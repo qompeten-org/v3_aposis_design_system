@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --aposis-primary: 201 96% 32%;
+  --aposis-primary-hover: 201 96% 26%;
+  --aposis-primary-light: 204 94% 94%;
+  --aposis-secondary: 215 19% 35%;
+  --aposis-secondary-hover: 215 19% 25%;
+  --aposis-secondary-light: 210 20% 96%;
+}
+
+/* Base font setup */
+body {
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #0f172a;
+}

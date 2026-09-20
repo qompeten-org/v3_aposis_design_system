@@ -1,0 +1,85 @@
+{
+  "name": "@aposis/design-system",
+  "version": "0.1.0",
+  "description": "Atomic Design System for Aposis microservices and frontends built with React, TypeScript, and Tailwind CSS",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css",
+    "./tailwind.preset": "./tailwind.preset.js",
+    "./atoms": {
+      "types": "./dist/atoms/index.d.ts",
+      "import": "./dist/atoms/index.js",
+      "require": "./dist/atoms/index.cjs"
+    },
+    "./molecules": {
+      "types": "./dist/molecules/index.d.ts",
+      "import": "./dist/molecules/index.js",
+      "require": "./dist/molecules/index.cjs"
+    },
+    "./organisms": {
+      "types": "./dist/organisms/index.d.ts",
+      "import": "./dist/organisms/index.js",
+      "require": "./dist/organisms/index.cjs"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.js",
+      "require": "./dist/tokens/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "tailwind.preset.js",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.build.json && vite build",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "preview": "vite preview",
+    "package:test": "npm pack --dry-run"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "tailwind-merge": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vite-plugin-dts": "^4.5.0"
+  },
+  "keywords": [
+    "aposis",
+    "design-system",
+    "react",
+    "tailwind",
+    "atomic-design",
+    "microservices",
+    "components"
+  ],
+  "author": "Aposis Team",
+  "license": "MIT"
+}
