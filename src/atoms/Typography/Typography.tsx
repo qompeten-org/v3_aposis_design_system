@@ -1,44 +1,56 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
+export type TypographyVariant =
+  | 'display'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'title'
+  | 'body-lg'
+  | 'subtitle'
+  | 'body'
+  | 'caption'
+  | 'overline';
+
 export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span';
+  variant?: 'display' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'title';
 }
 
 export const Heading: React.FC<HeadingProps> = ({
   as: Component = 'h2',
-  size,
+  variant,
   className,
   children,
   ...props
 }) => {
-  const defaultSizeMap = {
-    h1: 'text-3xl lg:text-4xl font-extrabold tracking-tight',
-    h2: 'text-2xl lg:text-3xl font-bold tracking-tight',
-    h3: 'text-xl lg:text-2xl font-bold',
-    h4: 'text-lg lg:text-xl font-semibold',
-    h5: 'text-base font-semibold',
-    h6: 'text-sm font-semibold uppercase tracking-wider',
+  const variantMap = {
+    display: 'text-[36px] md:text-[60px] font-light leading-[1.1] tracking-[-0.02em]',
+    h1: 'text-[30px] md:text-[48px] font-medium leading-[1.15] tracking-[-0.02em]',
+    h2: 'text-[24px] md:text-[36px] font-medium leading-[1.2] tracking-[-0.01em]',
+    h3: 'text-[20px] md:text-[30px] font-medium leading-[1.25] tracking-[-0.01em]',
+    h4: 'text-[18px] md:text-[24px] font-medium leading-[1.3] tracking-[0]',
+    h5: 'text-[17px] md:text-[20px] font-medium leading-[1.4] tracking-[0]',
+    title: 'text-[16px] md:text-[18px] font-medium leading-[1.4] tracking-[0]',
   };
 
-  const explicitSizes = {
-    xs: 'text-xs font-semibold uppercase tracking-wider',
-    sm: 'text-sm font-semibold',
-    md: 'text-base font-semibold',
-    lg: 'text-lg lg:text-xl font-bold',
-    xl: 'text-xl lg:text-2xl font-bold',
-    '2xl': 'text-2xl lg:text-3xl font-extrabold tracking-tight',
-    '3xl': 'text-3xl lg:text-4xl font-extrabold tracking-tight',
+  const defaultForTag: Record<string, string> = {
+    h1: variantMap.h1,
+    h2: variantMap.h2,
+    h3: variantMap.h3,
+    h4: variantMap.h4,
+    h5: variantMap.h5,
+    h6: variantMap.h5,
   };
+
+  const chosenClass = variant ? variantMap[variant] : defaultForTag[Component] || variantMap.h2;
 
   return (
     <Component
-      className={cn(
-        'text-slate-900',
-        size ? explicitSizes[size] : defaultSizeMap[Component],
-        className
-      )}
+      className={cn('text-slate-900 font-sans', chosenClass, className)}
       {...props}
     >
       {children}
@@ -48,27 +60,28 @@ export const Heading: React.FC<HeadingProps> = ({
 
 export interface TextProps extends React.HTMLAttributes<HTMLElement> {
   as?: 'p' | 'span' | 'div' | 'label';
-  variant?: 'lead' | 'body' | 'small' | 'caption' | 'muted';
-  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  variant?: 'body-lg' | 'subtitle' | 'body' | 'caption' | 'overline';
+  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 }
 
 export const Text: React.FC<TextProps> = ({
   as: Component = 'p',
   variant = 'body',
-  weight = 'normal',
+  weight,
   className,
   children,
   ...props
 }) => {
   const variants = {
-    lead: 'text-lg text-slate-700 leading-relaxed',
-    body: 'text-sm text-slate-600 leading-normal',
-    small: 'text-xs text-slate-600',
-    caption: 'text-[11px] text-slate-500 tracking-wide',
-    muted: 'text-sm text-slate-400',
+    'body-lg': 'text-[16px] leading-[1.3] tracking-[0] font-normal text-slate-700',
+    subtitle: 'text-[14px] leading-[1.3] tracking-[0] font-semibold text-slate-800',
+    body: 'text-[14px] leading-[1.3] tracking-[0] font-normal text-slate-600',
+    caption: 'text-[12px] leading-[1.5] tracking-[0.01em] font-normal text-slate-500',
+    overline: 'text-[11px] leading-[1.3] tracking-[0.06em] font-semibold uppercase text-slate-500',
   };
 
   const weights = {
+    light: 'font-light',
     normal: 'font-normal',
     medium: 'font-medium',
     semibold: 'font-semibold',
@@ -77,10 +90,18 @@ export const Text: React.FC<TextProps> = ({
 
   return (
     <Component
-      className={cn(variants[variant], weights[weight], className)}
+      className={cn(
+        'font-sans',
+        variants[variant],
+        weight && weights[weight],
+        className
+      )}
       {...props}
     >
       {children}
     </Component>
   );
 };
+
+Heading.displayName = 'Heading';
+Text.displayName = 'Text';

@@ -3,16 +3,164 @@
 @tailwind utilities;
 
 :root {
-  --aposis-primary: 201 96% 32%;
-  --aposis-primary-hover: 201 96% 26%;
-  --aposis-primary-light: 204 94% 94%;
+  /* Background Semantic Colors */
+  --background-default: #FFFFFF;
+  --background-subtle: #F8FAFC;
+
+  /* Surface Semantic Colors */
+  --surface-field: #F1F5F9;
+  --surface-field-hover: #E2E8F0;
+  --surface-default: #FFFFFF;
+  --surface-disabled: #CBD5E1;
+  --surface-brand: #0F62FE;
+  --surface-brand-active: #002D9C;
+  --surface-brand-hover: #0043CE;
+  --surface-brand-subtle: #EDF5FF;
+  --surface-brand-tint: #D0E2FF;
+  --surface-brand-tint-hover: #A6C8FF;
+
+  /* Layer Semantic Colors */
+  --layer: #F8FAFC;
+  --layer-active: #E2E8F0;
+  --layer-hover: #F1F5F9;
+
+  /* Icon Semantic Colors */
+  --icon-disabled: rgba(15, 23, 42, 0.24);
+  --icon-helper: #64748B;
+  --icon-interactive: #0F62FE;
+  --icon-inverse: #FFFFFF;
+  --icon-on-color: #FFFFFF;
+  --icon-on-color-disabled: #94A3B8;
+  --icon-placeholder: #CBD5E1;
+  --icon-primary: #0F172A;
+  --icon-secondary: #475569;
+  --icon-tertiary-amber: #B45309;
+  --icon-tertiary-cyan: #0E7490;
+  --icon-tertiary-green: #15803D;
+  --icon-tertiary-rose: #E6212A;
+  --icon-tertiary-violet: #9333EA;
+
+  /* Border Semantic Colors */
+  --border-alert: #F59E0B;
+  --border-card: #CBD5E1;
+  --border-card-hover: #0F62FE;
+  --border-danger: #FF3941;
+  --border-disabled: #E2E8F0;
+  --border-info: #0F62FE;
+  --border-interactive: #0F62FE;
+  --border-inverse: #000000;
+  --border-strong-01: #94A3B8;
+  --border-strong-02: #64748B;
+  --border-strong-03: #475569;
+  --border-subtle-01: #F1F5F9;
+  --border-subtle-02: #E2E8F0;
+  --border-subtle-03: #CBD5E1;
+  --border-success: #16A34A;
+
+  /* Text Semantic Colors (Light Mode) */
+  --text-disabled: rgba(15, 23, 42, 0.24);
+  --text-error: #E6212A;
+  --text-error-hover: #B81A22;
+  --text-helper: #64748B;
+  --text-interactive: #0F62FE;
+  --text-interactive-hover: #0043CE;
+  --text-inverse: #FFFFFF;
+  --text-on-color: #FFFFFF;
+  --text-on-color-disabled: #94A3B8;
+  --text-placeholder: #94A3B8;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary-amber: #B45309;
+  --text-tertiary-cyan: #0E7490;
+  --text-tertiary-green: #15803D;
+  --text-tertiary-violet: #9333EA;
+
+  /* Brand Primary & Secondary defaults */
+  --aposis-primary: 217 100% 53%; /* #0F62FE Blue 60 */
+  --aposis-primary-hover: 220 100% 40%; /* #0043CE Blue 70 */
+  --aposis-primary-light: 215 100% 91%; /* #D0E2FF Blue 20 */
   --aposis-secondary: 215 19% 35%;
   --aposis-secondary-hover: 215 19% 25%;
   --aposis-secondary-light: 210 20% 96%;
 }
 
+.dark {
+  /* Background Semantic Colors */
+  --background-default: #0F172A;
+  --background-subtle: #212B3C;
+
+  /* Surface Semantic Colors */
+  --surface-field: #212B3C;
+  --surface-field-hover: #283445;
+  --surface-default: #0F172A;
+  --surface-disabled: #475569;
+  --surface-brand: #0F62FE;
+  --surface-brand-active: #002D9C;
+  --surface-brand-hover: #0043CE;
+  --surface-brand-subtle: #101831;
+  --surface-brand-tint: #101831;
+  --surface-brand-tint-hover: #0B1F53;
+
+  /* Layer Semantic Colors */
+  --layer: #212B3C;
+  --layer-active: #475569;
+  --layer-hover: #283445;
+
+  /* Icon Semantic Colors */
+  --icon-disabled: rgba(15, 23, 42, 0.24);
+  --icon-helper: #94A3B8;
+  --icon-interactive: #0F62FE;
+  --icon-inverse: #000000;
+  --icon-on-color: #FFFFFF;
+  --icon-on-color-disabled: #94A3B8;
+  --icon-placeholder: #CBD5E1;
+  --icon-primary: #F8FAFC;
+  --icon-secondary: #F1F5F9;
+  --icon-tertiary-amber: #FBBF24;
+  --icon-tertiary-cyan: #4ADE80;
+  --icon-tertiary-green: #4ADE80;
+  --icon-tertiary-rose: #FF3941;
+  --icon-tertiary-violet: #C084FC;
+
+  /* Border Semantic Colors */
+  --border-alert: #F59E0B;
+  --border-card: #475569;
+  --border-card-hover: #0F62FE;
+  --border-danger: #FF3941;
+  --border-disabled: #475569;
+  --border-info: #0F62FE;
+  --border-interactive: #0F62FE;
+  --border-inverse: #FFFFFF;
+  --border-strong-01: #64748B;
+  --border-strong-02: #94A3B8;
+  --border-strong-03: #CBD5E1;
+  --border-subtle-01: #212B3C;
+  --border-subtle-02: #283445;
+  --border-subtle-03: #475569;
+  --border-success: #16A34A;
+
+  /* Text Semantic Colors (Dark Mode) */
+  --text-disabled: rgba(255, 255, 255, 0.24);
+  --text-error: #E6212A;
+  --text-error-hover: #B81A22;
+  --text-helper: #64748B;
+  --text-interactive: #4589FF;
+  --text-interactive-hover: #4589FF;
+  --text-inverse: #FFFFFF;
+  --text-on-color: #FFFFFF;
+  --text-on-color-disabled: #64748B;
+  --text-placeholder: #475569;
+  --text-primary: #FFFFFF;
+  --text-secondary: #E2E8F0;
+  --text-tertiary-amber: #FCD34D;
+  --text-tertiary-cyan: #67E8F9;
+  --text-tertiary-green: #86EFAC;
+  --text-tertiary-violet: #D8B4FE;
+}
+
 /* Base font setup */
 body {
-  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #0f172a;
+  font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--background-default);
 }

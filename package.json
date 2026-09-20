@@ -53,6 +53,7 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.47.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
     "tailwind-merge": "^3.0.1"

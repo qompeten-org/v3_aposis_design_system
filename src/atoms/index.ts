@@ -5,3 +5,4 @@ export * from './Avatar';
 export * from './Spinner';
 export * from './Checkbox';
 export * from './Typography';
+export * from './Icon';
