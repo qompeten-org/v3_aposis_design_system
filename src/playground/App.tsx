@@ -206,7 +206,7 @@ export default function App() {
     if (isGroup) imports.add('RadioGroup');
     imports.add('Radio');
 
-    let code = `import { ${Array.from(imports).join(', ')} } from '@aposis/design-system';\n\n`;
+    let code = `import React, { useState } from 'react';\nimport { ${Array.from(imports).join(', ')} } from '@aposis/design-system';\n\n`;
 
     const labelPosAttr =
       radioConfigLabelPos !== 'right' && radioConfigLabelPos !== 'none'
@@ -219,6 +219,9 @@ export default function App() {
     const invalidAttr = radioConfigInvalid ? `\n  isInvalid` : '';
 
     if (isGroup) {
+      code += `// Nilai aktif saat ini: "${radioConfigSelected}"\n`;
+      code += `const [selectedValue, setSelectedValue] = useState('${radioConfigSelected}');\n\n`;
+
       let groupContent = `<RadioGroup\n  name="pilihan"\n  value={selectedValue}\n  onChange={setSelectedValue}`;
       if (radioConfigOrientation !== 'vertical') groupContent += `\n  orientation="${radioConfigOrientation}"`;
       groupContent += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}`;
@@ -248,14 +251,16 @@ export default function App() {
         code += groupContent;
       }
     } else {
-      let singleRadio = `<Radio\n  name="demo"\n  value="1"`;
+      code += `const [checked, setChecked] = useState(${radioConfigSelected === 'opt1'});\n\n`;
+
+      let singleRadio = `<Radio\n  name="demo"\n  value="1"\n  checked={checked}\n  onChange={(e) => setChecked(e.target.checked)}`;
       if (radioConfigLabelPos !== 'none') {
         singleRadio += `\n  label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
         if (radioConfigHasDesc) singleRadio += `\n  description="Keterangan pembantu di bawah label"`;
       } else {
         singleRadio += `\n  aria-label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
       }
-      singleRadio += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n  defaultChecked\n/>`;
+      singleRadio += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n/>`;
 
       if (radioConfigWrapForm) {
         code += `<FormField\n  label="Persetujuan"\n  required${radioConfigInvalid ? '\n  error="Harap setujui ketentuan ini"' : ''}\n>\n`;
@@ -279,6 +284,7 @@ export default function App() {
     radioConfigHasDesc,
     radioConfigWrapForm,
     radioConfigCustomLabel,
+    radioConfigSelected,
   ]);
 
   const buttonSnippets = [
@@ -1498,28 +1504,6 @@ export default function App() {
               title="Radio"
               badgeText="Atom"
               description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, 5 palet warna, dan RadioGroup helper."
-              snippets={[
-                {
-                  label: 'Penggunaan Dasar',
-                  desc: 'Radio individual dengan label atau posisi label fleksibel.',
-                  code: `import { Radio } from '@aposis/design-system';\n\n<Radio name="pilihan" value="1" label="Opsi Pertama" defaultChecked />\n<Radio name="pilihan" value="2" label="Opsi Kedua" />\n<Radio name="pilihan" value="3" label="Opsi Ketiga" labelPosition="bottom" />`,
-                },
-                {
-                  label: 'RadioGroup',
-                  desc: 'Pembungkus terpadu untuk mengelola nilai grup, label, deskripsi, dan pesan error.',
-                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup\n  label="Metode Pembayaran"\n  name="payment"\n  value={selectedPayment}\n  onChange={(val) => setSelectedPayment(val)}\n  orientation="horizontal"\n>\n  <Radio value="transfer" label="Transfer Bank" />\n  <Radio value="qris" label="QRIS" />\n  <Radio value="card" label="Kartu Kredit" />\n</RadioGroup>`,
-                },
-                {
-                  label: 'Varian Card',
-                  desc: 'Tampilan kotak kartu yang dapat diklik dengan deskripsi pembantu.',
-                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup value={plan} onChange={setPlan} className="grid grid-cols-1 sm:grid-cols-2 gap-3">\n  <Radio variant="card" value="starter" label="Starter" description="Untuk pengguna individu" />\n  <Radio variant="card" value="pro" label="Pro" description="Fitur lengkap untuk tim" />\n</RadioGroup>`,
-                },
-                {
-                  label: 'Di dalam FormField',
-                  desc: 'Dibungkus FormField dengan validasi dan penanganan error otomatis.',
-                  code: `import { FormField, RadioGroup, Radio } from '@aposis/design-system';\n\n<FormField label="Metode Pembayaran" required helperText="Pilih salah satu" error={error}>\n  <RadioGroup name="payment" value={payment} onChange={setPayment} orientation="horizontal">\n    <Radio value="qris" label="QRIS Instan" />\n    <Radio value="va" label="Virtual Account" />\n  </RadioGroup>\n</FormField>`,
-                },
-              ]}
             >
               <div className="space-y-6">
                 {/* 1. Interactive Live Radio Builder */}
