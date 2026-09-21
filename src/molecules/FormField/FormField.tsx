@@ -1,14 +1,13 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-export interface FormFieldProps {
+export interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   id?: string;
   label?: string;
   required?: boolean;
   error?: string;
   helperText?: string;
   children: React.ReactNode;
-  className?: string;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -19,9 +18,10 @@ export const FormField: React.FC<FormFieldProps> = ({
   helperText,
   children,
   className,
+  ...props
 }) => {
   return (
-    <div className={cn('flex flex-col gap-1.5 w-full', className)}>
+    <div className={cn('flex flex-col gap-1.5 w-full', className)} {...props}>
       {label && (
         <label
           htmlFor={id}

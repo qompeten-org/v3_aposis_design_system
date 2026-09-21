@@ -7,15 +7,16 @@ export interface CheckboxProps
   label?: React.ReactNode;
   description?: React.ReactNode;
   error?: string;
+  containerClassName?: string;
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, label, description, error, disabled, id, checked, ...props }, ref) => {
+  ({ className, containerClassName, label, description, error, disabled, id, checked, ...props }, ref) => {
     const generatedId = React.useId();
     const checkboxId = id || generatedId;
 
     return (
-      <div className="flex items-start gap-2.5">
+      <div className={cn('flex items-start gap-2.5', containerClassName)}>
         <div className="relative flex items-center justify-center pt-0.5">
           <input
             ref={ref}

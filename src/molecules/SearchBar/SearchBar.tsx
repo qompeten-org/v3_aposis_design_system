@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { cn } from '../../utils/cn';
 import { Search, X } from 'lucide-react';
 
-export interface SearchBarProps {
+export interface SearchBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
   onSearch?: (value: string) => void;
   shortcut?: string;
-  className?: string;
   size?: 'sm' | 'md' | 'lg';
+  inputId?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -20,6 +20,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   shortcut = '⌘K',
   className,
   size = 'md',
+  inputId,
+  id,
+  ...props
 }) => {
   const [internalValue, setInternalValue] = useState('');
   const isControlled = controlledValue !== undefined;
@@ -57,7 +60,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className={cn('relative flex items-center w-full max-w-md', className)}>
+    <div id={id} className={cn('relative flex items-center w-full max-w-md', className)} {...props}>
       <Search
         className={cn(
           'absolute text-slate-400 pointer-events-none stroke-[2]',
@@ -65,6 +68,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         )}
       />
       <input
+        id={inputId}
         type="text"
         value={query}
         onChange={handleChange}

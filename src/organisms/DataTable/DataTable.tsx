@@ -11,7 +11,7 @@ export interface Column<T> {
   align?: 'left' | 'center' | 'right';
 }
 
-export interface DataTableProps<T> {
+export interface DataTableProps<T> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   columns: Column<T>[];
   data: T[];
   keyExtractor: (item: T, index: number) => string | number;
@@ -23,7 +23,6 @@ export interface DataTableProps<T> {
     onPageChange: (page: number) => void;
     totalItems?: number;
   };
-  className?: string;
 }
 
 export function DataTable<T>({
@@ -34,6 +33,8 @@ export function DataTable<T>({
   emptyMessage = 'Tidak ada data ditemukan.',
   pagination,
   className,
+  id,
+  ...props
 }: DataTableProps<T>) {
   const alignClasses = {
     left: 'text-left',
@@ -42,7 +43,7 @@ export function DataTable<T>({
   };
 
   return (
-    <div className={cn('w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col', className)}>
+    <div id={id} className={cn('w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col', className)} {...props}>
       <div className="w-full overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>

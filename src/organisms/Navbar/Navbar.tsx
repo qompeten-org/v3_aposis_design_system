@@ -11,7 +11,7 @@ export interface NavLinkItem {
   onClick?: () => void;
 }
 
-export interface NavbarProps {
+export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   brandName?: string;
   brandLogo?: React.ReactNode;
   navLinks?: NavLinkItem[];
@@ -23,7 +23,6 @@ export interface NavbarProps {
   };
   notificationCount?: number;
   onNotificationClick?: () => void;
-  className?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,13 +34,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   notificationCount,
   onNotificationClick,
   className,
+  id,
+  ...props
 }) => {
   return (
     <header
+      id={id}
       className={cn(
         'w-full h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40',
         className
       )}
+      {...props}
     >
       {/* Brand & Left Navigation */}
       <div className="flex items-center gap-8">

@@ -2,12 +2,11 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import { Info, CheckCircle2, AlertTriangle, AlertCircle, X } from 'lucide-react';
 
-export interface AlertProps {
+export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: 'info' | 'success' | 'warning' | 'danger';
   title?: React.ReactNode;
   children: React.ReactNode;
   onClose?: () => void;
-  className?: string;
 }
 
 export const Alert: React.FC<AlertProps> = ({
@@ -16,6 +15,8 @@ export const Alert: React.FC<AlertProps> = ({
   children,
   onClose,
   className,
+  id,
+  ...props
 }) => {
   const configs = {
     info: {
@@ -45,11 +46,13 @@ export const Alert: React.FC<AlertProps> = ({
   return (
     <div
       role="alert"
+      id={id}
       className={cn(
         'relative flex items-start gap-3 p-4 rounded-xl border text-sm transition-all',
         config.container,
         className
       )}
+      {...props}
     >
       {config.icon}
       <div className="flex-1 min-w-0 pr-4">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Button,
   Input,
@@ -73,6 +73,14 @@ import {
   IconWindow,
   IconMenu2,
   IconX,
+  IconArrowRight,
+  IconDeviceFloppy,
+  IconDownload,
+  IconEdit,
+  IconChevronDown,
+  IconAdjustmentsHorizontal,
+  IconInfoCircle,
+  IconExternalLink,
 } from '@tabler/icons-react';
 import { units } from '../tokens/units';
 import { primitiveColors } from '../tokens/colors';
@@ -114,6 +122,19 @@ export default function App() {
   const [checkboxChecked, setCheckboxChecked] = useState(true);
   const [activeTabDemo, setActiveTabDemo] = useState('tab1');
 
+  // Interactive Button Configurator state
+  const [demoVariant, setDemoVariant] = useState<'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger'>('primary');
+  const [demoSize, setDemoSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [demoHasLeftIcon, setDemoHasLeftIcon] = useState(true);
+  const [demoLeftIconName, setDemoLeftIconName] = useState<string>('IconPlus');
+  const [demoHasRightIcon, setDemoHasRightIcon] = useState(false);
+  const [demoRightIconName, setDemoRightIconName] = useState<string>('IconArrowRight');
+  const [demoCustomId, setDemoCustomId] = useState('btn-simpan');
+  const [demoCustomClass, setDemoCustomClass] = useState('');
+  const [demoButtonText, setDemoButtonText] = useState('Simpan Perubahan');
+  const [demoIsLoading, setDemoIsLoading] = useState(false);
+  const [demoIsDisabled, setDemoIsDisabled] = useState(false);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
@@ -128,6 +149,129 @@ export default function App() {
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
   };
+
+  const demoIcons: Record<string, { label: string; icon: any }> = {
+    IconPlus: { label: 'Plus (Tambah)', icon: IconPlus },
+    IconDeviceFloppy: { label: 'Floppy (Simpan)', icon: IconDeviceFloppy },
+    IconSearch: { label: 'Search (Cari)', icon: IconSearch },
+    IconDownload: { label: 'Download (Unduh)', icon: IconDownload },
+    IconEdit: { label: 'Edit (Ubah)', icon: IconEdit },
+    IconArrowRight: { label: 'ArrowRight (Lanjut)', icon: IconArrowRight },
+    IconSend: { label: 'Send (Kirim)', icon: IconSend },
+    IconTrash: { label: 'Trash (Hapus)', icon: IconTrash },
+    IconChevronDown: { label: 'ChevronDown (Dropdown)', icon: IconChevronDown },
+    IconSettings: { label: 'Settings (Pengaturan)', icon: IconSettings },
+    IconHeart: { label: 'Heart (Favorit)', icon: IconHeart },
+  };
+
+  const dynamicButtonCode = useMemo(() => {
+    const imports = ['Button'];
+    if (demoHasLeftIcon || demoHasRightIcon) imports.push('Icon');
+
+    const iconImports = new Set<string>();
+    if (demoHasLeftIcon) iconImports.add(demoLeftIconName);
+    if (demoHasRightIcon) iconImports.add(demoRightIconName);
+
+    let res = `import { ${imports.join(', ')} } from '@aposis/design-system';\n`;
+    if (iconImports.size > 0) {
+      res += `import { ${Array.from(iconImports).join(', ')} } from '@tabler/icons-react';\n`;
+    }
+    res += `\n<Button`;
+    if (demoCustomId.trim()) res += `\n  id="${demoCustomId.trim()}"`;
+    if (demoVariant !== 'primary') res += `\n  variant="${demoVariant}"`;
+    if (demoSize !== 'md') res += `\n  size="${demoSize}"`;
+    if (demoHasLeftIcon) res += `\n  leftIcon={<Icon icon={${demoLeftIconName}} size="${demoSize === 'lg' ? 'md' : 'sm'}" />}`;
+    if (demoHasRightIcon) res += `\n  rightIcon={<Icon icon={${demoRightIconName}} size="${demoSize === 'lg' ? 'md' : 'sm'}" />}`;
+    if (demoIsLoading) res += `\n  isLoading`;
+    if (demoIsDisabled) res += `\n  disabled`;
+    if (demoCustomClass.trim()) res += `\n  className="${demoCustomClass.trim()}"`;
+    res += `\n>\n  ${demoButtonText}\n</Button>`;
+    return res;
+  }, [demoVariant, demoSize, demoHasLeftIcon, demoLeftIconName, demoHasRightIcon, demoRightIconName, demoCustomId, demoCustomClass, demoButtonText, demoIsLoading, demoIsDisabled]);
+
+  const buttonSnippets = [
+    {
+      label: 'Dasar',
+      desc: 'Penggunaan dasar Button dengan variant dan size standar.',
+      code: `import { Button } from '@aposis/design-system';\n\n<Button variant="primary" size="md">Simpan Perubahan</Button>`,
+    },
+    {
+      label: 'Icon di Kiri (leftIcon)',
+      desc: 'Tambahkan prop leftIcon={<Icon icon={IconPlus} size="sm" />} untuk meletakkan ikon di sebelah kiri teks.',
+      code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n<Button\n  variant="primary"\n  leftIcon={<Icon icon={IconPlus} size="sm" />}\n>\n  Tambah Data\n</Button>`,
+    },
+    {
+      label: 'Icon di Kanan (rightIcon)',
+      desc: 'Tambahkan prop rightIcon={<Icon icon={IconArrowRight} size="sm" />} untuk tombol aksi atau langkah navigasi.',
+      code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconArrowRight } from '@tabler/icons-react';\n\n<Button\n  variant="outline"\n  rightIcon={<Icon icon={IconArrowRight} size="sm" />}\n>\n  Langkah Selanjutnya\n</Button>`,
+    },
+    {
+      label: 'Kedua Icon (Kiri & Kanan)',
+      desc: 'Menampilkan ikon di kedua sisi tombol (misal tombol unduh dengan opsi dropdown).',
+      code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconDownload, IconChevronDown } from '@tabler/icons-react';\n\n<Button\n  variant="secondary"\n  leftIcon={<Icon icon={IconDownload} size="sm" />}\n  rightIcon={<Icon icon={IconChevronDown} size="sm" />}\n>\n  Export Dokumen\n</Button>`,
+    },
+    {
+      label: 'Cara Ganti Ikon Lain',
+      desc: 'Pilih nama ikon dari ribuan pilihan di Tabler Icons lalu import dan pasang ke <Icon icon={...} />.',
+      code: `import { Button, Icon } from '@aposis/design-system';\n// 1. Import nama ikon dari library Tabler Icons:\nimport {\n  IconTrash,\n  IconDeviceFloppy,\n  IconSearch,\n  IconSettings,\n  IconDownload\n} from '@tabler/icons-react';\n\n// 2. Tombol Hapus (Merah + Icon Trash):\n<Button variant="danger" leftIcon={<Icon icon={IconTrash} size="sm" />}>\n  Hapus Akun\n</Button>\n\n// 3. Tombol Simpan (Hijau + Icon Disket):\n<Button variant="success" leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}>\n  Simpan Perubahan\n</Button>\n\n// 4. Tombol Cari (Outline + Icon Kaca Pembesar):\n<Button variant="outline" leftIcon={<Icon icon={IconSearch} size="sm" />}>\n  Cari Siswa\n</Button>`,
+    },
+    {
+      label: 'Kustom id & className',
+      desc: 'Tiap atom menerima id unik dan kustom className Tailwind untuk penyesuaian khusus.',
+      code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconDeviceFloppy } from '@tabler/icons-react';\n\n<Button\n  id="btn-submit-form"\n  className="w-full shadow-lg hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-blue-600 to-indigo-600"\n  leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}\n>\n  Simpan Data Guru\n</Button>`,
+    },
+  ];
+
+  const inputSnippets = [
+    {
+      label: 'Dasar',
+      desc: 'Input teks standar',
+      code: `import { Input } from '@aposis/design-system';\n\n<Input placeholder="Masukkan nama..." />`,
+    },
+    {
+      label: 'Icon Kiri (leftIcon)',
+      desc: 'Menampilkan ikon di sisi kiri input (misal ikon pencarian)',
+      code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconSearch } from '@tabler/icons-react';\n\n<Input\n  placeholder="Cari data siswa..."\n  leftIcon={<Icon icon={IconSearch} size="sm" />}\n/>`,
+    },
+    {
+      label: 'Icon Kanan (rightIcon)',
+      desc: 'Menampilkan ikon di sisi kanan input (misal indikator status atau aksi)',
+      code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconCheck } from '@tabler/icons-react';\n\n<Input\n  placeholder="Email terverifikasi"\n  rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}\n/>`,
+    },
+    {
+      label: 'Kedua Icon',
+      desc: 'Menampilkan ikon di sisi kiri dan kanan secara bersamaan',
+      code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconUser, IconCheck } from '@tabler/icons-react';\n\n<Input\n  placeholder="Nama pengguna"\n  leftIcon={<Icon icon={IconUser} size="sm" />}\n  rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}\n/>`,
+    },
+    {
+      label: 'Kustom id & className',
+      desc: 'Dapat diberikan id unik dan custom styling className Tailwind serta containerClassName',
+      code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconSearch } from '@tabler/icons-react';\n\n<Input\n  id="field-search-siswa"\n  className="font-mono border-blue-400 focus:ring-blue-300"\n  containerClassName="max-w-md shadow-sm"\n  leftIcon={<Icon icon={IconSearch} size="sm" />}\n/>`,
+    },
+  ];
+
+  const iconDocSnippets = [
+    {
+      label: 'Dasar (Tabler)',
+      desc: 'Menggunakan ikon dari Tabler Icons dengan stroke otomatis sesuai ukuran',
+      code: `import { Icon } from '@aposis/design-system';\nimport { IconPlus, IconSearch, IconHeart } from '@tabler/icons-react';\n\n<Icon icon={IconPlus} size="md" />\n<Icon icon={IconSearch} size="sm" />`,
+    },
+    {
+      label: 'Standar Ukuran & Stroke',
+      desc: 'SM (16px / 1.25px stroke), MD (20px / 1.5px stroke), LG (24px / 2px stroke)',
+      code: `import { Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n// SM: 16px (stroke 1.25px)\n<Icon icon={IconPlus} size="sm" />\n\n// MD: 20px (stroke 1.5px)\n<Icon icon={IconPlus} size="md" />\n\n// LG: 24px (stroke 2px)\n<Icon icon={IconPlus} size="lg" />`,
+    },
+    {
+      label: 'Ikon Kustom Figma',
+      desc: 'Ikon SVG resmi khusus Aposis (Bahasa ID, Bahasa EN, Rumus Matematika)',
+      code: `import { IconLanguageId, IconLanguageEn, IconMathSqrt } from '@aposis/design-system';\n\n<IconLanguageId size="md" />\n<IconLanguageEn size="md" />\n<IconMathSqrt size="md" />`,
+    },
+    {
+      label: 'Kustom id & className',
+      desc: 'Bisa diberi id unik, warna semantik, hover effect, atau animasi putar',
+      code: `import { Icon } from '@aposis/design-system';\nimport { IconHeart } from '@tabler/icons-react';\n\n<Icon\n  id="favorite-icon"\n  icon={IconHeart}\n  size="lg"\n  className="text-rose-500 hover:text-rose-600 hover:scale-125 cursor-pointer transition-transform"\n/>`,
+    },
+  ];
 
   const studentColumns: Column<StudentData>[] = [
     {
@@ -300,62 +444,103 @@ export default function App() {
     { name: 'border-success', val: 'Green 70', light: '#16A34A', dark: '#16A34A', desc: 'Garis tepi bertema Green untuk status berhasil/sukses.' },
   ];
 
-  // Helper component to render component documentation card
+  interface SnippetItem {
+    label: string;
+    code: string;
+    desc?: string;
+  }
+
+  // Helper component to render component documentation card with multiple snippet tabs
   const DocCard = ({
     title,
     badgeText = 'Atom',
     description,
     usageSnippet,
+    snippets,
+    tips,
     children,
   }: {
     title: string;
     badgeText?: string;
     description: string;
     usageSnippet?: string;
+    snippets?: SnippetItem[];
+    tips?: React.ReactNode;
     children: React.ReactNode;
-  }) => (
-    <div className="space-y-6 animate-in fade-in duration-150">
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
-        <div className="flex items-center gap-2 mb-1.5">
-          <Badge variant="primary" appearance="solid" size="sm">
-            {badgeText}
-          </Badge>
-          <span className="text-xs font-mono text-slate-400">@aposis/design-system</span>
-        </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          {title}
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-3xl leading-relaxed">
-          {description}
-        </p>
+  }) => {
+    const allSnippets: SnippetItem[] = snippets && snippets.length > 0
+      ? snippets
+      : (usageSnippet ? [{ label: 'Kode TSX', code: usageSnippet }] : []);
+    const [activeIdx, setActiveIdx] = useState(0);
+    const activeItem = allSnippets[activeIdx] || allSnippets[0];
 
-        {usageSnippet && (
-          <div className="mt-4 rounded-xl bg-slate-900 border border-slate-800 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-950/60 text-[11px] font-mono text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <Icon icon={IconCode} size="sm" className="text-aposis-blue-50" />
-                Cara Penggunaan / Kode (TSX)
-              </span>
-              <button
-                type="button"
-                onClick={() => copySnippet(usageSnippet)}
-                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-sans font-medium active:scale-95"
-                title="Salin kode penggunaan"
-              >
-                {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
-                <span>{copiedCode ? 'Tersalin!' : 'Salin Kode'}</span>
-              </button>
-            </div>
-            <pre className="p-4 overflow-x-auto font-mono text-xs text-sky-300 whitespace-pre leading-relaxed select-all">
-              <code>{usageSnippet}</code>
-            </pre>
+    return (
+      <div className="space-y-6 animate-in fade-in duration-150">
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Badge variant="primary" appearance="solid" size="sm">
+              {badgeText}
+            </Badge>
+            <span className="text-xs font-mono text-slate-400">@aposis/design-system</span>
           </div>
-        )}
-      </div>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            {title}
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-3xl leading-relaxed">
+            {description}
+          </p>
 
-      <div className="pt-2">{children}</div>
-    </div>
-  );
+          {/* Tips / Guidance banner */}
+          {tips && <div className="mt-4">{tips}</div>}
+
+          {/* Multi-Tab Code Snippet Box */}
+          {allSnippets.length > 0 && (
+            <div className="mt-4 rounded-xl bg-slate-900 border border-slate-800 shadow-sm overflow-hidden">
+              <div className="flex flex-wrap items-center justify-between px-3 py-2 border-b border-slate-800 bg-slate-950/70 gap-2">
+                <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
+                  <Icon icon={IconCode} size="sm" className="text-aposis-blue-50 shrink-0 ml-1 mr-1" />
+                  {allSnippets.map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveIdx(idx)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                        activeIdx === idx
+                          ? 'bg-aposis-blue-60 text-white shadow-xs'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copySnippet(activeItem?.code || '')}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-sans font-medium active:scale-95 shrink-0"
+                  title="Salin kode ini"
+                >
+                  {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
+                  <span>{copiedCode ? 'Tersalin!' : 'Salin Kode'}</span>
+                </button>
+              </div>
+              {activeItem?.desc && (
+                <div className="px-4 py-2 text-xs bg-slate-950/50 text-slate-300 border-b border-slate-800 flex items-center gap-2">
+                  <span className="text-aposis-blue-40 font-semibold shrink-0">💡 Cara Pakai:</span>
+                  <span>{activeItem.desc}</span>
+                </div>
+              )}
+              <pre className="p-4 overflow-x-auto font-mono text-xs text-sky-300 whitespace-pre leading-relaxed select-all">
+                <code>{activeItem?.code}</code>
+              </pre>
+            </div>
+          )}
+        </div>
+
+        <div className="pt-2">{children}</div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
@@ -398,11 +583,20 @@ export default function App() {
       </header>
 
       {/* Main Two-Column Layout */}
-      <div className="flex-1 flex w-full max-w-7xl mx-auto">
-        {/* Left Sidebar Navigation */}
+      <div className="flex-1 flex w-full min-h-0 relative">
+        {/* Mobile Backdrop Overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-30 md:hidden transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Left Sidebar Navigation - Mentok Kiri */}
         <aside
-          className={`fixed md:sticky top-[57px] left-0 h-[calc(100vh-57px)] w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 overflow-y-auto z-30 transition-transform duration-200 ${
-            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          className={`fixed md:sticky top-[57px] left-0 h-[calc(100vh-57px)] w-72 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 overflow-y-auto z-40 transition-transform duration-200 ${
+            isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
           }`}
         >
           <div className="space-y-6">
@@ -452,19 +646,348 @@ export default function App() {
         </aside>
 
         {/* Right Main Content Area */}
-        <main ref={mainRef} className="flex-1 p-6 sm:p-10 max-w-4xl overflow-y-auto">
+        <main ref={mainRef} className="flex-1 min-w-0 p-6 sm:p-10 overflow-y-auto">
+          <div className="max-w-5xl mx-auto space-y-6">
           {/* 1. BUTTON ATOM */}
           {selectedId === 'button' && (
             <DocCard
               title="Button"
               badgeText="Atom"
-              description="Komponen tombol aksi dengan berbagai pilihan varian, ukuran, status loading, dan dukungan penempatan ikon di sisi kiri atau kanan."
-              usageSnippet={`import { Button } from '@aposis/design-system';\n\n<Button variant="primary" size="md">Simpan Perubahan</Button>`}
+              description="Komponen tombol aksi resmi Aposis dengan berbagai pilihan varian, ukuran, status loading/disabled, dukungan penempatan ikon (kiri/kanan), serta atribut kustom id & className."
+              snippets={buttonSnippets}
+              tips={
+                <div className="p-4 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200 space-y-2">
+                  <div className="font-bold flex items-center gap-1.5 text-sm text-aposis-blue-70 dark:text-aposis-blue-40">
+                    <Icon icon={IconInfoCircle} size="sm" />
+                    Panduan Lengkap: Mengganti Ikon, Posisi Kiri/Kanan & Kustomisasi
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">1. Posisi Ikon (Kiri / Kanan)</div>
+                      <div className="text-slate-500 dark:text-slate-400 mt-1">Gunakan prop <code className="text-aposis-blue-60 font-semibold">leftIcon</code> atau <code className="text-aposis-blue-60 font-semibold">rightIcon</code>. Anda bisa menyisipkan ikon di sisi kiri, kanan, atau keduanya sekaligus.</div>
+                    </div>
+                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">2. Cara Mengganti Ikon</div>
+                      <div className="text-slate-500 dark:text-slate-400 mt-1">Import ikon apa pun dari <code className="text-aposis-blue-60 font-semibold">@tabler/icons-react</code> (ribuan ikon tersedia) lalu bungkus ke dalam <code className="text-aposis-blue-60 font-semibold">&lt;Icon icon=&#123;IconNama&#125; size="sm" /&gt;</code>.</div>
+                    </div>
+                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">3. Editable: id & className</div>
+                      <div className="text-slate-500 dark:text-slate-400 mt-1">Semua atom menerima prop standar seperti <code className="text-aposis-blue-60 font-semibold">id="custom-id"</code> dan tambahan <code className="text-aposis-blue-60 font-semibold">className="..."</code> tanpa merusak style bawaan.</div>
+                    </div>
+                  </div>
+                </div>
+              }
             >
               <div className="space-y-6">
+                {/* Interactive Live Button Builder */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60 shadow-sm">
+                  <CardHeader className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
+                          Interactive Button Builder (Coba Ganti Ikon, id & className)
+                        </CardTitle>
+                        <CardDescription>
+                          Ubah konfigurasi di bawah untuk melihat hasil tombol secara langsung dan salin kode TSX yang ter-generate otomatis!
+                        </CardDescription>
+                      </div>
+                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6 pt-6">
+                    {/* Controls Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+                      {/* Left column: Variant, Size, Text */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            1. Pilih Varian Tombol:
+                          </label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(['primary', 'secondary', 'outline', 'ghost', 'success', 'danger'] as const).map((v) => (
+                              <button
+                                key={v}
+                                type="button"
+                                onClick={() => setDemoVariant(v)}
+                                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all ${
+                                  demoVariant === v
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                                }`}
+                              >
+                                {v}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            2. Pilih Ukuran (Size):
+                          </label>
+                          <div className="flex gap-2">
+                            {(['sm', 'md', 'lg'] as const).map((s) => (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => setDemoSize(s)}
+                                className={`px-3 py-1 rounded-lg uppercase font-medium transition-all ${
+                                  demoSize === s
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                                }`}
+                              >
+                                {s}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                            3. Teks Tombol:
+                          </label>
+                          <input
+                            type="text"
+                            value={demoButtonText}
+                            onChange={(e) => setDemoButtonText(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
+                            placeholder="Teks tombol..."
+                          />
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 pt-1">
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={demoIsLoading}
+                              onChange={(e) => setDemoIsLoading(e.target.checked)}
+                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300">Status Loading</span>
+                          </label>
+
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={demoIsDisabled}
+                              onChange={(e) => setDemoIsDisabled(e.target.checked)}
+                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300">Status Disabled</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Right column: Icon Kiri, Icon Kanan, ID & className */}
+                      <div className="space-y-4">
+                        {/* Icon Kiri Toggle & Selector */}
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={demoHasLeftIcon}
+                                onChange={(e) => setDemoHasLeftIcon(e.target.checked)}
+                                className="rounded text-aposis-blue-60"
+                              />
+                              <span>Aktifkan Icon Kiri (leftIcon)</span>
+                            </label>
+                            <Badge variant={demoHasLeftIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
+                              {demoHasLeftIcon ? 'Aktif' : 'Nonaktif'}
+                            </Badge>
+                          </div>
+                          {demoHasLeftIcon && (
+                            <div>
+                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kiri dari Tabler:</span>
+                              <select
+                                value={demoLeftIconName}
+                                onChange={(e) => setDemoLeftIconName(e.target.value)}
+                                className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                              >
+                                <option value="IconPlus">IconPlus (Tambah Data)</option>
+                                <option value="IconDeviceFloppy">IconDeviceFloppy (Simpan)</option>
+                                <option value="IconSearch">IconSearch (Cari)</option>
+                                <option value="IconDownload">IconDownload (Unduh)</option>
+                                <option value="IconEdit">IconEdit (Ubah)</option>
+                                <option value="IconHeart">IconHeart (Suka)</option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Icon Kanan Toggle & Selector */}
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={demoHasRightIcon}
+                                onChange={(e) => setDemoHasRightIcon(e.target.checked)}
+                                className="rounded text-aposis-blue-60"
+                              />
+                              <span>Aktifkan Icon Kanan (rightIcon)</span>
+                            </label>
+                            <Badge variant={demoHasRightIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
+                              {demoHasRightIcon ? 'Aktif' : 'Nonaktif'}
+                            </Badge>
+                          </div>
+                          {demoHasRightIcon && (
+                            <div>
+                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kanan dari Tabler:</span>
+                              <select
+                                value={demoRightIconName}
+                                onChange={(e) => setDemoRightIconName(e.target.value)}
+                                className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                              >
+                                <option value="IconArrowRight">IconArrowRight (Lanjut)</option>
+                                <option value="IconSend">IconSend (Kirim)</option>
+                                <option value="IconTrash">IconTrash (Hapus)</option>
+                                <option value="IconChevronDown">IconChevronDown (Dropdown)</option>
+                                <option value="IconSettings">IconSettings (Pengaturan)</option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Custom ID & className inputs */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                              Kustom id:
+                            </label>
+                            <input
+                              type="text"
+                              value={demoCustomId}
+                              onChange={(e) => setDemoCustomId(e.target.value)}
+                              placeholder="misal: btn-submit"
+                              className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                              Kustom className:
+                            </label>
+                            <input
+                              type="text"
+                              value={demoCustomClass}
+                              onChange={(e) => setDemoCustomClass(e.target.value)}
+                              placeholder="misal: shadow-lg"
+                              className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Preview Area */}
+                    <div className="p-5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-3">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hasil Render Tombol (Live Component):</span>
+                      <div className="py-2">
+                        <Button
+                          id={demoCustomId || undefined}
+                          variant={demoVariant}
+                          size={demoSize}
+                          isLoading={demoIsLoading}
+                          disabled={demoIsDisabled}
+                          className={demoCustomClass || undefined}
+                          leftIcon={demoHasLeftIcon && demoIcons[demoLeftIconName] ? (
+                            <Icon icon={demoIcons[demoLeftIconName].icon} size={demoSize === 'lg' ? 'md' : 'sm'} />
+                          ) : undefined}
+                          rightIcon={demoHasRightIcon && demoIcons[demoRightIconName] ? (
+                            <Icon icon={demoIcons[demoRightIconName].icon} size={demoSize === 'lg' ? 'md' : 'sm'} />
+                          ) : undefined}
+                          onClick={() => alert(`Tombol diklik! id: "${demoCustomId}", variant: "${demoVariant}"`)}
+                        >
+                          {demoButtonText}
+                        </Button>
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                        Coba klik tombol di atas! Atribut <code className="font-mono text-aposis-blue-60">id="{demoCustomId}"</code> dan <code className="font-mono text-aposis-blue-60">className="{demoCustomClass || 'default'}"</code> aktif diaplikasikan.
+                      </div>
+                    </div>
+
+                    {/* Live Generated TSX Code */}
+                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
+                        <span className="flex items-center gap-1.5">
+                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
+                          Kode TSX Otomatis Ter-generate (Siap Salin):
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copySnippet(dynamicButtonCode)}
+                          className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px]"
+                        >
+                          {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
+                          <span>{copiedCode ? 'Tersalin!' : 'Salin Kode Ini'}</span>
+                        </button>
+                      </div>
+                      <pre className="p-4 text-xs font-mono text-sky-300 overflow-x-auto whitespace-pre leading-relaxed select-all">
+                        <code>{dynamicButtonCode}</code>
+                      </pre>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Real-World Combinations */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Varian Tombol</CardTitle>
+                    <CardTitle>Koleksi Contoh Ikon Kiri & Kanan Populer (Siap Pakai)</CardTitle>
+                    <CardDescription>Berbagai skenario umum penempatan ikon dan aksi tombol</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Tambah (Icon Kiri)</div>
+                        <Button variant="primary" size="sm" leftIcon={<Icon icon={IconPlus} size="sm" />}>
+                          Tambah Data Siswa
+                        </Button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Simpan (Icon Kiri)</div>
+                        <Button variant="success" size="sm" leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}>
+                          Simpan Perubahan
+                        </Button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Lanjut (Icon Kanan)</div>
+                        <Button variant="outline" size="sm" rightIcon={<Icon icon={IconArrowRight} size="sm" />}>
+                          Langkah Berikutnya
+                        </Button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Kirim (Icon Kanan)</div>
+                        <Button variant="primary" size="sm" rightIcon={<Icon icon={IconSend} size="sm" />}>
+                          Kirim Pengumuman
+                        </Button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Kedua Sisi (Unduh + Dropdown)</div>
+                        <Button variant="secondary" size="sm" leftIcon={<Icon icon={IconDownload} size="sm" />} rightIcon={<Icon icon={IconChevronDown} size="sm" />}>
+                          Export Format CSV
+                        </Button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Hapus (Danger + Icon)</div>
+                        <Button variant="danger" size="sm" leftIcon={<Icon icon={IconTrash} size="sm" />}>
+                          Hapus Catatan
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Varian Tombol */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardHeader>
+                    <CardTitle>Varian Tombol Standar</CardTitle>
                     <CardDescription>Pilihan tema visual sesuai hirarki tindakan pengguna</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -479,6 +1002,7 @@ export default function App() {
                   </CardContent>
                 </Card>
 
+                {/* Ukuran Tombol */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
                     <CardTitle>Ukuran Tombol</CardTitle>
@@ -493,17 +1017,17 @@ export default function App() {
                   </CardContent>
                 </Card>
 
+                {/* Status & Loading */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Status & Dukungan Ikon</CardTitle>
-                    <CardDescription>Status loading, disabled, dan penempatan ikon</CardDescription>
+                    <CardTitle>Status Loading &amp; Disabled</CardTitle>
+                    <CardDescription>Indikator proses latar belakang dan status nonaktif</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap items-center gap-3">
-                      <Button leftIcon={<Icon icon={IconPlus} size="sm" />}>Dengan Icon Kiri</Button>
-                      <Button rightIcon={<Icon icon={IconSend} size="sm" />} variant="outline">Icon Kanan</Button>
                       <Button isLoading>Sedang Memproses...</Button>
                       <Button disabled>Disabled Button</Button>
+                      <Button variant="outline" disabled>Outline Disabled</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -516,8 +1040,8 @@ export default function App() {
             <DocCard
               title="Icon (Tabler & Custom)"
               badgeText="Atom"
-              description="Standar komponen ikon Aposis berbasis Tabler Icons dengan ketebalan garis (stroke width) dan ukuran proporsional resmi: SM (16px / 1.25px), MD (20px / 1.5px), LG (24px / 2px)."
-              usageSnippet={`import { Icon } from '@aposis/design-system';\nimport { IconPlus, IconSearch } from '@tabler/icons-react';\n\n<Icon icon={IconPlus} size="md" />`}
+              description="Standar komponen ikon Aposis berbasis Tabler Icons dengan ketebalan garis (stroke width) proporsional resmi: SM (16px / 1.25px), MD (20px / 1.5px), LG (24px / 2px), serta ikon khusus Figma."
+              snippets={iconDocSnippets}
             >
               <div className="space-y-6">
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
@@ -598,26 +1122,81 @@ export default function App() {
               title="Input"
               badgeText="Atom"
               description="Elemen masukan teks dengan status fokus elegan, error highlight, dan slot ikon di sisi kiri atau kanan."
-              usageSnippet={`import { Input } from '@aposis/design-system';\n\n<Input placeholder="Masukkan nama..." error="Harus diisi" />`}
+              snippets={inputSnippets}
+              tips={
+                <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
+                  <div className="font-semibold mb-1 flex items-center gap-1.5">
+                    <Icon icon={IconInfoCircle} size="sm" />
+                    Penempatan Ikon & Kustomisasi Input:
+                  </div>
+                  Gunakan prop <code className="text-aposis-blue-60 font-semibold">leftIcon</code> atau <code className="text-aposis-blue-60 font-semibold">rightIcon</code> untuk menyisipkan ikon. Anda juga dapat memberikan atribut <code className="text-aposis-blue-60 font-semibold">id="input-id"</code>, <code className="text-aposis-blue-60 font-semibold">className="..."</code>, dan <code className="text-aposis-blue-60 font-semibold">containerClassName="..."</code>.
+                </div>
+              }
             >
               <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-4">
+                <CardContent className="pt-6 space-y-5">
                   <div>
-                    <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Input Normal</label>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                      1. Input Normal (Kustom id & className)
+                    </label>
                     <Input
+                      id="input-nama-lengkap"
                       placeholder="Masukkan nama lengkap..."
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
+                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white font-sans"
+                    />
+                    <span className="text-[11px] text-slate-400 mt-1 block">id="input-nama-lengkap"</span>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                      2. Input dengan Icon Kiri (leftIcon)
+                    </label>
+                    <Input
+                      id="input-search-siswa"
+                      placeholder="Cari siswa berdasarkan NISN atau nama..."
+                      leftIcon={<Icon icon={IconSearch} size="sm" />}
                       className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Input dengan Pesan Eror</label>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                      3. Input dengan Icon Kanan (rightIcon)
+                    </label>
                     <Input
+                      id="input-email-status"
+                      defaultValue="ahmad.fauzi@aposis.sch.id"
+                      rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}
+                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                      4. Input dengan Kedua Icon (Kiri & Kanan)
+                    </label>
+                    <Input
+                      id="input-user-verified"
+                      placeholder="Username sistem..."
+                      defaultValue="ahmad_fauzi"
+                      leftIcon={<Icon icon={IconUser} size="sm" />}
+                      rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}
+                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                      5. Input dengan Status Error
+                    </label>
+                    <Input
+                      id="input-email-error"
                       placeholder="email@domain.com"
-                      defaultValue="invalid-email"
+                      defaultValue="email-salah-format"
                       error="Format alamat email tidak valid"
+                      leftIcon={<Icon icon={IconAlertCircle} size="sm" className="text-rose-500" />}
                       className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                     />
                   </div>
@@ -1392,6 +1971,7 @@ export function MyComponent() {
               </div>
             </DocCard>
           )}
+          </div>
         </main>
       </div>
 

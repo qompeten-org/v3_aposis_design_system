@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export interface StatCardProps {
+export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   value: string | number;
   change?: {
@@ -13,7 +13,6 @@ export interface StatCardProps {
   icon?: React.ReactNode;
   iconBg?: string;
   subtitle?: string;
-  className?: string;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -21,16 +20,20 @@ export const StatCard: React.FC<StatCardProps> = ({
   value,
   change,
   icon,
-  iconBg = 'bg-aposis-50 text-aposis-600',
+  iconBg = 'bg-aposis-50 text-aposis-blue-60',
   subtitle,
   className,
+  id,
+  ...props
 }) => {
   return (
     <div
+      id={id}
       className={cn(
         'p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between',
         className
       )}
+      {...props}
     >
       <div className="flex items-start justify-between gap-4">
         <div>

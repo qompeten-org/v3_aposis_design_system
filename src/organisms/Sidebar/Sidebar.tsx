@@ -16,13 +16,12 @@ export interface SidebarGroup {
   items: SidebarItem[];
 }
 
-export interface SidebarProps {
+export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   groups: SidebarGroup[];
   header?: React.ReactNode;
   footer?: React.ReactNode;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
-  className?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -31,14 +30,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
   footer,
   collapsed = false,
   className,
+  id,
+  ...props
 }) => {
   return (
     <aside
+      id={id}
       className={cn(
         'h-screen bg-slate-900 text-slate-300 flex flex-col justify-between transition-all duration-300 ease-in-out border-r border-slate-800 shrink-0 select-none',
         collapsed ? 'w-20' : 'w-64',
         className
       )}
+      {...props}
     >
       <div className="flex flex-col flex-1 overflow-y-auto">
         {header && (

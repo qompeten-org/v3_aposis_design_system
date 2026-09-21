@@ -6,17 +6,20 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   inputSize?: 'sm' | 'md' | 'lg';
+  containerClassName?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       className,
+      containerClassName,
       error,
       leftIcon,
       rightIcon,
       inputSize = 'md',
       disabled,
+      id,
       ...props
     },
     ref
@@ -28,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className="relative w-full">
+      <div className={cn('relative w-full', containerClassName)}>
         {leftIcon && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             {leftIcon}
