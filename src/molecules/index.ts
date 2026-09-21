@@ -4,3 +4,4 @@ export * from './Alert';
 export * from './Modal';
 export * from './Tabs';
 export * from './Tooltip';
+export * from './Notification';

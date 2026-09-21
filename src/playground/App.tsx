@@ -26,6 +26,13 @@ import {
   type TooltipPosition,
   type TooltipSize,
   type TooltipVariant,
+  Notification,
+  NotificationContainer,
+  notification,
+  type NotificationVariant,
+  type NotificationPosition,
+  type NotificationLayout,
+  type NotificationMultiStyle,
 } from '../molecules';
 import {
   Card,
@@ -83,6 +90,7 @@ import {
   IconAdjustmentsHorizontal,
   IconInfoCircle,
   IconHelpCircle,
+  IconBell,
 } from '@tabler/icons-react';
 import { units } from '../tokens/units';
 import { primitiveColors } from '../tokens/colors';
@@ -143,6 +151,21 @@ export default function App() {
   const [tooltipArrow, setTooltipArrow] = useState<boolean>(true);
   const [tooltipText, setTooltipText] = useState<string>('Tooltip text');
   const [tooltipTriggerText, setTooltipTriggerText] = useState<string>('Definition tooltip');
+
+  // Interactive Notification Configurator state
+  const [notifVariant, setNotifVariant] = useState<NotificationVariant>('info');
+  const [notifPos, setNotifPos] = useState<NotificationPosition>('top-right');
+  const [notifMultiStyle, setNotifMultiStyle] = useState<NotificationMultiStyle>('default');
+  const [notifShowProgress, setNotifShowProgress] = useState<boolean>(true);
+  const [notifTeks, setNotifTeks] = useState<string>('Notification');
+  const [notifDescription, setNotifDescription] = useState<string>(
+    'Information notification message'
+  );
+  const [notifDuration, setNotifDuration] = useState<number>(4000);
+  const [notifHasAction, setNotifHasAction] = useState<boolean>(true);
+  const [notifActionLabel, setNotifActionLabel] = useState<string>('Action');
+  const [notifCustomIcon, setNotifCustomIcon] = useState<boolean>(false);
+  const [notifPreviewKey, setNotifPreviewKey] = useState<number>(0);
 
   // Interactive Button Configurator state
   const [demoVariant, setDemoVariant] = useState<'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger'>('primary');
@@ -359,6 +382,81 @@ export default function App() {
     },
   ];
 
+  const dynamicNotificationCode = useMemo(() => {
+    const isError = notifVariant === 'error' || notifVariant === 'danger';
+    const method = isError ? 'error' : notifVariant;
+
+    let code = `import { notification, Notification } from '@aposis/design-system';\n`;
+    if (notifCustomIcon) {
+      code += `import { IconBell } from '@tabler/icons-react';\n`;
+    }
+    code += `\n// 1. Munculkan Toast Melayang secara Programatik:\n`;
+    code += `notification.${method}({\n`;
+    code += `  teks: '${notifTeks.replace(/'/g, "\\'")}',\n`;
+    if (notifDescription.trim()) {
+      code += `  description: '${notifDescription.replace(/'/g, "\\'")}',\n`;
+    }
+    code += `  pos: '${notifPos}',\n`;
+    code += `  duration: ${notifDuration},\n`;
+    if (notifHasAction) {
+      code += `  actionTrigger: {\n    label: '${notifActionLabel}',\n    onClick: () => console.log('Aksi diklik'),\n  },\n`;
+    }
+    if (notifCustomIcon) {
+      code += `  icon: <IconBell size={20} className="text-blue-500" />,\n`;
+    }
+    code += `});\n\n`;
+    code += `// 2. Atau pasang sebagai Banner Komponen Statis:\n`;
+    code += `<Notification\n  variant="${notifVariant}"\n  teks="${notifTeks.replace(/"/g, '&quot;')}"\n`;
+    if (notifDescription.trim()) {
+      code += `  description="${notifDescription.replace(/"/g, '&quot;')}"\n`;
+    }
+    if (notifHasAction) {
+      code += `  actionTrigger={{\n    label: '${notifActionLabel}',\n    onClick: () => console.log('Aksi dijalankan'),\n  }}\n`;
+    }
+    if (notifCustomIcon) {
+      code += `  icon={<IconBell size={20} className="text-blue-500" />}\n`;
+    }
+    code += `  onClose={() => console.log('Ditutup')}\n/>`;
+    return code;
+  }, [
+    notifVariant,
+    notifPos,
+    notifTeks,
+    notifDescription,
+    notifDuration,
+    notifHasAction,
+    notifActionLabel,
+    notifCustomIcon,
+  ]);
+
+  const notificationSnippets = [
+    {
+      label: 'Dasar (Toast Mandiri)',
+      desc: 'Memanggil notifikasi toast melayang secara programatis pada posisi layar yang dipilih.',
+      code: `import { notification } from '@aposis/design-system';\n\n// Panggil kapan saja, misal setelah submit form atau async task:\nnotification.show({\n  teks: 'Notifikasi Berhasil',\n  description: 'Data profil guru telah tersimpan rapi.',\n  variant: 'success',\n  pos: 'top-right',\n  duration: 4000,\n});`,
+    },
+    {
+      label: '4 Varian Semantik',
+      desc: 'Mendukung varian info, success, warning, dan error dengan palet resmi Aposis.',
+      code: `import { notification } from '@aposis/design-system';\n\nnotification.info({ teks: 'Informasi', description: 'Ada fitur kurikulum baru.' });\nnotification.success({ teks: 'Sukses', description: 'Nilai rapor berhasil dikirim.' });\nnotification.warning({ teks: 'Peringatan', description: 'Sisa kuota upload 10%.' });\nnotification.error({ teks: 'Kesalahan', description: 'Gagal menghubungi server database.' });`,
+    },
+    {
+      label: 'Multiple Notifikasi (Stacking vs Default)',
+      desc: 'Mendukung gaya bertumpuk (stacking deck) atau daftar lurus vertikal (default).',
+      code: `import { notification, NotificationContainer } from '@aposis/design-system';\n\n// Di root layout aplikasi:\n<NotificationContainer multiStyle="stacking" />\n\n// Panggil beberapa kali:\nnotification.info({ teks: 'Notifikasi 1', description: 'Pesan pertama' });\nnotification.success({ teks: 'Notifikasi 2', description: 'Pesan kedua' });\nnotification.warning({ teks: 'Notifikasi 3', description: 'Pesan ketiga' });`,
+    },
+    {
+      label: 'Action Trigger & Tombol Tutup',
+      desc: 'Menerima prop actionTrigger berupa objek { label, onClick } atau elemen kustom.',
+      code: `import { notification } from '@aposis/design-system';\n\nnotification.info({\n  teks: 'Pembaruan Tersedia',\n  description: 'Versi 3.2 aplikasi siap diunduh.',\n  actionTrigger: {\n    label: 'Perbarui Sekarang',\n    onClick: () => window.location.reload(),\n  },\n  pos: 'bottom-right',\n  duration: 6000,\n});`,
+    },
+    {
+      label: 'Komponen Statis / Inline',
+      desc: 'Bisa langsung dipasang di dalam halaman atau panel card sebagai banner notifikasi.',
+      code: `import { Notification } from '@aposis/design-system';\n\n<Notification\n  variant="warning"\n  teks="Perhatian"\n  description="Masa pengisian rapor semester ganjil berakhir 3 hari lagi."\n  actionTrigger={{ label: 'Isi Sekarang', onClick: () => alert('Isi') }}\n/>`,
+    },
+  ];
+
   const buttonSnippets = [
     {
       label: 'Dasar',
@@ -514,6 +612,7 @@ export default function App() {
         { id: 'modal', label: 'Modal', icon: IconWindow },
         { id: 'tabs', label: 'Tabs', icon: IconComponents },
         { id: 'tooltip', label: 'Tooltip', icon: IconHelpCircle },
+        { id: 'notification', label: 'Notification', icon: IconBell },
       ],
     },
     {
@@ -717,6 +816,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
+      <NotificationContainer multiStyle={notifMultiStyle} />
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
@@ -2518,6 +2618,539 @@ export default function App() {
                   </div>
                 </CardContent>
               </Card>
+            </DocCard>
+          )}
+
+          {/* MOLECULES: NOTIFICATION */}
+          {selectedId === 'notification' && (
+            <DocCard
+              title="Notification"
+              badgeText="Molecule"
+              description="Komponen notifikasi tingkat molekul dengan 4 varian semantik resmi (info, success, warning, error). Mendukung pemanggilan toast melayang secara programatis via notification.show(), progress bar durasi otomatis di atas atau di bawah tergantung posisi, animasi masuk, tombol aksi (actionTrigger), serta 2 gaya multiple notifikasi: default (daftar berurutan) dan stacking (kartu bertumpuk)."
+              snippets={notificationSnippets}
+            >
+              <div className="space-y-6">
+                {/* 1. Interactive Live Tester */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60 dark:border-slate-800 shadow-sm">
+                  <CardHeader className="border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Icon icon={IconBell} size="sm" className="text-aposis-blue-60" />
+                          Interactive Notification Tester & Live Trigger
+                        </CardTitle>
+                        <CardDescription className="text-xs mt-1">
+                          Sesuaikan konfigurasi props di bawah, lalu klik tombol uji untuk memunculkan notifikasi melayang (toast) secara interaktif dengan animasi masuk.
+                        </CardDescription>
+                      </div>
+                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-6 pt-6">
+                    {/* Controls Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+                      {/* Left Column */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            1. Varian Semantik (variant):
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {(
+                              [
+                                { id: 'info', label: 'Info (Biru)', bg: 'bg-blue-600' },
+                                { id: 'success', label: 'Success (Hijau)', bg: 'bg-emerald-600' },
+                                { id: 'warning', label: 'Warning (Kuning)', bg: 'bg-amber-500' },
+                                { id: 'error', label: 'Error (Merah)', bg: 'bg-rose-600' },
+                              ] as const
+                            ).map((v) => (
+                              <button
+                                key={v.id}
+                                type="button"
+                                onClick={() => setNotifVariant(v.id)}
+                                className={`px-2.5 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                  notifVariant === v.id
+                                    ? `${v.bg} text-white shadow-xs font-semibold ring-2 ring-offset-1 ring-slate-400`
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {v.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            2. Posisi Layar (pos):
+                          </label>
+                          <div className="grid grid-cols-3 gap-1.5">
+                            {(
+                              [
+                                { id: 'top-left', label: 'Top Left' },
+                                { id: 'top-center', label: 'Top Center' },
+                                { id: 'top-right', label: 'Top Right' },
+                                { id: 'bottom-left', label: 'Bottom Left' },
+                                { id: 'bottom-center', label: 'Bottom Center' },
+                                { id: 'bottom-right', label: 'Bottom Right' },
+                              ] as const
+                            ).map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => setNotifPos(p.id)}
+                                className={`px-2 py-1 rounded-lg font-medium text-center transition-all cursor-pointer text-[11px] ${
+                                  notifPos === p.id
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {p.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            3. Durasi Otomatis (duration):
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {(
+                              [
+                                { val: 2000, label: '2 Detik (2000ms)' },
+                                { val: 4000, label: '4 Detik (Default)' },
+                                { val: 8000, label: '8 Detik' },
+                                { val: 0, label: 'Manual (Permanen)' },
+                              ] as const
+                            ).map((d) => (
+                              <button
+                                key={d.val}
+                                type="button"
+                                onClick={() => setNotifDuration(d.val)}
+                                className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                  notifDuration === d.val
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {d.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            4. Gaya Multiple Notifikasi (multiStyle):
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNotifMultiStyle('default');
+                                notification.setMultiStyle('default');
+                              }}
+                              className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                notifMultiStyle === 'default'
+                                  ? 'bg-aposis-blue-60 text-white shadow-xs font-semibold'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              }`}
+                            >
+                              Default (Daftar)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNotifMultiStyle('stacking');
+                                notification.setMultiStyle('stacking');
+                              }}
+                              className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                notifMultiStyle === 'stacking'
+                                  ? 'bg-aposis-blue-60 text-white shadow-xs font-semibold'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              }`}
+                            >
+                              Stacking (Bertumpuk)
+                            </button>
+                          </div>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                            {notifMultiStyle === 'stacking'
+                              ? 'Mode Stacking: Notifikasi bertumpuk rapi seperti deck kartu, dan memanjang saat kursor di-hover.'
+                              : 'Mode Default: Notifikasi tersusun berurutan dalam daftar vertikal.'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                            5. Teks Judul Notifikasi (teks):
+                          </label>
+                          <input
+                            type="text"
+                            value={notifTeks}
+                            onChange={(e) => setNotifTeks(e.target.value)}
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                            placeholder="Contoh: Notification"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                            6. Deskripsi / Keterangan (description):
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={notifDescription}
+                            onChange={(e) => setNotifDescription(e.target.value)}
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50 resize-none"
+                            placeholder="Contoh: Information notification message"
+                          />
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={notifHasAction}
+                              onChange={(e) => setNotifHasAction(e.target.checked)}
+                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">
+                              Aktifkan Tombol Aksi (actionTrigger)
+                            </span>
+                          </label>
+
+                          {notifHasAction && (
+                            <div className="pl-6 pt-1">
+                              <label className="font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                                Label Aksi:
+                              </label>
+                              <input
+                                type="text"
+                                value={notifActionLabel}
+                                onChange={(e) => setNotifActionLabel(e.target.value)}
+                                className="w-full px-3 py-1 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                                placeholder="Contoh: Action"
+                              />
+                            </div>
+                          )}
+
+                          <label className="flex items-center gap-2 cursor-pointer pt-1 border-t border-slate-200 dark:border-slate-700/60">
+                            <input
+                              type="checkbox"
+                              checked={notifShowProgress}
+                              onChange={(e) => setNotifShowProgress(e.target.checked)}
+                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">
+                              Progress Bar Durasi ({notifPos.startsWith('bottom') ? 'di atas notifikasi' : 'di bawah notifikasi'})
+                            </span>
+                          </label>
+
+                          <label className="flex items-center gap-2 cursor-pointer pt-1 border-t border-slate-200 dark:border-slate-700/60">
+                            <input
+                              type="checkbox"
+                              checked={notifCustomIcon}
+                              onChange={(e) => setNotifCustomIcon(e.target.checked)}
+                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">
+                              Gunakan Ikon Kustom (IconBell)
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dedicated Trigger Button & Toast Tester Area */}
+                    <div className="p-5 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50/40 dark:bg-blue-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-slate-900 dark:text-white">
+                            Tombol Pengujian Notifikasi
+                          </span>
+                          <Badge variant="primary" size="sm">Interaktif</Badge>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                          Klik tombol di sebelah kanan untuk memicu notifikasi mengambang dengan animasi masuk ke posisi <code className="font-mono bg-blue-100 dark:bg-blue-900/60 px-1 py-0.5 rounded text-blue-800 dark:text-blue-200">{notifPos}</code>. Progress bar durasi otomatis berada <strong className="text-slate-800 dark:text-slate-200">{notifPos.startsWith('bottom') ? 'di atas' : 'di bawah'}</strong> kartu dengan countdown yang tetap berjalan saat kursor di-hover.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 shrink-0">
+                        {/* 1 Main Testing Button */}
+                        <Button
+                          variant="primary"
+                          size="md"
+                          leftIcon={<Icon icon={IconBell} size="sm" />}
+                          onClick={() => {
+                            notification.show({
+                              variant: notifVariant,
+                              teks: notifTeks || 'Notification',
+                              description: notifDescription || undefined,
+                              pos: notifPos,
+                              duration: notifDuration === 0 ? null : notifDuration,
+                              showProgress: notifShowProgress,
+                              actionTrigger: notifHasAction
+                                ? {
+                                    label: notifActionLabel || 'Action',
+                                    onClick: () => alert(`Aksi "${notifActionLabel}" diklik!`),
+                                  }
+                                : undefined,
+                              icon: notifCustomIcon ? (
+                                <Icon icon={IconBell} size="sm" className="text-blue-500" />
+                              ) : undefined,
+                            });
+                          }}
+                          className="shadow-sm hover:shadow-md font-semibold active:scale-95 transition-all"
+                        >
+                          Munculkan Notifikasi
+                        </Button>
+
+                        {/* Multiple Toast Tester Button */}
+                        <Button
+                          variant="outline"
+                          size="md"
+                          onClick={() => {
+                            const activeDuration = notifDuration === 0 ? null : notifDuration;
+                            notification.info({
+                              teks: 'Notifikasi Pertama',
+                              description: 'Pesan urutan awal dalam antrian.',
+                              pos: notifPos,
+                              duration: activeDuration,
+                              showProgress: notifShowProgress,
+                            });
+                            setTimeout(() => {
+                              notification.success({
+                                teks: 'Notifikasi Kedua',
+                                description: 'Pesan kedua dengan tombol aksi.',
+                                pos: notifPos,
+                                duration: activeDuration,
+                                showProgress: notifShowProgress,
+                                actionTrigger: { label: 'Lihat', onClick: () => alert('Aksi 2 diklik') },
+                              });
+                            }, 200);
+                            setTimeout(() => {
+                              notification.warning({
+                                teks: 'Notifikasi Ketiga',
+                                description: `Pesan ketiga menguji mode ${notifMultiStyle}.`,
+                                pos: notifPos,
+                                duration: activeDuration,
+                                showProgress: notifShowProgress,
+                              });
+                            }, 400);
+                          }}
+                          className="font-medium"
+                        >
+                          Uji 3 Notifikasi ({notifMultiStyle})
+                        </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => notification.dismissAll()}
+                          className="px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                          title="Hapus semua toast yang sedang tampil"
+                        >
+                          Bersihkan Toast
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Live Static Preview Card */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Pratinjau Komponen Langsung (In-Place Preview):
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setNotifPreviewKey((k) => k + 1)}
+                          className="text-xs text-aposis-blue-60 hover:underline cursor-pointer"
+                        >
+                          Reset Pratinjau
+                        </button>
+                      </div>
+
+                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+                        <Notification
+                          key={notifPreviewKey}
+                          variant={notifVariant}
+                          teks={notifTeks || 'Notification'}
+                          description={notifDescription || undefined}
+                          pos={notifPos}
+                          duration={notifDuration === 0 ? null : notifDuration}
+                          showProgress={notifShowProgress}
+                          actionTrigger={
+                            notifHasAction
+                              ? {
+                                  label: notifActionLabel || 'Action',
+                                  onClick: () => alert(`Aksi "${notifActionLabel}" diklik!`),
+                                }
+                              : undefined
+                          }
+                          icon={
+                            notifCustomIcon ? (
+                              <Icon icon={IconBell} size="sm" className="text-blue-500" />
+                            ) : undefined
+                          }
+                          onClose={() => console.log('Notification ditutup')}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Live Reactive TSX Code */}
+                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
+                        <span className="flex items-center gap-1.5">
+                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
+                          Kode TSX:
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copySnippet(dynamicNotificationCode)}
+                          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                        >
+                          {copiedCode ? (
+                            <Icon icon={IconCheck} size="sm" className="text-emerald-400" />
+                          ) : (
+                            <Icon icon={IconCopy} size="sm" />
+                          )}
+                          {copiedCode ? 'Tersalin' : 'Salin Kode'}
+                        </button>
+                      </div>
+                      <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
+                        <code>{dynamicNotificationCode}</code>
+                      </pre>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 2. Galeri Varian Semantik */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">Galeri Varian Notifikasi Semantik</CardTitle>
+                      <Badge variant="neutral" size="sm">4 Varian</Badge>
+                    </div>
+                    <CardDescription className="text-xs">
+                      Matriks 4 varian semantik resmi (Information, Success, Warning, Error) dengan garis border kiri tebal, warna latar tint lembut, teks tebal, tombol aksi, dan tombol tutup.
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="space-y-8">
+                    {/* Section A: Varian Lengkap */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Varian Lengkap (Judul & Deskripsi)
+                        </span>
+                        <span className="text-[11px] text-slate-400">Informasi detail dengan tombol aksi</span>
+                      </div>
+
+                      <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
+                        {/* 1. Info */}
+                        <Notification
+                          variant="info"
+                          teks="Notification"
+                          description="Information notification message that provides additional context and instructions for the user to follow."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Info Action diklik'),
+                          }}
+                        />
+
+                        {/* 2. Success */}
+                        <Notification
+                          variant="success"
+                          teks="Notification"
+                          description="Success notification message confirming that the operation was completed safely."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Success Action diklik'),
+                          }}
+                        />
+
+                        {/* 3. Warning */}
+                        <Notification
+                          variant="warning"
+                          teks="Notification"
+                          description="Warning notification message alerting the user to take precaution before proceeding."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Warning Action diklik'),
+                          }}
+                        />
+
+                        {/* 4. Error */}
+                        <Notification
+                          variant="error"
+                          teks="Notification"
+                          description="Error notification message explaining the issue and offering actionable resolution steps."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Error Action diklik'),
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Section B: Varian Ringkas */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Varian Ringkas (Hanya Judul)
+                        </span>
+                        <span className="text-[11px] text-slate-400">Pesan ringkas satu baris</span>
+                      </div>
+
+                      <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
+                        {/* 1. Info Ringkas */}
+                        <Notification
+                          variant="info"
+                          teks="Notification: Pembaruan sistem telah selesai dimuat."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Info Action diklik'),
+                          }}
+                        />
+
+                        {/* 2. Success Ringkas */}
+                        <Notification
+                          variant="success"
+                          teks="Notification: Data nilai rapor berhasil disimpan."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Success Action diklik'),
+                          }}
+                        />
+
+                        {/* 3. Warning Ringkas */}
+                        <Notification
+                          variant="warning"
+                          teks="Notification: Sisa kuota penyimpanan server tinggal 10%."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Warning Action diklik'),
+                          }}
+                        />
+
+                        {/* 4. Error Ringkas */}
+                        <Notification
+                          variant="error"
+                          teks="Notification: Gagal menyinkronkan data ke server pusat."
+                          actionTrigger={{
+                            label: 'Action',
+                            onClick: () => alert('Error Action diklik'),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </DocCard>
           )}
 
