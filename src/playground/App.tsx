@@ -12,6 +12,7 @@ import {
   IconLanguageId,
   IconLanguageEn,
   IconMathSqrt,
+  Link,
 } from '../atoms';
 import {
   FormField,
@@ -34,14 +35,12 @@ import {
   type Column,
 } from '../organisms';
 import {
-  IconAtom,
   IconComponents,
   IconLayout,
   IconCode,
   IconCopy,
   IconCheck,
   IconUsers,
-  IconSchool,
   IconTrendingUp,
   IconSettings,
   IconPlus,
@@ -50,11 +49,7 @@ import {
   IconSparkles,
   IconSearch,
   IconHeart,
-  IconMessageCircle,
-  IconBell,
-  IconFileText,
   IconCalendar,
-  IconChartBar,
   IconSun,
   IconMoon,
   IconPalette,
@@ -80,7 +75,6 @@ import {
   IconChevronDown,
   IconAdjustmentsHorizontal,
   IconInfoCircle,
-  IconExternalLink,
 } from '@tabler/icons-react';
 import { units } from '../tokens/units';
 import { primitiveColors } from '../tokens/colors';
@@ -325,6 +319,7 @@ export default function App() {
       title: 'Atoms',
       items: [
         { id: 'button', label: 'Button', icon: IconClick },
+        { id: 'link', label: 'Link', icon: IconArrowRight },
         { id: 'icon', label: 'Icon (Tabler)', icon: IconSparkles },
         { id: 'input', label: 'Input', icon: IconForms },
         { id: 'badge', label: 'Badge', icon: IconIdBadge },
@@ -1028,6 +1023,129 @@ export default function App() {
                       <Button isLoading>Sedang Memproses...</Button>
                       <Button disabled>Disabled Button</Button>
                       <Button variant="outline" disabled>Outline Disabled</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </DocCard>
+          )}
+
+          {/* LINK ATOM */}
+          {selectedId === 'link' && (
+            <DocCard
+              title="Link"
+              badgeText="Atom"
+              description="Komponen tautan navigasi resmi Aposis v3 dengan dukungan panah arah (kiri/kanan/none), 5 palet warna Tailwind, 3 variasi ukuran, gaya garis bawah (default/underlined), serta status disabled."
+              snippets={[
+                {
+                  label: 'Penggunaan Dasar',
+                  desc: 'Tautan standar dengan prop to atau href, dan panah terintegrasi.',
+                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="/dashboard" arrow="right">Lihat Dashboard</Link>\n<Link to="/kembali" arrow="left">Kembali</Link>`,
+                },
+                {
+                  label: 'Palet Warna (color / c)',
+                  desc: 'Pilihan warna berbasis Tailwind: primary, danger, neutral, purple, dan muted.',
+                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="#" color="primary" arrow="right">Primary Blue</Link>\n<Link to="#" color="danger" arrow="right">Danger Red</Link>\n<Link to="#" color="neutral" arrow="right">Neutral Dark</Link>\n<Link to="#" color="purple" arrow="right">Purple Violet</Link>\n<Link to="#" color="muted" arrow="right">Muted Gray</Link>`,
+                },
+                {
+                  label: 'Underlined vs Default',
+                  desc: 'Gunakan variant="underlined" untuk tautan yang selalu memiliki garis bawah.',
+                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="#" variant="default">Underline saat hover</Link>\n<Link to="#" variant="underlined">Selalu bergaris bawah</Link>`,
+                },
+              ]}
+            >
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Matriks Palet Warna & Arah Panah</CardTitle>
+                    <CardDescription>
+                      Tiap warna disandingkan dengan panah kanan, panah kiri, teks biasa, gaya bergaris bawah, dan status disabled.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="overflow-x-auto p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <table className="w-full min-w-[640px] text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <th className="pb-3 pr-4">Tema Warna</th>
+                            <th className="pb-3 px-4">Panah Kanan</th>
+                            <th className="pb-3 px-4">Panah Kiri</th>
+                            <th className="pb-3 px-4">Tanpa Panah</th>
+                            <th className="pb-3 px-4">Underlined</th>
+                            <th className="pb-3 pl-4">Disabled</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                          {/* 1. Primary Blue */}
+                          <tr>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Primary (Blue)</td>
+                            <td className="py-3.5 px-4"><Link to="#" color="primary" arrow="right">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="primary" arrow="left">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="primary">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="primary" variant="underlined">Link</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" color="primary" disabled arrow="right">Link</Link></td>
+                          </tr>
+
+                          {/* 2. Danger Red */}
+                          <tr>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Danger (Red)</td>
+                            <td className="py-3.5 px-4"><Link to="#" color="danger" arrow="right">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="danger" arrow="left">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="danger">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="danger" variant="underlined">Link</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" color="danger" disabled arrow="right">Link</Link></td>
+                          </tr>
+
+                          {/* 3. Neutral Dark */}
+                          <tr>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Neutral (Dark)</td>
+                            <td className="py-3.5 px-4"><Link to="#" color="neutral" arrow="right">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="neutral" arrow="left">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="neutral">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="neutral" variant="underlined">Link</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" color="neutral" disabled arrow="right">Link</Link></td>
+                          </tr>
+
+                          {/* 4. Purple Violet */}
+                          <tr>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Purple (Violet)</td>
+                            <td className="py-3.5 px-4"><Link to="#" color="purple" arrow="right">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="purple" arrow="left">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="purple">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="purple" variant="underlined">Link</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" color="purple" disabled arrow="right">Link</Link></td>
+                          </tr>
+
+                          {/* 5. Muted Gray */}
+                          <tr>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Muted (Gray)</td>
+                            <td className="py-3.5 px-4"><Link to="#" color="muted" arrow="right">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="muted" arrow="left">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="muted">Link</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" color="muted" variant="underlined">Link</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" color="muted" disabled arrow="right">Link</Link></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Skala Ukuran */}
+                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Perbandingan Ukuran (sm, md, lg)</div>
+                      <div className="flex flex-wrap items-center gap-8">
+                        <div className="space-y-1">
+                          <span className="text-[11px] text-slate-400 block font-mono">size="lg" (16px)</span>
+                          <Link to="#" size="lg" arrow="right">Link Action Large</Link>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[11px] text-slate-400 block font-mono">size="md" (14px - Default)</span>
+                          <Link to="#" size="md" arrow="right">Link Action Medium</Link>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[11px] text-slate-400 block font-mono">size="sm" (12px)</span>
+                          <Link to="#" size="sm" arrow="right">Link Action Small</Link>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

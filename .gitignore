@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+graphify-out/
+site/
+docs/
+design.md
+gemini.md
+docmd.config.json

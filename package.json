@@ -46,7 +46,10 @@
     "build": "tsc -p tsconfig.build.json && vite build",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "preview": "vite preview",
-    "package:test": "npm pack --dry-run"
+    "package:test": "npm pack --dry-run",
+    "docs:dev": "docmd dev",
+    "docs:build": "docmd build",
+    "docs:validate": "docmd validate"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -59,6 +62,7 @@
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
+    "@docmd/core": "^0.9.6",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
