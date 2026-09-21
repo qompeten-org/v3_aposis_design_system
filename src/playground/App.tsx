@@ -1504,6 +1504,13 @@ export default function App() {
               title="Radio"
               badgeText="Atom"
               description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, 5 palet warna, dan RadioGroup helper."
+              snippets={[
+                {
+                  label: 'Kode TSX (Reaktif)',
+                  desc: 'Kode otomatis ter-generate dan langsung bereaksi sesuai opsi varian, orientasi, warna, ukuran, dan pilihan yang Anda tentukan di bawah.',
+                  code: dynamicRadioCode,
+                },
+              ]}
             >
               <div className="space-y-6">
                 {/* 1. Interactive Live Radio Builder */}
@@ -1878,27 +1885,6 @@ export default function App() {
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
                         Coba klik pilihan di atas untuk menguji respons visual, orientasi label, warna, dan status error secara langsung!
                       </div>
-                    </div>
-
-                    {/* Live Generated TSX Code */}
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5">
-                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
-                          Kode TSX Otomatis Ter-generate (Siap Salin):
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => copySnippet(dynamicRadioCode)}
-                          className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-                        >
-                          {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
-                          <span>{copiedCode ? 'Tersalin!' : 'Salin Kode Ini'}</span>
-                        </button>
-                      </div>
-                      <pre className="p-4 text-xs font-mono text-sky-300 overflow-x-auto whitespace-pre leading-relaxed select-all">
-                        <code>{dynamicRadioCode}</code>
-                      </pre>
                     </div>
                   </CardContent>
                 </Card>
