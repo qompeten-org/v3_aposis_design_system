@@ -3,7 +3,6 @@ import { cn } from '../../utils/cn';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export type LinkVariant = 'default' | 'underlined';
-export type LinkColor = 'primary' | 'danger' | 'neutral' | 'purple' | 'muted';
 export type LinkSize = 'sm' | 'md' | 'lg';
 export type LinkArrow = 'left' | 'right' | 'none';
 
@@ -12,10 +11,6 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   to?: string;
   /** Visual presentation style */
   variant?: LinkVariant;
-  /** Color palette theme */
-  color?: LinkColor;
-  /** Shorthand alias for color */
-  c?: LinkColor;
   /** Text and icon sizing scale */
   size?: LinkSize;
   /** Arrow direction helper */
@@ -34,8 +29,6 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
       to,
       href,
       variant = 'default',
-      color,
-      c,
       size = 'md',
       arrow = 'none',
       leftIcon,
@@ -48,7 +41,6 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
     },
     ref
   ) => {
-    const resolvedColor: LinkColor = c || color || 'primary';
     const targetHref = disabled ? undefined : to || href;
 
     const baseStyles =
@@ -67,19 +59,9 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
       lg: 'w-4.5 h-4.5',
     };
 
-    // Standard base Tailwind colors matching Figma specs
-    const colorStyles: Record<LinkColor, string> = {
-      primary:
-        'text-blue-600 hover:text-blue-700 active:text-blue-800 focus-visible:ring-blue-600',
-      danger:
-        'text-red-600 hover:text-red-700 active:text-red-800 focus-visible:ring-red-600',
-      neutral:
-        'text-slate-900 hover:text-slate-700 active:text-black focus-visible:ring-slate-400',
-      purple:
-        'text-purple-600 hover:text-purple-700 active:text-purple-800 focus-visible:ring-purple-600',
-      muted:
-        'text-slate-400 hover:text-slate-600 active:text-slate-700 focus-visible:ring-slate-400',
-    };
+    // Default link color is blue, overrideable via className
+    const defaultColorStyles =
+      'text-blue-600 hover:text-blue-700 active:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 focus-visible:ring-blue-600';
 
     const variantStyles: Record<LinkVariant, string> = {
       default: 'no-underline hover:underline underline-offset-4 decoration-current/60',
@@ -126,7 +108,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         className={cn(
           baseStyles,
           sizeStyles[size],
-          colorStyles[resolvedColor],
+          defaultColorStyles,
           variantStyles[variant],
           disabled && disabledStyles,
           className

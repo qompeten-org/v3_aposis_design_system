@@ -4,7 +4,6 @@ import { useRadioGroup } from './RadioGroupContext';
 import { useFormField } from '../../context/FormFieldContext';
 
 export type RadioVariant = 'default' | 'card';
-export type RadioColor = 'neutral' | 'primary' | 'danger' | 'purple' | 'muted';
 export type RadioSize = 'sm' | 'md' | 'lg';
 export type RadioLabelPosition = 'right' | 'left' | 'top' | 'bottom';
 
@@ -17,10 +16,6 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   labelPosition?: RadioLabelPosition;
   /** Visual presentation style */
   variant?: RadioVariant;
-  /** Color palette theme */
-  color?: RadioColor;
-  /** Shorthand alias for color */
-  c?: RadioColor;
   /** Component size scale */
   size?: RadioSize;
   /** Error message string */
@@ -29,6 +24,8 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   isInvalid?: boolean;
   /** Custom class for outer wrapper */
   containerClassName?: string;
+  /** Custom class for the centered active dot */
+  dotClassName?: string;
 }
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(
@@ -44,13 +41,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       description,
       labelPosition: explicitLabelPosition,
       variant: explicitVariant,
-      color: explicitColor,
-      c,
       size: explicitSize,
       error,
       isInvalid: explicitIsInvalid,
       className,
       containerClassName,
+      dotClassName,
       onChange,
       ...props
     },
@@ -63,7 +59,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     // Context inheritance with fallback to explicit props
     const resolvedSize: RadioSize = explicitSize || group?.size || 'md';
-    const resolvedColor: RadioColor = c || explicitColor || group?.color || 'neutral';
     const resolvedVariant: RadioVariant = explicitVariant || group?.variant || 'default';
     const resolvedLabelPosition: RadioLabelPosition =
       explicitLabelPosition || group?.labelPosition || 'right';
@@ -109,29 +104,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       lg: 'text-sm',
     };
 
-    // Base Tailwind color mappings
-    const colorStyles: Record<RadioColor, { outer: string; dot: string }> = {
-      neutral: {
-        outer: 'border-slate-800 dark:border-slate-300 checked:border-slate-900 dark:checked:border-slate-100 group-hover:border-black dark:group-hover:border-white focus-visible:ring-slate-400',
-        dot: 'bg-slate-900 dark:bg-slate-100',
-      },
-      primary: {
-        outer: 'border-blue-600 checked:border-blue-600 group-hover:border-blue-700 focus-visible:ring-blue-500',
-        dot: 'bg-blue-600',
-      },
-      danger: {
-        outer: 'border-red-600 checked:border-red-600 group-hover:border-red-700 focus-visible:ring-red-500',
-        dot: 'bg-red-600',
-      },
-      purple: {
-        outer: 'border-purple-600 checked:border-purple-600 group-hover:border-purple-700 focus-visible:ring-purple-500',
-        dot: 'bg-purple-600',
-      },
-      muted: {
-        outer: 'border-slate-400 dark:border-slate-500 checked:border-slate-500 dark:checked:border-slate-400 group-hover:border-slate-600 dark:group-hover:border-slate-300 focus-visible:ring-slate-300',
-        dot: 'bg-slate-500 dark:bg-slate-400',
-      },
-    };
+    // Default black/dark outline; turns blue when selected
+    const defaultOuterStyles =
+      'border-slate-900 dark:border-slate-300 checked:border-blue-600 dark:checked:border-blue-500 group-hover:border-black dark:group-hover:border-white focus-visible:ring-blue-500';
+    const defaultDotStyles = 'bg-blue-600 dark:bg-blue-500';
 
     // Disabled styling
     const disabledStyles = {
@@ -153,9 +129,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       resolvedVariant === 'card'
         ? cn(
             'p-4 rounded-xl border transition-all duration-150 cursor-pointer',
-            'has-[:checked]:border-slate-900 dark:has-[:checked]:border-slate-200',
-            'has-[:checked]:bg-slate-50/70 dark:has-[:checked]:bg-slate-800/60 has-[:checked]:shadow-xs',
-            'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900',
+            'has-[:checked]:border-blue-600 dark:has-[:checked]:border-blue-500',
+            'has-[:checked]:bg-blue-50/40 dark:has-[:checked]:bg-blue-950/20 has-[:checked]:shadow-xs',
+            'border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 bg-white dark:bg-slate-900',
             resolvedDisabled && 'opacity-50 pointer-events-none',
             resolvedIsInvalid && 'border-red-300 dark:border-red-800 has-[:checked]:border-red-600'
           )
@@ -194,7 +170,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
                   ? disabledStyles.outer
                   : resolvedIsInvalid
                   ? 'border-red-500 checked:border-red-500 focus-visible:ring-red-400'
-                  : colorStyles[resolvedColor].outer,
+                  : defaultOuterStyles,
                 className
               )}
               {...props}
@@ -207,7 +183,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
                 dotSizes[resolvedSize],
                 resolvedDisabled
                   ? disabledStyles.dot
-                  : colorStyles[resolvedColor].dot
+                  : resolvedIsInvalid
+                  ? 'bg-red-500'
+                  : defaultDotStyles,
+                dotClassName
               )}
               aria-hidden="true"
             />

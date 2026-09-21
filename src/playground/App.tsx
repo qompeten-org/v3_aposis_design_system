@@ -120,7 +120,6 @@ export default function App() {
   const [activeTabDemo, setActiveTabDemo] = useState('tab1');
   // Interactive Radio Configurator state
   const [radioConfigVariant, setRadioConfigVariant] = useState<'default' | 'card'>('default');
-  const [radioConfigColor, setRadioConfigColor] = useState<'neutral' | 'primary' | 'danger' | 'purple' | 'muted'>('neutral');
   const [radioConfigSize, setRadioConfigSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [radioConfigLabelPos, setRadioConfigLabelPos] = useState<'right' | 'left' | 'bottom' | 'top' | 'none'>('right');
   const [radioConfigMode, setRadioConfigMode] = useState<'group' | 'single'>('group');
@@ -212,7 +211,6 @@ export default function App() {
       radioConfigLabelPos !== 'right' && radioConfigLabelPos !== 'none'
         ? `\n  labelPosition="${radioConfigLabelPos}"`
         : '';
-    const colorAttr = radioConfigColor !== 'neutral' ? `\n  color="${radioConfigColor}"` : '';
     const sizeAttr = radioConfigSize !== 'md' ? `\n  size="${radioConfigSize}"` : '';
     const variantAttr = radioConfigVariant !== 'default' ? `\n  variant="${radioConfigVariant}"` : '';
     const disabledAttr = radioConfigDisabled ? `\n  disabled` : '';
@@ -223,7 +221,7 @@ export default function App() {
 
       let groupContent = `<RadioGroup\n  name="pilihan"\n  value={selectedValue}\n  onChange={setSelectedValue}`;
       if (radioConfigOrientation !== 'vertical') groupContent += `\n  orientation="${radioConfigOrientation}"`;
-      groupContent += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}`;
+      groupContent += `${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}`;
       if (radioConfigVariant === 'card') groupContent += `\n  className="grid grid-cols-1 sm:grid-cols-2 gap-3"`;
       groupContent += `\n>\n`;
 
@@ -259,7 +257,7 @@ export default function App() {
       } else {
         singleRadio += `\n  aria-label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
       }
-      singleRadio += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n/>`;
+      singleRadio += `${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n/>`;
 
       if (radioConfigWrapForm) {
         code += `<FormField\n  label="Persetujuan"\n  required${radioConfigInvalid ? '\n  error="Harap setujui ketentuan ini"' : ''}\n>\n`;
@@ -274,7 +272,6 @@ export default function App() {
   }, [
     radioConfigMode,
     radioConfigVariant,
-    radioConfigColor,
     radioConfigSize,
     radioConfigLabelPos,
     radioConfigOrientation,
@@ -1139,17 +1136,12 @@ export default function App() {
             <DocCard
               title="Link"
               badgeText="Atom"
-              description="Komponen tautan navigasi resmi Aposis v3 dengan dukungan panah arah (kiri/kanan/none), 5 palet warna Tailwind, 3 variasi ukuran, gaya garis bawah (default/underlined), serta status disabled."
+              description="Komponen tautan navigasi resmi Aposis v3 dengan warna biru resmi, dukungan panah arah (kiri/kanan/none), 3 variasi ukuran, gaya garis bawah (default/underlined), serta status disabled."
               snippets={[
                 {
-                  label: 'Penggunaan Dasar',
-                  desc: 'Tautan standar dengan prop to atau href, dan panah terintegrasi.',
-                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="/dashboard" arrow="right">Lihat Dashboard</Link>\n<Link to="/kembali" arrow="left">Kembali</Link>`,
-                },
-                {
-                  label: 'Palet Warna (color / c)',
-                  desc: 'Pilihan warna berbasis Tailwind: primary, danger, neutral, purple, dan muted.',
-                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="#" color="primary" arrow="right">Primary Blue</Link>\n<Link to="#" color="danger" arrow="right">Danger Red</Link>\n<Link to="#" color="neutral" arrow="right">Neutral Dark</Link>\n<Link to="#" color="purple" arrow="right">Purple Violet</Link>\n<Link to="#" color="muted" arrow="right">Muted Gray</Link>`,
+                  label: 'Penggunaan Dasar & Arah Panah',
+                  desc: 'Tautan standar berwarna biru Aposis dengan opsi panah kanan, kiri, atau tanpa panah.',
+                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="/dashboard" arrow="right">Lihat Dashboard</Link>\n<Link to="/kembali" arrow="left">Kembali</Link>\n<Link to="#">Tautan Standar</Link>`,
                 },
                 {
                   label: 'Underlined vs Default',
@@ -1161,9 +1153,9 @@ export default function App() {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Matriks Palet Warna & Arah Panah</CardTitle>
+                    <CardTitle>Varian Tautan Resmi (Default Biru)</CardTitle>
                     <CardDescription>
-                      Tiap warna disandingkan dengan panah kanan, panah kiri, teks biasa, gaya bergaris bawah, dan status disabled.
+                      Komponen tautan resmi Aposis dengan warna bawaan biru, dukungan arah panah, garis bawah, serta status disabled.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -1171,7 +1163,7 @@ export default function App() {
                       <table className="w-full min-w-[640px] text-left border-collapse">
                         <thead>
                           <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                            <th className="pb-3 pr-4">Tema Warna</th>
+                            <th className="pb-3 pr-4">Tipe Tautan</th>
                             <th className="pb-3 px-4">Panah Kanan</th>
                             <th className="pb-3 px-4">Panah Kiri</th>
                             <th className="pb-3 px-4">Tanpa Panah</th>
@@ -1180,54 +1172,13 @@ export default function App() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                          {/* 1. Primary Blue */}
                           <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Primary (Blue)</td>
-                            <td className="py-3.5 px-4"><Link to="#" color="primary" arrow="right">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="primary" arrow="left">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="primary">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="primary" variant="underlined">Link</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" color="primary" disabled arrow="right">Link</Link></td>
-                          </tr>
-
-                          {/* 2. Danger Red */}
-                          <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Danger (Red)</td>
-                            <td className="py-3.5 px-4"><Link to="#" color="danger" arrow="right">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="danger" arrow="left">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="danger">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="danger" variant="underlined">Link</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" color="danger" disabled arrow="right">Link</Link></td>
-                          </tr>
-
-                          {/* 3. Neutral Dark */}
-                          <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Neutral (Dark)</td>
-                            <td className="py-3.5 px-4"><Link to="#" color="neutral" arrow="right">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="neutral" arrow="left">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="neutral">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="neutral" variant="underlined">Link</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" color="neutral" disabled arrow="right">Link</Link></td>
-                          </tr>
-
-                          {/* 4. Purple Violet */}
-                          <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Purple (Violet)</td>
-                            <td className="py-3.5 px-4"><Link to="#" color="purple" arrow="right">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="purple" arrow="left">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="purple">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="purple" variant="underlined">Link</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" color="purple" disabled arrow="right">Link</Link></td>
-                          </tr>
-
-                          {/* 5. Muted Gray */}
-                          <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-500">Muted (Gray)</td>
-                            <td className="py-3.5 px-4"><Link to="#" color="muted" arrow="right">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="muted" arrow="left">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="muted">Link</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" color="muted" variant="underlined">Link</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" color="muted" disabled arrow="right">Link</Link></td>
+                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-700 dark:text-slate-300">Default (Biru Resmi)</td>
+                            <td className="py-3.5 px-4"><Link to="#" arrow="right">Lihat Detail</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" arrow="left">Kembali</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#">Tautan</Link></td>
+                            <td className="py-3.5 px-4"><Link to="#" variant="underlined">Tautan</Link></td>
+                            <td className="py-3.5 pl-4"><Link to="#" disabled arrow="right">Tautan</Link></td>
                           </tr>
                         </tbody>
                       </table>
@@ -1502,7 +1453,7 @@ export default function App() {
             <DocCard
               title="Radio"
               badgeText="Atom"
-              description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, 5 palet warna, dan RadioGroup helper."
+              description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, dan RadioGroup helper."
               snippets={[
                 {
                   label: 'Penggunaan Dasar',
@@ -1534,10 +1485,10 @@ export default function App() {
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
-                          Interactive Radio Builder (Pilih Varian, Posisi Label & Warna)
+                          Interactive Radio Builder (Pilih Varian, Ukuran & Posisi Label)
                         </CardTitle>
                         <CardDescription>
-                          Pilih konfigurasi di bawah untuk melihat preview interaktif secara langsung dan salin kode TSX yang ter-generate otomatis!
+                          Pilih konfigurasi di bawah untuk melihat preview interaktif. Default bergaris tepi hitam/netral dan otomatis berubah menjadi biru saat dipilih.
                         </CardDescription>
                       </div>
                       <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
@@ -1546,7 +1497,7 @@ export default function App() {
                   <CardContent className="space-y-6 pt-6">
                     {/* Controls Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left column: Variant, Color, Size, LabelPosition */}
+                      {/* Left column: Variant, Size, LabelPosition */}
                       <div className="space-y-4">
                         <div>
                           <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
@@ -1572,38 +1523,7 @@ export default function App() {
 
                         <div>
                           <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            2. Pilih Palet Warna (color / c):
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(
-                              [
-                                { id: 'neutral', label: 'Neutral (Slate)', dot: 'bg-slate-900 dark:bg-white' },
-                                { id: 'primary', label: 'Primary (Blue)', dot: 'bg-blue-600' },
-                                { id: 'danger', label: 'Danger (Red)', dot: 'bg-red-600' },
-                                { id: 'purple', label: 'Purple (Violet)', dot: 'bg-purple-600' },
-                                { id: 'muted', label: 'Muted (Gray)', dot: 'bg-slate-500' },
-                              ] as const
-                            ).map((c) => (
-                              <button
-                                key={c.id}
-                                type="button"
-                                onClick={() => setRadioConfigColor(c.id)}
-                                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
-                                  radioConfigColor === c.id
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                <span className={`w-2 h-2 rounded-full ${c.dot}`} />
-                                <span>{c.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            3. Pilih Ukuran (Size):
+                            2. Pilih Ukuran (Size):
                           </label>
                           <div className="flex gap-2">
                             {(['sm', 'md', 'lg'] as const).map((s) => (
@@ -1625,7 +1545,7 @@ export default function App() {
 
                         <div>
                           <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            4. Posisi Label (labelPosition):
+                            3. Posisi Label (labelPosition):
                           </label>
                           <div className="flex flex-wrap gap-1.5">
                             {(
@@ -1658,7 +1578,7 @@ export default function App() {
                       <div className="space-y-4">
                         <div>
                           <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            5. Mode Komponen:
+                            4. Mode Komponen:
                           </label>
                           <div className="flex gap-2">
                             <button
@@ -1689,7 +1609,7 @@ export default function App() {
                         {radioConfigMode === 'group' && (
                           <div>
                             <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                              6. Orientasi Susunan Grup:
+                              5. Orientasi Susunan Grup:
                             </label>
                             <div className="flex gap-2">
                               {(['horizontal', 'vertical'] as const).map((ori) => (
@@ -1712,7 +1632,7 @@ export default function App() {
 
                         <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
                           <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
-                            7. Status & Opsi Tambahan:
+                            6. Status & Opsi Tambahan:
                           </span>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <label className="flex items-center gap-1.5 cursor-pointer select-none">
@@ -1760,7 +1680,7 @@ export default function App() {
                         {radioConfigLabelPos !== 'none' && (
                           <div>
                             <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              8. Kustom Teks Label:
+                              7. Kustom Teks Label:
                             </label>
                             <input
                               type="text"
@@ -1799,7 +1719,6 @@ export default function App() {
                                 name="interactive_builder_radio"
                                 value={radioConfigSelected}
                                 onChange={(val) => setRadioConfigSelected(val)}
-                                color={radioConfigColor}
                                 size={radioConfigSize}
                                 variant={radioConfigVariant}
                                 orientation={radioConfigOrientation}
@@ -1833,7 +1752,6 @@ export default function App() {
                                 value="opt1"
                                 checked={radioConfigSelected === 'opt1'}
                                 onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
-                                color={radioConfigColor}
                                 size={radioConfigSize}
                                 variant={radioConfigVariant}
                                 labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
@@ -1850,7 +1768,6 @@ export default function App() {
                             name="interactive_builder_radio"
                             value={radioConfigSelected}
                             onChange={(val) => setRadioConfigSelected(val)}
-                            color={radioConfigColor}
                             size={radioConfigSize}
                             variant={radioConfigVariant}
                             orientation={radioConfigOrientation}
@@ -1884,7 +1801,6 @@ export default function App() {
                             value="opt1"
                             checked={radioConfigSelected === 'opt1'}
                             onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
-                            color={radioConfigColor}
                             size={radioConfigSize}
                             variant={radioConfigVariant}
                             labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
@@ -1897,7 +1813,7 @@ export default function App() {
                         )}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
-                        Coba klik pilihan di atas untuk menguji respons visual, orientasi label, warna, dan status error secara langsung!
+                        Coba klik pilihan di atas untuk menguji respons visual, orientasi label, dan status error secara langsung!
                       </div>
                     </div>
 

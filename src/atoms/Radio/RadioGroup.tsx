@@ -2,7 +2,7 @@ import React, { forwardRef, useState, useId } from 'react';
 import { cn } from '../../utils/cn';
 import { RadioGroupContext } from './RadioGroupContext';
 import { useFormField } from '../../context/FormFieldContext';
-import type { RadioSize, RadioColor, RadioVariant, RadioLabelPosition } from './Radio';
+import type { RadioSize, RadioVariant, RadioLabelPosition } from './Radio';
 
 export interface RadioGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -18,10 +18,6 @@ export interface RadioGroupProps
   orientation?: 'horizontal' | 'vertical';
   /** Size inherited by child radio items */
   size?: RadioSize;
-  /** Color theme inherited by child radio items */
-  color?: RadioColor;
-  /** Shorthand alias for color */
-  c?: RadioColor;
   /** Visual variant inherited by child radio items */
   variant?: RadioVariant;
   /** Label position inherited by child radio items */
@@ -49,8 +45,6 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
       onChange,
       orientation = 'vertical',
       size = 'md',
-      color = 'neutral',
-      c,
       variant = 'default',
       labelPosition = 'right',
       label,
@@ -72,7 +66,6 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     const resolvedRequired = explicitRequired ?? formField?.required ?? false;
     const resolvedIsInvalid = Boolean(explicitIsInvalid || error || formField?.isInvalid);
     const resolvedName = name || (formField?.id ? `${formField.id}-radiogroup` : `radio-group-${generatedName}`);
-    const resolvedColor: RadioColor = c || color;
 
     const [uncontrolledValue, setUncontrolledValue] = useState<string | undefined>(
       defaultValue
@@ -100,7 +93,6 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
           value: activeValue,
           onChange: handleValueChange,
           size,
-          color: resolvedColor,
           variant,
           labelPosition,
           disabled: resolvedDisabled,
