@@ -13,6 +13,8 @@ import {
   IconLanguageEn,
   IconMathSqrt,
   Link,
+  Radio,
+  RadioGroup,
 } from '../atoms';
 import {
   FormField,
@@ -64,6 +66,7 @@ import {
   IconUser,
   IconLoader,
   IconCheckbox,
+  IconCircleDot,
   IconAlertCircle,
   IconWindow,
   IconMenu2,
@@ -115,6 +118,11 @@ export default function App() {
   const [inputValue, setInputValue] = useState('');
   const [checkboxChecked, setCheckboxChecked] = useState(true);
   const [activeTabDemo, setActiveTabDemo] = useState('tab1');
+  const [radioDemoValue, setRadioDemoValue] = useState('opt2');
+  const [radioCardValue, setRadioCardValue] = useState('team');
+  const [formRadioValue, setFormRadioValue] = useState<string>('');
+  const [formRadioError, setFormRadioError] = useState<string>('');
+  const [formSubmittedPayload, setFormSubmittedPayload] = useState<string | null>(null);
 
   // Interactive Button Configurator state
   const [demoVariant, setDemoVariant] = useState<'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger'>('primary');
@@ -325,6 +333,7 @@ export default function App() {
         { id: 'badge', label: 'Badge', icon: IconIdBadge },
         { id: 'avatar', label: 'Avatar', icon: IconUser },
         { id: 'checkbox', label: 'Checkbox', icon: IconCheckbox },
+        { id: 'radio', label: 'Radio', icon: IconCircleDot },
         { id: 'spinner', label: 'Spinner', icon: IconLoader },
       ],
     },
@@ -1393,6 +1402,281 @@ export default function App() {
             </DocCard>
           )}
 
+          {/* RADIO ATOM */}
+          {selectedId === 'radio' && (
+            <DocCard
+              title="Radio"
+              badgeText="Atom"
+              description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, 5 palet warna, dan RadioGroup helper."
+              snippets={[
+                {
+                  label: 'Penggunaan Dasar',
+                  desc: 'Radio individual dengan label atau posisi label fleksibel.',
+                  code: `import { Radio } from '@aposis/design-system';\n\n<Radio name="pilihan" value="1" label="Opsi Pertama" defaultChecked />\n<Radio name="pilihan" value="2" label="Opsi Kedua" />\n<Radio name="pilihan" value="3" label="Opsi Ketiga" labelPosition="bottom" />`,
+                },
+                {
+                  label: 'RadioGroup',
+                  desc: 'Pembungkus terpadu untuk mengelola nilai grup, label, deskripsi, dan pesan error.',
+                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup\n  label="Metode Pembayaran"\n  name="payment"\n  value={selectedPayment}\n  onChange={(val) => setSelectedPayment(val)}\n  orientation="horizontal"\n>\n  <Radio value="transfer" label="Transfer Bank" />\n  <Radio value="qris" label="QRIS" />\n  <Radio value="card" label="Kartu Kredit" />\n</RadioGroup>`,
+                },
+                {
+                  label: 'Varian Card',
+                  desc: 'Tampilan kotak kartu yang dapat diklik dengan deskripsi pembantu.',
+                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup value={plan} onChange={setPlan} className="grid grid-cols-1 sm:grid-cols-2 gap-3">\n  <Radio variant="card" value="starter" label="Starter" description="Untuk pengguna individu" />\n  <Radio variant="card" value="pro" label="Pro" description="Fitur lengkap untuk tim" />\n</RadioGroup>`,
+                },
+                {
+                  label: 'Di dalam FormField',
+                  desc: 'Dibungkus FormField dengan validasi dan penanganan error otomatis.',
+                  code: `import { FormField, RadioGroup, Radio } from '@aposis/design-system';\n\n<FormField label="Metode Pembayaran" required helperText="Pilih salah satu" error={error}>\n  <RadioGroup name="payment" value={payment} onChange={setPayment} orientation="horizontal">\n    <Radio value="qris" label="QRIS Instan" />\n    <Radio value="va" label="Virtual Account" />\n  </RadioGroup>\n</FormField>`,
+                },
+              ]}
+            >
+              <div className="space-y-6">
+                {/* Section 1: Orientasi Label & Figma Specs */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Spesifikasi Figma & Orientasi Label</CardTitle>
+                    <CardDescription>
+                      Dukungan posisi label: kanan (default), kiri, bawah (stacked), atas, serta standalone tanpa label.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                        Label Kanan (Default) & Label Kiri
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <Radio name="demo-orient" value="1" defaultChecked label="Label di kanan (Checked)" />
+                        <Radio name="demo-orient" value="2" label="Label di kanan (Unchecked)" />
+                        <Radio name="demo-orient-left" value="3" defaultChecked labelPosition="left" label="Label di kiri (Checked)" />
+                        <Radio name="demo-orient-left" value="4" labelPosition="left" label="Label di kiri (Unchecked)" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                        Label Bawah (Stacked) & Standalone (Tanpa Label)
+                      </h4>
+                      <div className="flex flex-wrap items-end gap-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <Radio name="demo-bottom" value="b1" defaultChecked labelPosition="bottom" label="Label Bawah" />
+                        <Radio name="demo-bottom" value="b2" labelPosition="bottom" label="Label Bawah" />
+                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
+                          <span className="text-xs text-slate-500 dark:text-slate-400">Standalone:</span>
+                          <Radio name="demo-standalone" value="s1" defaultChecked aria-label="Standalone checked" />
+                          <Radio name="demo-standalone" value="s2" aria-label="Standalone unchecked" />
+                        </div>
+                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
+                          <span className="text-xs text-slate-500 dark:text-slate-400">Disabled:</span>
+                          <Radio name="demo-dis-1" checked disabled label="Disabled On" />
+                          <Radio name="demo-dis-2" disabled label="Disabled Off" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Section 2: Palet Warna & Ukuran */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Palet Warna & Ukuran</CardTitle>
+                    <CardDescription>
+                      Pilihan 5 palet warna Tailwind murni dan 3 ukuran proporsional (sm: 16px, md: 20px, lg: 24px).
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                        Palet Warna (color / c)
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <Radio name="demo-c-neutral" defaultChecked color="neutral" label="Neutral (Slate 900)" />
+                        <Radio name="demo-c-primary" defaultChecked color="primary" label="Primary (Blue 600)" />
+                        <Radio name="demo-c-danger" defaultChecked color="danger" label="Danger (Red 600)" />
+                        <Radio name="demo-c-purple" defaultChecked color="purple" label="Purple (Violet 600)" />
+                        <Radio name="demo-c-muted" defaultChecked color="muted" label="Muted (Slate 500)" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                        Variasi Ukuran (sm, md, lg)
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <Radio name="demo-sz-sm" defaultChecked size="sm" label="Small (16px)" />
+                        <Radio name="demo-sz-md" defaultChecked size="md" label="Medium (20px)" />
+                        <Radio name="demo-sz-lg" defaultChecked size="lg" label="Large (24px)" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Section 3: RadioGroup Interaktif & Varian Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Komponen RadioGroup Interaktif</CardTitle>
+                    <CardDescription>
+                      Manajemen nilai terpusat dengan orientasi horizontal atau vertikal dan dukungan varian card.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+                        <RadioGroup
+                          label="Paket Layanan Akademik"
+                          description="Pilih salah satu paket untuk konfigurasi akun sekolah."
+                          name="academic-plan"
+                          value={radioDemoValue}
+                          onChange={(val) => setRadioDemoValue(val)}
+                        >
+                          <Radio value="opt1" label="Paket Standar" description="Maksimal 100 siswa per semester" />
+                          <Radio value="opt2" label="Paket Reguler" description="Hingga 500 siswa dengan rekap nilai otomatis" />
+                          <Radio value="opt3" label="Paket Enterprise" description="Tanpa batasan siswa dengan integrasi Dapodik" />
+                        </RadioGroup>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
+                          Nilai terpilih: <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{radioDemoValue}</span>
+                        </div>
+                      </div>
+
+                      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+                        <RadioGroup
+                          label="Pilihan Peran Pengguna (Varian Card)"
+                          description="Kartu interaktif dengan hover dan highlight status aktif."
+                          name="role-card"
+                          value={radioCardValue}
+                          onChange={(val) => setRadioCardValue(val)}
+                          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                        >
+                          <Radio
+                            variant="card"
+                            value="team"
+                            label="Koordinator Tim"
+                            description="Akses penuh ke semua modul dan pengelolaan hak akses staf."
+                          />
+                          <Radio
+                            variant="card"
+                            value="member"
+                            label="Anggota Pengajar"
+                            description="Input nilai, absensi kelas, dan pembuatan materi ajar."
+                          />
+                          <Radio
+                            variant="card"
+                            value="viewer"
+                            label="Pengamat Data"
+                            description="Hanya dapat melihat ringkasan statistik dan laporan."
+                          />
+                          <Radio
+                            variant="card"
+                            value="custom"
+                            disabled
+                            label="Khusus (Terkunci)"
+                            description="Paket kustom memerlukan lisensi khusus administrator."
+                          />
+                        </RadioGroup>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
+                          Kartu terpilih: <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{radioCardValue}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Section 4: Integrasi FormField & Validasi Form */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Integrasi FormField & Validasi Form</CardTitle>
+                    <CardDescription>
+                      Bisa langsung dibungkus dengan komponen FormField untuk label terpadu, tanda wajib (*), serta pewarisan status validasi error secara otomatis.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!formRadioValue) {
+                          setFormRadioError('Silakan pilih salah satu kanal pembayaran terlebih dahulu.');
+                          setFormSubmittedPayload(null);
+                          return;
+                        }
+                        setFormRadioError('');
+                        const fd = new FormData(e.currentTarget);
+                        setFormSubmittedPayload(JSON.stringify(Object.fromEntries(fd.entries()), null, 2));
+                      }}
+                      onReset={() => {
+                        setFormRadioValue('');
+                        setFormRadioError('');
+                        setFormSubmittedPayload(null);
+                      }}
+                      className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-5"
+                    >
+                      <FormField
+                        label="Metode Pembayaran Resmi"
+                        required
+                        helperText="Pilih salah satu kanal pembayaran yang tersedia untuk menyelesaikan transaksi."
+                        error={formRadioError}
+                      >
+                        <RadioGroup
+                          name="payment_method"
+                          value={formRadioValue}
+                          onChange={(val) => {
+                            setFormRadioValue(val);
+                            if (formRadioError) setFormRadioError('');
+                          }}
+                          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+                        >
+                          <Radio
+                            variant="card"
+                            value="qris"
+                            label="QRIS Instan"
+                            description="Verifikasi otomatis 24 jam"
+                          />
+                          <Radio
+                            variant="card"
+                            value="va_bca"
+                            label="BCA Virtual Account"
+                            description="Transfer via ATM / m-BCA"
+                          />
+                          <Radio
+                            variant="card"
+                            value="va_mandiri"
+                            label="Mandiri VA"
+                            description="Transfer via Livin' Mandiri"
+                          />
+                        </RadioGroup>
+                      </FormField>
+
+                      <div className="flex flex-wrap items-center gap-3 pt-2">
+                        <Button type="submit" size="sm" variant="primary">
+                          Kirim Formulir
+                        </Button>
+                        <Button type="reset" size="sm" variant="secondary">
+                          Reset Pilihan
+                        </Button>
+                        <button
+                          type="button"
+                          onClick={() => setFormRadioError(formRadioError ? '' : 'Simulasi validasi gagal dari server!')}
+                          className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 underline cursor-pointer"
+                        >
+                          Toggle Pesan Error
+                        </button>
+                      </div>
+
+                      {formSubmittedPayload && (
+                        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs space-y-1">
+                          <p className="font-semibold text-emerald-800 dark:text-emerald-300">
+                            Data FormData Berhasil Terkirim:
+                          </p>
+                          <pre className="font-mono text-emerald-900 dark:text-emerald-200">
+                            {formSubmittedPayload}
+                          </pre>
+                        </div>
+                      )}
+                    </form>
+                  </CardContent>
+                </Card>
+              </div>
+            </DocCard>
+          )}
+
           {/* 7. SPINNER ATOM */}
           {selectedId === 'spinner' && (
             <DocCard
@@ -1429,6 +1713,13 @@ export default function App() {
                   </FormField>
                   <FormField label="Kata Sandi Baru" required error="Kata sandi minimal 8 karakter">
                     <Input type="password" placeholder="••••••••" className="dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
+                  </FormField>
+                  <FormField label="Status Keaktifan Akademik" required helperText="Pilih salah satu status administratif siswa">
+                    <RadioGroup name="student_status_demo" defaultValue="aktif" orientation="horizontal">
+                      <Radio value="aktif" label="Aktif" />
+                      <Radio value="cuti" label="Cuti Akademik" />
+                      <Radio value="pindah" label="Pindah Sekolah" />
+                    </RadioGroup>
                   </FormField>
                 </CardContent>
               </Card>

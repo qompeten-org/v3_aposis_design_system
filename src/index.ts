@@ -13,5 +13,8 @@ export * from './atoms';
 // Molecules
 export * from './molecules';
 
+// Context
+export * from './context';
+
 // Organisms
 export * from './organisms';

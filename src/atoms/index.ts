@@ -7,3 +7,4 @@ export * from './Checkbox';
 export * from './Typography';
 export * from './Icon';
 export * from './Link';
+export * from './Radio';
