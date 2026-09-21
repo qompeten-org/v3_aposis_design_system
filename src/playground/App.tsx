@@ -118,11 +118,19 @@ export default function App() {
   const [inputValue, setInputValue] = useState('');
   const [checkboxChecked, setCheckboxChecked] = useState(true);
   const [activeTabDemo, setActiveTabDemo] = useState('tab1');
-  const [radioDemoValue, setRadioDemoValue] = useState('opt2');
-  const [radioCardValue, setRadioCardValue] = useState('team');
-  const [formRadioValue, setFormRadioValue] = useState<string>('');
-  const [formRadioError, setFormRadioError] = useState<string>('');
-  const [formSubmittedPayload, setFormSubmittedPayload] = useState<string | null>(null);
+  // Interactive Radio Configurator state
+  const [radioConfigVariant, setRadioConfigVariant] = useState<'default' | 'card'>('default');
+  const [radioConfigColor, setRadioConfigColor] = useState<'neutral' | 'primary' | 'danger' | 'purple' | 'muted'>('neutral');
+  const [radioConfigSize, setRadioConfigSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [radioConfigLabelPos, setRadioConfigLabelPos] = useState<'right' | 'left' | 'bottom' | 'top' | 'none'>('right');
+  const [radioConfigMode, setRadioConfigMode] = useState<'group' | 'single'>('group');
+  const [radioConfigOrientation, setRadioConfigOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [radioConfigDisabled, setRadioConfigDisabled] = useState(false);
+  const [radioConfigInvalid, setRadioConfigInvalid] = useState(false);
+  const [radioConfigHasDesc, setRadioConfigHasDesc] = useState(false);
+  const [radioConfigWrapForm, setRadioConfigWrapForm] = useState(false);
+  const [radioConfigSelected, setRadioConfigSelected] = useState('opt1');
+  const [radioConfigCustomLabel, setRadioConfigCustomLabel] = useState('Pilihan Utama');
 
   // Interactive Button Configurator state
   const [demoVariant, setDemoVariant] = useState<'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger'>('primary');
@@ -190,6 +198,88 @@ export default function App() {
     res += `\n>\n  ${demoButtonText}\n</Button>`;
     return res;
   }, [demoVariant, demoSize, demoHasLeftIcon, demoLeftIconName, demoHasRightIcon, demoRightIconName, demoCustomId, demoCustomClass, demoButtonText, demoIsLoading, demoIsDisabled]);
+
+  const dynamicRadioCode = useMemo(() => {
+    const isGroup = radioConfigMode === 'group';
+    const imports = new Set<string>();
+    if (radioConfigWrapForm) imports.add('FormField');
+    if (isGroup) imports.add('RadioGroup');
+    imports.add('Radio');
+
+    let code = `import { ${Array.from(imports).join(', ')} } from '@aposis/design-system';\n\n`;
+
+    const labelPosAttr =
+      radioConfigLabelPos !== 'right' && radioConfigLabelPos !== 'none'
+        ? `\n  labelPosition="${radioConfigLabelPos}"`
+        : '';
+    const colorAttr = radioConfigColor !== 'neutral' ? `\n  color="${radioConfigColor}"` : '';
+    const sizeAttr = radioConfigSize !== 'md' ? `\n  size="${radioConfigSize}"` : '';
+    const variantAttr = radioConfigVariant !== 'default' ? `\n  variant="${radioConfigVariant}"` : '';
+    const disabledAttr = radioConfigDisabled ? `\n  disabled` : '';
+    const invalidAttr = radioConfigInvalid ? `\n  isInvalid` : '';
+
+    if (isGroup) {
+      let groupContent = `<RadioGroup\n  name="pilihan"\n  value={selectedValue}\n  onChange={setSelectedValue}`;
+      if (radioConfigOrientation !== 'vertical') groupContent += `\n  orientation="${radioConfigOrientation}"`;
+      groupContent += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}`;
+      if (radioConfigVariant === 'card') groupContent += `\n  className="grid grid-cols-1 sm:grid-cols-2 gap-3"`;
+      groupContent += `\n>\n`;
+
+      const options = [
+        { val: 'opt1', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Pertama', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 1' : undefined },
+        { val: 'opt2', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 2' : undefined },
+        { val: 'opt3', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 3' : undefined },
+      ];
+
+      options.forEach((opt) => {
+        groupContent += `  <Radio value="${opt.val}"`;
+        if (opt.label) groupContent += ` label="${opt.label}"`;
+        else groupContent += ` aria-label="Opsi ${opt.val}"`;
+        if (opt.desc && radioConfigLabelPos !== 'none') groupContent += ` description="${opt.desc}"`;
+        groupContent += ` />\n`;
+      });
+      groupContent += `</RadioGroup>`;
+
+      if (radioConfigWrapForm) {
+        code += `<FormField\n  label="Pilih Kategori"\n  required\n  helperText="Pilih salah satu opsi yang tersedia"${radioConfigInvalid ? '\n  error="Wajib memilih salah satu opsi"' : ''}\n>\n`;
+        code += groupContent.split('\n').map(line => `  ${line}`).join('\n');
+        code += `\n</FormField>`;
+      } else {
+        code += groupContent;
+      }
+    } else {
+      let singleRadio = `<Radio\n  name="demo"\n  value="1"`;
+      if (radioConfigLabelPos !== 'none') {
+        singleRadio += `\n  label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
+        if (radioConfigHasDesc) singleRadio += `\n  description="Keterangan pembantu di bawah label"`;
+      } else {
+        singleRadio += `\n  aria-label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
+      }
+      singleRadio += `${colorAttr}${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n  defaultChecked\n/>`;
+
+      if (radioConfigWrapForm) {
+        code += `<FormField\n  label="Persetujuan"\n  required${radioConfigInvalid ? '\n  error="Harap setujui ketentuan ini"' : ''}\n>\n`;
+        code += singleRadio.split('\n').map(line => `  ${line}`).join('\n');
+        code += `\n</FormField>`;
+      } else {
+        code += singleRadio;
+      }
+    }
+
+    return code;
+  }, [
+    radioConfigMode,
+    radioConfigVariant,
+    radioConfigColor,
+    radioConfigSize,
+    radioConfigLabelPos,
+    radioConfigOrientation,
+    radioConfigDisabled,
+    radioConfigInvalid,
+    radioConfigHasDesc,
+    radioConfigWrapForm,
+    radioConfigCustomLabel,
+  ]);
 
   const buttonSnippets = [
     {
@@ -1432,245 +1522,457 @@ export default function App() {
               ]}
             >
               <div className="space-y-6">
-                {/* Section 1: Orientasi Label & Figma Specs */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Spesifikasi Figma & Orientasi Label</CardTitle>
-                    <CardDescription>
-                      Dukungan posisi label: kanan (default), kiri, bawah (stacked), atas, serta standalone tanpa label.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-                        Label Kanan (Default) & Label Kiri
-                      </h4>
-                      <div className="flex flex-wrap items-center gap-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <Radio name="demo-orient" value="1" defaultChecked label="Label di kanan (Checked)" />
-                        <Radio name="demo-orient" value="2" label="Label di kanan (Unchecked)" />
-                        <Radio name="demo-orient-left" value="3" defaultChecked labelPosition="left" label="Label di kiri (Checked)" />
-                        <Radio name="demo-orient-left" value="4" labelPosition="left" label="Label di kiri (Unchecked)" />
+                {/* 1. Interactive Live Radio Builder */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60 shadow-sm">
+                  <CardHeader className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
+                          Interactive Radio Builder (Pilih Varian, Posisi Label & Warna)
+                        </CardTitle>
+                        <CardDescription>
+                          Pilih konfigurasi di bawah untuk melihat preview interaktif secara langsung dan salin kode TSX yang ter-generate otomatis!
+                        </CardDescription>
                       </div>
+                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
                     </div>
-
-                    <div>
-                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-                        Label Bawah (Stacked) & Standalone (Tanpa Label)
-                      </h4>
-                      <div className="flex flex-wrap items-end gap-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <Radio name="demo-bottom" value="b1" defaultChecked labelPosition="bottom" label="Label Bawah" />
-                        <Radio name="demo-bottom" value="b2" labelPosition="bottom" label="Label Bawah" />
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                          <span className="text-xs text-slate-500 dark:text-slate-400">Standalone:</span>
-                          <Radio name="demo-standalone" value="s1" defaultChecked aria-label="Standalone checked" />
-                          <Radio name="demo-standalone" value="s2" aria-label="Standalone unchecked" />
+                  </CardHeader>
+                  <CardContent className="space-y-6 pt-6">
+                    {/* Controls Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+                      {/* Left column: Variant, Color, Size, LabelPosition */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            1. Pilih Varian Tampilan:
+                          </label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(['default', 'card'] as const).map((v) => (
+                              <button
+                                key={v}
+                                type="button"
+                                onClick={() => setRadioConfigVariant(v)}
+                                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
+                                  radioConfigVariant === v
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {v === 'default' ? 'Lingkaran Biasa (Default)' : 'Varian Kartu (Card)'}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                          <span className="text-xs text-slate-500 dark:text-slate-400">Disabled:</span>
-                          <Radio name="demo-dis-1" checked disabled label="Disabled On" />
-                          <Radio name="demo-dis-2" disabled label="Disabled Off" />
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            2. Pilih Palet Warna (color / c):
+                          </label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(
+                              [
+                                { id: 'neutral', label: 'Neutral (Slate)', dot: 'bg-slate-900 dark:bg-white' },
+                                { id: 'primary', label: 'Primary (Blue)', dot: 'bg-blue-600' },
+                                { id: 'danger', label: 'Danger (Red)', dot: 'bg-red-600' },
+                                { id: 'purple', label: 'Purple (Violet)', dot: 'bg-purple-600' },
+                                { id: 'muted', label: 'Muted (Gray)', dot: 'bg-slate-500' },
+                              ] as const
+                            ).map((c) => (
+                              <button
+                                key={c.id}
+                                type="button"
+                                onClick={() => setRadioConfigColor(c.id)}
+                                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                                  radioConfigColor === c.id
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                <span className={`w-2 h-2 rounded-full ${c.dot}`} />
+                                <span>{c.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            3. Pilih Ukuran (Size):
+                          </label>
+                          <div className="flex gap-2">
+                            {(['sm', 'md', 'lg'] as const).map((s) => (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => setRadioConfigSize(s)}
+                                className={`px-3 py-1 rounded-lg uppercase font-medium transition-all cursor-pointer ${
+                                  radioConfigSize === s
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {s === 'sm' ? 'SM (16px)' : s === 'md' ? 'MD (20px)' : 'LG (24px)'}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            4. Posisi Label (labelPosition):
+                          </label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(
+                              [
+                                { id: 'right', label: 'Kanan (Default)' },
+                                { id: 'left', label: 'Kiri' },
+                                { id: 'bottom', label: 'Bawah (Stacked)' },
+                                { id: 'top', label: 'Atas' },
+                                { id: 'none', label: 'Tanpa Label (Circle Only)' },
+                              ] as const
+                            ).map((pos) => (
+                              <button
+                                key={pos.id}
+                                type="button"
+                                onClick={() => setRadioConfigLabelPos(pos.id)}
+                                className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                  radioConfigLabelPos === pos.id
+                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                }`}
+                              >
+                                {pos.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                {/* Section 2: Palet Warna & Ukuran */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Palet Warna & Ukuran</CardTitle>
-                    <CardDescription>
-                      Pilihan 5 palet warna Tailwind murni dan 3 ukuran proporsional (sm: 16px, md: 20px, lg: 24px).
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-                        Palet Warna (color / c)
-                      </h4>
-                      <div className="flex flex-wrap items-center gap-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <Radio name="demo-c-neutral" defaultChecked color="neutral" label="Neutral (Slate 900)" />
-                        <Radio name="demo-c-primary" defaultChecked color="primary" label="Primary (Blue 600)" />
-                        <Radio name="demo-c-danger" defaultChecked color="danger" label="Danger (Red 600)" />
-                        <Radio name="demo-c-purple" defaultChecked color="purple" label="Purple (Violet 600)" />
-                        <Radio name="demo-c-muted" defaultChecked color="muted" label="Muted (Slate 500)" />
+                      {/* Right column: Mode, Orientation, Toggles, Custom Label */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                            5. Mode Komponen:
+                          </label>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setRadioConfigMode('group')}
+                              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                radioConfigMode === 'group'
+                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              }`}
+                            >
+                              RadioGroup (Multi-opsi)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setRadioConfigMode('single')}
+                              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                radioConfigMode === 'single'
+                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                              }`}
+                            >
+                              Single Radio (Atom)
+                            </button>
+                          </div>
+                        </div>
+
+                        {radioConfigMode === 'group' && (
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              6. Orientasi Susunan Grup:
+                            </label>
+                            <div className="flex gap-2">
+                              {(['horizontal', 'vertical'] as const).map((ori) => (
+                                <button
+                                  key={ori}
+                                  type="button"
+                                  onClick={() => setRadioConfigOrientation(ori)}
+                                  className={`px-3 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
+                                    radioConfigOrientation === ori
+                                      ? 'bg-aposis-blue-60 text-white shadow-xs'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                  }`}
+                                >
+                                  {ori}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
+                            7. Status & Opsi Tambahan:
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={radioConfigDisabled}
+                                onChange={(e) => setRadioConfigDisabled(e.target.checked)}
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">Status Disabled</span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={radioConfigInvalid}
+                                onChange={(e) => setRadioConfigInvalid(e.target.checked)}
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">Status Error (isInvalid)</span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={radioConfigHasDesc}
+                                onChange={(e) => setRadioConfigHasDesc(e.target.checked)}
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">Sertakan Deskripsi</span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={radioConfigWrapForm}
+                                onChange={(e) => setRadioConfigWrapForm(e.target.checked)}
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">Bungkus FormField</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {radioConfigLabelPos !== 'none' && (
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                              8. Kustom Teks Label:
+                            </label>
+                            <input
+                              type="text"
+                              value={radioConfigCustomLabel}
+                              onChange={(e) => setRadioConfigCustomLabel(e.target.value)}
+                              className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
+                              placeholder="Teks label radio..."
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div>
-                      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-                        Variasi Ukuran (sm, md, lg)
-                      </h4>
-                      <div className="flex flex-wrap items-center gap-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                        <Radio name="demo-sz-sm" defaultChecked size="sm" label="Small (16px)" />
-                        <Radio name="demo-sz-md" defaultChecked size="md" label="Medium (20px)" />
-                        <Radio name="demo-sz-lg" defaultChecked size="lg" label="Large (24px)" />
+                    {/* Live Preview Area */}
+                    <div className="p-6 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-4">
+                      <div className="flex items-center justify-between w-full border-b border-slate-200/80 dark:border-slate-700/80 pb-2">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                          Hasil Render Radio (Live Component):
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          Pilihan Aktif: <strong className="font-mono text-blue-600 dark:text-blue-400">{radioConfigSelected}</strong>
+                        </span>
+                      </div>
+
+                      <div className="py-2 w-full flex justify-center">
+                        {radioConfigWrapForm ? (
+                          <FormField
+                            label="Pilih Kategori Layanan"
+                            required
+                            helperText="Silakan tentukan salah satu opsi untuk melanjutkan proses."
+                            error={radioConfigInvalid ? 'Wajib memilih salah satu opsi layanan.' : undefined}
+                            className="max-w-lg"
+                          >
+                            {radioConfigMode === 'group' ? (
+                              <RadioGroup
+                                name="interactive_builder_radio"
+                                value={radioConfigSelected}
+                                onChange={(val) => setRadioConfigSelected(val)}
+                                color={radioConfigColor}
+                                size={radioConfigSize}
+                                variant={radioConfigVariant}
+                                orientation={radioConfigOrientation}
+                                labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
+                                disabled={radioConfigDisabled}
+                                isInvalid={radioConfigInvalid}
+                                className={radioConfigVariant === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3 w-full' : undefined}
+                              >
+                                <Radio
+                                  value="opt1"
+                                  label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Opsi Pertama')}
+                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Pertama' : undefined}
+                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 1' : undefined}
+                                />
+                                <Radio
+                                  value="opt2"
+                                  label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua'}
+                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Kedua' : undefined}
+                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 2' : undefined}
+                                />
+                                <Radio
+                                  value="opt3"
+                                  label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga'}
+                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Ketiga' : undefined}
+                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 3' : undefined}
+                                />
+                              </RadioGroup>
+                            ) : (
+                              <Radio
+                                name="interactive_single_radio"
+                                value="opt1"
+                                checked={radioConfigSelected === 'opt1'}
+                                onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
+                                color={radioConfigColor}
+                                size={radioConfigSize}
+                                variant={radioConfigVariant}
+                                labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
+                                label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Pilihan Utama')}
+                                aria-label={radioConfigLabelPos === 'none' ? 'Pilihan Utama' : undefined}
+                                description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu di bawah label' : undefined}
+                                disabled={radioConfigDisabled}
+                                isInvalid={radioConfigInvalid}
+                              />
+                            )}
+                          </FormField>
+                        ) : radioConfigMode === 'group' ? (
+                          <RadioGroup
+                            name="interactive_builder_radio"
+                            value={radioConfigSelected}
+                            onChange={(val) => setRadioConfigSelected(val)}
+                            color={radioConfigColor}
+                            size={radioConfigSize}
+                            variant={radioConfigVariant}
+                            orientation={radioConfigOrientation}
+                            labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
+                            disabled={radioConfigDisabled}
+                            isInvalid={radioConfigInvalid}
+                            className={radioConfigVariant === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg' : undefined}
+                          >
+                            <Radio
+                              value="opt1"
+                              label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Opsi Pertama')}
+                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Pertama' : undefined}
+                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 1' : undefined}
+                            />
+                            <Radio
+                              value="opt2"
+                              label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua'}
+                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Kedua' : undefined}
+                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 2' : undefined}
+                            />
+                            <Radio
+                              value="opt3"
+                              label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga'}
+                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Ketiga' : undefined}
+                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 3' : undefined}
+                            />
+                          </RadioGroup>
+                        ) : (
+                          <Radio
+                            name="interactive_single_radio"
+                            value="opt1"
+                            checked={radioConfigSelected === 'opt1'}
+                            onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
+                            color={radioConfigColor}
+                            size={radioConfigSize}
+                            variant={radioConfigVariant}
+                            labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
+                            label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Pilihan Utama')}
+                            aria-label={radioConfigLabelPos === 'none' ? 'Pilihan Utama' : undefined}
+                            description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu di bawah label' : undefined}
+                            disabled={radioConfigDisabled}
+                            isInvalid={radioConfigInvalid}
+                          />
+                        )}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                        Coba klik pilihan di atas untuk menguji respons visual, orientasi label, warna, dan status error secara langsung!
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Section 3: RadioGroup Interaktif & Varian Card */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Komponen RadioGroup Interaktif</CardTitle>
-                    <CardDescription>
-                      Manajemen nilai terpusat dengan orientasi horizontal atau vertikal dan dukungan varian card.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
-                        <RadioGroup
-                          label="Paket Layanan Akademik"
-                          description="Pilih salah satu paket untuk konfigurasi akun sekolah."
-                          name="academic-plan"
-                          value={radioDemoValue}
-                          onChange={(val) => setRadioDemoValue(val)}
+                    {/* Live Generated TSX Code */}
+                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
+                        <span className="flex items-center gap-1.5">
+                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
+                          Kode TSX Otomatis Ter-generate (Siap Salin):
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copySnippet(dynamicRadioCode)}
+                          className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
                         >
-                          <Radio value="opt1" label="Paket Standar" description="Maksimal 100 siswa per semester" />
-                          <Radio value="opt2" label="Paket Reguler" description="Hingga 500 siswa dengan rekap nilai otomatis" />
-                          <Radio value="opt3" label="Paket Enterprise" description="Tanpa batasan siswa dengan integrasi Dapodik" />
-                        </RadioGroup>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
-                          Nilai terpilih: <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{radioDemoValue}</span>
-                        </div>
+                          {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
+                          <span>{copiedCode ? 'Tersalin!' : 'Salin Kode Ini'}</span>
+                        </button>
                       </div>
-
-                      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
-                        <RadioGroup
-                          label="Pilihan Peran Pengguna (Varian Card)"
-                          description="Kartu interaktif dengan hover dan highlight status aktif."
-                          name="role-card"
-                          value={radioCardValue}
-                          onChange={(val) => setRadioCardValue(val)}
-                          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-                        >
-                          <Radio
-                            variant="card"
-                            value="team"
-                            label="Koordinator Tim"
-                            description="Akses penuh ke semua modul dan pengelolaan hak akses staf."
-                          />
-                          <Radio
-                            variant="card"
-                            value="member"
-                            label="Anggota Pengajar"
-                            description="Input nilai, absensi kelas, dan pembuatan materi ajar."
-                          />
-                          <Radio
-                            variant="card"
-                            value="viewer"
-                            label="Pengamat Data"
-                            description="Hanya dapat melihat ringkasan statistik dan laporan."
-                          />
-                          <Radio
-                            variant="card"
-                            value="custom"
-                            disabled
-                            label="Khusus (Terkunci)"
-                            description="Paket kustom memerlukan lisensi khusus administrator."
-                          />
-                        </RadioGroup>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
-                          Kartu terpilih: <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{radioCardValue}</span>
-                        </div>
-                      </div>
+                      <pre className="p-4 text-xs font-mono text-sky-300 overflow-x-auto whitespace-pre leading-relaxed select-all">
+                        <code>{dynamicRadioCode}</code>
+                      </pre>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Section 4: Integrasi FormField & Validasi Form */}
-                <Card>
+                {/* 2. Real-World Presets / Skenario Populer */}
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Integrasi FormField & Validasi Form</CardTitle>
+                    <CardTitle>Koleksi Contoh Skenario Populer (Siap Pakai)</CardTitle>
                     <CardDescription>
-                      Bisa langsung dibungkus dengan komponen FormField untuk label terpadu, tanda wajib (*), serta pewarisan status validasi error secara otomatis.
+                      Preset siap pakai untuk varian card interaktif dan orientasi stacked vertikal sesuai board Figma.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (!formRadioValue) {
-                          setFormRadioError('Silakan pilih salah satu kanal pembayaran terlebih dahulu.');
-                          setFormSubmittedPayload(null);
-                          return;
-                        }
-                        setFormRadioError('');
-                        const fd = new FormData(e.currentTarget);
-                        setFormSubmittedPayload(JSON.stringify(Object.fromEntries(fd.entries()), null, 2));
-                      }}
-                      onReset={() => {
-                        setFormRadioValue('');
-                        setFormRadioError('');
-                        setFormSubmittedPayload(null);
-                      }}
-                      className="p-5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-5"
-                    >
-                      <FormField
-                        label="Metode Pembayaran Resmi"
-                        required
-                        helperText="Pilih salah satu kanal pembayaran yang tersedia untuk menyelesaikan transaksi."
-                        error={formRadioError}
-                      >
-                        <RadioGroup
-                          name="payment_method"
-                          value={formRadioValue}
-                          onChange={(val) => {
-                            setFormRadioValue(val);
-                            if (formRadioError) setFormRadioError('');
-                          }}
-                          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
-                        >
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {/* Preset 1: Card Selector */}
+                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Preset 1: Pilihan Peran Akun (Card Variant)
+                          </span>
+                          <Badge variant="primary" size="sm">Varian Card</Badge>
+                        </div>
+                        <RadioGroup defaultValue="teacher" orientation="vertical" className="gap-2.5">
                           <Radio
                             variant="card"
-                            value="qris"
-                            label="QRIS Instan"
-                            description="Verifikasi otomatis 24 jam"
+                            value="teacher"
+                            label="Tenaga Pendidik"
+                            description="Input nilai, absensi, dan jadwal mengajar harian"
                           />
                           <Radio
                             variant="card"
-                            value="va_bca"
-                            label="BCA Virtual Account"
-                            description="Transfer via ATM / m-BCA"
-                          />
-                          <Radio
-                            variant="card"
-                            value="va_mandiri"
-                            label="Mandiri VA"
-                            description="Transfer via Livin' Mandiri"
+                            value="staff"
+                            label="Staf Tata Usaha"
+                            description="Pengelolaan arsip surat dan administrasi sekolah"
                           />
                         </RadioGroup>
-                      </FormField>
-
-                      <div className="flex flex-wrap items-center gap-3 pt-2">
-                        <Button type="submit" size="sm" variant="primary">
-                          Kirim Formulir
-                        </Button>
-                        <Button type="reset" size="sm" variant="secondary">
-                          Reset Pilihan
-                        </Button>
-                        <button
-                          type="button"
-                          onClick={() => setFormRadioError(formRadioError ? '' : 'Simulasi validasi gagal dari server!')}
-                          className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 underline cursor-pointer"
-                        >
-                          Toggle Pesan Error
-                        </button>
                       </div>
 
-                      {formSubmittedPayload && (
-                        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs space-y-1">
-                          <p className="font-semibold text-emerald-800 dark:text-emerald-300">
-                            Data FormData Berhasil Terkirim:
-                          </p>
-                          <pre className="font-mono text-emerald-900 dark:text-emerald-200">
-                            {formSubmittedPayload}
-                          </pre>
+                      {/* Preset 2: Stacked Vertical (Figma Board) */}
+                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Preset 2: Posisi Label Bawah (Stacked Vertikal)
+                          </span>
+                          <Badge variant="neutral" size="sm">Figma 53-3380</Badge>
                         </div>
-                      )}
-                    </form>
+                        <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+                          <RadioGroup defaultValue="sem1" orientation="horizontal" className="justify-around py-2">
+                            <Radio value="sem1" labelPosition="bottom" label="Semester 1" />
+                            <Radio value="sem2" labelPosition="bottom" label="Semester 2" />
+                            <Radio value="pend" labelPosition="bottom" label="Remedial" />
+                          </RadioGroup>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Sangat cocok untuk tata letak ringkas horizontal dengan teks yang berpusat di bawah lingkaran radio.
+                        </p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
