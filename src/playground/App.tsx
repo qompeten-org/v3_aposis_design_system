@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
   Button,
+  type ButtonVariant,
+  type ButtonSize,
   Input,
   Badge,
   Avatar,
@@ -112,6 +114,244 @@ const mockStudents: StudentData[] = [
   { id: '5', name: 'Rizky Pratama', nisn: '0053918274', class: 'X-B', status: 'active', gpa: 3.78 },
 ];
 
+const BUTTON_SPEC_MODES = [
+  {
+    id: 'primary',
+    name: 'Blue Mode (Primary)',
+    desc: 'Solid brand blue untuk tindakan utama / primer',
+    variant: 'primary' as ButtonVariant,
+    badge: 'Brand Blue',
+    badgeClass: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
+    hoverClass: 'bg-aposis-blue-70 shadow',
+    activeClass: 'bg-aposis-blue-80',
+    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+  },
+  {
+    id: 'secondary',
+    name: 'Dark Mode (Secondary)',
+    desc: 'Solid dark slate / black untuk aksi netral kontras tinggi',
+    variant: 'secondary' as ButtonVariant,
+    badge: 'Slate 900',
+    badgeClass: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200',
+    hoverClass: 'bg-slate-800 dark:bg-slate-700',
+    activeClass: 'bg-slate-950 dark:bg-slate-900',
+    focusRing: 'ring-2 ring-offset-2 ring-slate-700 ring-offset-white dark:ring-offset-slate-900',
+  },
+  {
+    id: 'outline',
+    name: 'Outline Mode',
+    desc: 'Bordered light background untuk tindakan sekunder',
+    variant: 'outline' as ButtonVariant,
+    badge: 'Bordered',
+    badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    hoverClass: 'bg-slate-100 border-slate-400 dark:bg-slate-800',
+    activeClass: 'bg-slate-200 dark:bg-slate-700',
+    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+  },
+  {
+    id: 'subtle',
+    name: 'Subtle / Ghost Mode',
+    desc: 'Soft tint blue & transparan untuk aksi pendukung / tertier',
+    variant: 'subtle' as ButtonVariant,
+    badge: 'Soft Tint',
+    badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+    hoverClass: 'bg-blue-100 dark:bg-blue-950/80',
+    activeClass: 'bg-blue-200 dark:bg-blue-900/60',
+    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+  },
+  {
+    id: 'danger',
+    name: 'Red Mode (Danger / Destructive)',
+    desc: 'Solid rose red untuk tindakan destruktif atau peringatan kritis',
+    variant: 'danger' as ButtonVariant,
+    badge: 'Critical Action',
+    badgeClass: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+    hoverClass: 'bg-rose-700 shadow',
+    activeClass: 'bg-rose-800',
+    focusRing: 'ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900',
+  },
+  {
+    id: 'danger-outline',
+    name: 'Red Outline & Subtle Mode',
+    desc: 'Border merah dan soft tint red untuk konfirmasi hapus',
+    variant: 'danger-outline' as ButtonVariant,
+    badge: 'Destructive Border',
+    badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+    hoverClass: 'bg-rose-50 border-rose-400 dark:bg-rose-950/40',
+    activeClass: 'bg-rose-100 dark:bg-rose-950/70',
+    focusRing: 'ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900',
+  },
+];
+
+function ButtonV31SpecMatrix() {
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+
+  const filteredModes = selectedFilter === 'all'
+    ? BUTTON_SPEC_MODES
+    : BUTTON_SPEC_MODES.filter((m) => m.id === selectedFilter);
+
+  const sizesConfig: { size: ButtonSize; label: string; px: string; iconSize: 'xs' | 'sm' | 'md' }[] = [
+    { size: 'lg', label: 'Large (LG)', px: '48px', iconSize: 'sm' },
+    { size: 'md', label: 'Medium (MD)', px: '40px', iconSize: 'sm' },
+    { size: 'sm', label: 'Small (SM)', px: '32px', iconSize: 'xs' },
+    { size: 'xs', label: 'Extra Small (XS)', px: '28px', iconSize: 'xs' },
+  ];
+
+  const states = [
+    { id: 'default', label: 'Default', badge: 'Normal' },
+    { id: 'hover', label: 'Hover', badge: 'Mouse Over' },
+    { id: 'active', label: 'Pressed', badge: 'Active' },
+    { id: 'focus', label: 'Focus', badge: 'Ring 2px' },
+    { id: 'disabled', label: 'Disabled', badge: 'Nonaktif' },
+    { id: 'skeleton', label: 'Skeleton', badge: 'Loading Pulse' },
+  ];
+
+  return (
+    <Card className="dark:bg-slate-900 dark:border-slate-800 overflow-hidden shadow-sm">
+      <CardHeader className="bg-slate-50/70 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-aposis-blue-60 animate-pulse" />
+              Matriks Spesifikasi Button v3.1 (Resmi Figma)
+            </CardTitle>
+            <CardDescription>
+              Hierarki varian tombol dalam 4 ukuran (LG, MD, SM, XS) serta 6 status interaksi (Default, Hover, Active, Focus, Disabled, Skeleton)
+            </CardDescription>
+          </div>
+          {/* Mode Filter Buttons */}
+          <div className="flex flex-wrap gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+            <button
+              type="button"
+              onClick={() => setSelectedFilter('all')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                selectedFilter === 'all'
+                  ? 'bg-aposis-blue-60 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Semua Mode ({BUTTON_SPEC_MODES.length})
+            </button>
+            {BUTTON_SPEC_MODES.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setSelectedFilter(m.id)}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                  selectedFilter === m.id
+                    ? 'bg-aposis-blue-60 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {m.name.split(' ')[0]}
+              </button>
+            ))}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <div className="min-w-[880px] divide-y divide-slate-100 dark:divide-slate-800">
+            {/* Table Header: Sizes */}
+            <div className="grid grid-cols-9 bg-slate-100/70 dark:bg-slate-800/80 px-4 py-3 text-xs font-semibold text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+              <div className="col-span-1">Status / State</div>
+              {sizesConfig.map((s) => (
+                <React.Fragment key={s.size}>
+                  <div className="col-span-1 text-center">
+                    <span className="text-slate-900 dark:text-white font-bold">{s.label.split(' ')[0]}</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">{s.px} • Text</span>
+                  </div>
+                  <div className="col-span-1 text-center">
+                    <span className="text-slate-900 dark:text-white font-bold">{s.label.split(' ')[0]}</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">Icon Only</span>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+
+            {/* Render Each Mode Section */}
+            {filteredModes.map((mode) => (
+              <div key={mode.id} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+                {/* Section Title */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">{mode.name}</span>
+                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${mode.badgeClass}`}>
+                      {mode.badge}
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400">{mode.desc}</span>
+                </div>
+
+                {/* 6 State Rows */}
+                <div className="space-y-2">
+                  {states.map((st) => (
+                    <div
+                      key={st.id}
+                      className="grid grid-cols-9 items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                    >
+                      <div className="col-span-1 flex flex-col">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{st.label}</span>
+                        <span className="text-[10px] text-slate-400">{st.badge}</span>
+                      </div>
+
+                      {sizesConfig.map((s) => {
+                        const icon = <Icon icon={IconPlus} size={s.iconSize} />;
+                        const isSkeleton = st.id === 'skeleton';
+                        const isDisabled = st.id === 'disabled';
+                        const additionalClass =
+                          st.id === 'hover'
+                            ? mode.hoverClass
+                            : st.id === 'active'
+                            ? mode.activeClass
+                            : st.id === 'focus'
+                            ? mode.focusRing
+                            : undefined;
+
+                        return (
+                          <React.Fragment key={s.size}>
+                            {/* Text + Icon Button */}
+                            <div className="col-span-1 flex justify-center">
+                              <Button
+                                variant={mode.variant}
+                                size={s.size}
+                                leftIcon={icon}
+                                disabled={isDisabled}
+                                skeleton={isSkeleton}
+                                className={additionalClass}
+                              >
+                                Button
+                              </Button>
+                            </div>
+
+                            {/* Icon-Only Button */}
+                            <div className="col-span-1 flex justify-center">
+                              <Button
+                                variant={mode.variant}
+                                size={s.size}
+                                iconOnly
+                                leftIcon={icon}
+                                disabled={isDisabled}
+                                skeleton={isSkeleton}
+                                className={additionalClass}
+                                aria-label="Aksi"
+                              />
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function App() {
   const [selectedId, setSelectedId] = useState('button');
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -168,15 +408,17 @@ export default function App() {
   const [notifPreviewKey, setNotifPreviewKey] = useState<number>(0);
 
   // Interactive Button Configurator state
-  const [demoVariant, setDemoVariant] = useState<'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger'>('primary');
-  const [demoSize, setDemoSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [demoVariant, setDemoVariant] = useState<ButtonVariant>('primary');
+  const [demoSize, setDemoSize] = useState<ButtonSize>('md');
+  const [demoIsIconOnly, setDemoIsIconOnly] = useState(false);
+  const [demoIsSkeleton, setDemoIsSkeleton] = useState(false);
   const [demoHasLeftIcon, setDemoHasLeftIcon] = useState(true);
   const [demoLeftIconName, setDemoLeftIconName] = useState<string>('IconPlus');
   const [demoHasRightIcon, setDemoHasRightIcon] = useState(false);
   const [demoRightIconName, setDemoRightIconName] = useState<string>('IconArrowRight');
   const [demoCustomId, setDemoCustomId] = useState('btn-simpan');
   const [demoCustomClass, setDemoCustomClass] = useState('');
-  const [demoButtonText, setDemoButtonText] = useState('Simpan Perubahan');
+  const [demoButtonText, setDemoButtonText] = useState('Button');
   const [demoIsLoading, setDemoIsLoading] = useState(false);
   const [demoIsDisabled, setDemoIsDisabled] = useState(false);
 
@@ -225,14 +467,20 @@ export default function App() {
     if (demoCustomId.trim()) res += `\n  id="${demoCustomId.trim()}"`;
     if (demoVariant !== 'primary') res += `\n  variant="${demoVariant}"`;
     if (demoSize !== 'md') res += `\n  size="${demoSize}"`;
-    if (demoHasLeftIcon) res += `\n  leftIcon={<Icon icon={${demoLeftIconName}} size="${demoSize === 'lg' ? 'md' : 'sm'}" />}`;
-    if (demoHasRightIcon) res += `\n  rightIcon={<Icon icon={${demoRightIconName}} size="${demoSize === 'lg' ? 'md' : 'sm'}" />}`;
+    if (demoIsIconOnly) res += `\n  iconOnly`;
+    if (demoIsSkeleton) res += `\n  skeleton`;
+    if (demoHasLeftIcon) res += `\n  leftIcon={<Icon icon={${demoLeftIconName}} size="${demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'}" />}`;
+    if (demoHasRightIcon && !demoIsIconOnly) res += `\n  rightIcon={<Icon icon={${demoRightIconName}} size="${demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'}" />}`;
     if (demoIsLoading) res += `\n  isLoading`;
     if (demoIsDisabled) res += `\n  disabled`;
     if (demoCustomClass.trim()) res += `\n  className="${demoCustomClass.trim()}"`;
-    res += `\n>\n  ${demoButtonText}\n</Button>`;
+    if (demoIsIconOnly || demoIsSkeleton) {
+      res += `\n/>`;
+    } else {
+      res += `\n>\n  ${demoButtonText}\n</Button>`;
+    }
     return res;
-  }, [demoVariant, demoSize, demoHasLeftIcon, demoLeftIconName, demoHasRightIcon, demoRightIconName, demoCustomId, demoCustomClass, demoButtonText, demoIsLoading, demoIsDisabled]);
+  }, [demoVariant, demoSize, demoIsIconOnly, demoIsSkeleton, demoHasLeftIcon, demoLeftIconName, demoHasRightIcon, demoRightIconName, demoCustomId, demoCustomClass, demoButtonText, demoIsLoading, demoIsDisabled]);
 
   const dynamicRadioCode = useMemo(() => {
     const isGroup = radioConfigMode === 'group';
@@ -472,6 +720,16 @@ export default function App() {
       label: 'Icon di Kanan (rightIcon)',
       desc: 'Tambahkan prop rightIcon={<Icon icon={IconArrowRight} size="sm" />} untuk tombol aksi atau langkah navigasi.',
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconArrowRight } from '@tabler/icons-react';\n\n<Button\n  variant="outline"\n  rightIcon={<Icon icon={IconArrowRight} size="sm" />}\n>\n  Langkah Selanjutnya\n</Button>`,
+    },
+    {
+      label: 'Icon-Only (Square)',
+      desc: 'Tombol khusus ikon berbentuk bujur sangkar proporsional dengan prop iconOnly.',
+      code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n<Button\n  variant="primary"\n  size="md"\n  iconOnly\n  leftIcon={<Icon icon={IconPlus} size="sm" />}\n  aria-label="Tambah Data"\n/>`,
+    },
+    {
+      label: 'Skeleton State',
+      desc: 'Menampilkan placeholder animasi loading berdenyut (pulse) yang menyesuaikan ukuran button.',
+      code: `import { Button } from '@aposis/design-system';\n\n// Text Button Skeleton:\n<Button size="md" skeleton />\n\n// Icon-Only Skeleton:\n<Button size="md" iconOnly skeleton />`,
     },
     {
       label: 'Kedua Icon (Kiri & Kanan)',
@@ -951,15 +1209,71 @@ export default function App() {
                 </div>
               }
             >
-              <div className="space-y-6">
-                {/* Interactive Live Button Builder */}
+              <div className="space-y-8">
+                {/* Figma Button v3.1 Official Header Card */}
+                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6">
+                  <div className="space-y-3">
+                    <div className="text-xs font-bold tracking-wider text-aposis-blue-60 uppercase flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-aposis-blue-60" />
+                      APOSIS Design System
+                    </div>
+                    <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                      Button v3.1
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        PROPERTIES
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-aposis-blue-70 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                        VARIANTS
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        v3.1 SPEC
+                      </span>
+                    </div>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-1.5 min-w-[240px]">
+                    <div className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">About</div>
+                    <div className="text-slate-900 dark:text-white font-bold text-sm">Button Variations</div>
+                    <div className="text-aposis-blue-60 font-semibold">Over 200+ Variations</div>
+                    <ul className="text-slate-600 dark:text-slate-400 space-y-1 pt-1 text-[11px]">
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-aposis-blue-60 shrink-0" />
+                        Blue Mode (Primary Brand)
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-900 shrink-0" />
+                        Dark Mode (Secondary Slate)
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0" />
+                        Red Mode (Danger Solid &amp; Outline)
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                        Outline, Subtle &amp; Ghost
+                      </li>
+                      <li className="flex items-center gap-1.5 text-slate-500">
+                        <span>• 4 Ukuran: LG (48), MD (40), SM (32), XS (28)</span>
+                      </li>
+                      <li className="flex items-center gap-1.5 text-slate-500">
+                        <span>• 6 Status: Default, Hover, Active, Focus, Disabled, Skeleton</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* 1. Full Figma v3.1 Spec Matrix */}
+                <ButtonV31SpecMatrix />
+
+                {/* 2. Interactive Live Button Builder */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60 shadow-sm">
                   <CardHeader className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
-                          Interactive Button Builder (Coba Ganti Ikon, id & className)
+                          Interactive Button Builder (Coba Ganti Ikon, id &amp; className)
                         </CardTitle>
                         <CardDescription>
                           Ubah konfigurasi di bawah untuk melihat hasil tombol secara langsung dan salin kode TSX yang ter-generate otomatis!
@@ -971,19 +1285,31 @@ export default function App() {
                   <CardContent className="space-y-6 pt-6">
                     {/* Controls Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left column: Variant, Size, Text */}
+                      {/* Left column: Variant, Size, Text, State toggles */}
                       <div className="space-y-4">
                         <div>
                           <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            1. Pilih Varian Tombol:
+                            1. Pilih Varian Tombol (Figma v3.1):
                           </label>
                           <div className="flex flex-wrap gap-1.5">
-                            {(['primary', 'secondary', 'outline', 'ghost', 'success', 'danger'] as const).map((v) => (
+                            {(
+                              [
+                                'primary',
+                                'secondary',
+                                'outline',
+                                'ghost',
+                                'subtle',
+                                'danger',
+                                'danger-outline',
+                                'danger-subtle',
+                                'success',
+                              ] as const
+                            ).map((v) => (
                               <button
                                 key={v}
                                 type="button"
                                 onClick={() => setDemoVariant(v)}
-                                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all ${
+                                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                                   demoVariant === v
                                     ? 'bg-aposis-blue-60 text-white shadow-xs'
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
@@ -1000,7 +1326,7 @@ export default function App() {
                             2. Pilih Ukuran (Size):
                           </label>
                           <div className="flex gap-2">
-                            {(['sm', 'md', 'lg'] as const).map((s) => (
+                            {(['xs', 'sm', 'md', 'lg'] as const).map((s) => (
                               <button
                                 key={s}
                                 type="button"
@@ -1017,20 +1343,42 @@ export default function App() {
                           </div>
                         </div>
 
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                            3. Teks Tombol:
-                          </label>
-                          <input
-                            type="text"
-                            value={demoButtonText}
-                            onChange={(e) => setDemoButtonText(e.target.value)}
-                            className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
-                            placeholder="Teks tombol..."
-                          />
-                        </div>
+                        {!demoIsIconOnly && (
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                              3. Teks Tombol:
+                            </label>
+                            <input
+                              type="text"
+                              value={demoButtonText}
+                              onChange={(e) => setDemoButtonText(e.target.value)}
+                              className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
+                              placeholder="Teks tombol..."
+                            />
+                          </div>
+                        )}
 
-                        <div className="flex flex-wrap gap-4 pt-1">
+                        <div className="grid grid-cols-2 gap-2 pt-1 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={demoIsIconOnly}
+                              onChange={(e) => setDemoIsIconOnly(e.target.checked)}
+                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-semibold">Icon Only (Square)</span>
+                          </label>
+
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={demoIsSkeleton}
+                              onChange={(e) => setDemoIsSkeleton(e.target.checked)}
+                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                            />
+                            <span className="text-slate-700 dark:text-slate-300 font-semibold">Skeleton State</span>
+                          </label>
+
                           <label className="flex items-center gap-1.5 cursor-pointer select-none">
                             <input
                               type="checkbox"
@@ -1065,7 +1413,7 @@ export default function App() {
                                 onChange={(e) => setDemoHasLeftIcon(e.target.checked)}
                                 className="rounded text-aposis-blue-60"
                               />
-                              <span>Aktifkan Icon Kiri (leftIcon)</span>
+                              <span>{demoIsIconOnly ? 'Ikon Tombol (iconOnly)' : 'Aktifkan Icon Kiri (leftIcon)'}</span>
                             </label>
                             <Badge variant={demoHasLeftIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
                               {demoHasLeftIcon ? 'Aktif' : 'Nonaktif'}
@@ -1073,7 +1421,7 @@ export default function App() {
                           </div>
                           {demoHasLeftIcon && (
                             <div>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kiri dari Tabler:</span>
+                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon dari Tabler:</span>
                               <select
                                 value={demoLeftIconName}
                                 onChange={(e) => setDemoLeftIconName(e.target.value)}
@@ -1085,44 +1433,48 @@ export default function App() {
                                 <option value="IconDownload">IconDownload (Unduh)</option>
                                 <option value="IconEdit">IconEdit (Ubah)</option>
                                 <option value="IconHeart">IconHeart (Suka)</option>
-                              </select>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Icon Kanan Toggle & Selector */}
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={demoHasRightIcon}
-                                onChange={(e) => setDemoHasRightIcon(e.target.checked)}
-                                className="rounded text-aposis-blue-60"
-                              />
-                              <span>Aktifkan Icon Kanan (rightIcon)</span>
-                            </label>
-                            <Badge variant={demoHasRightIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
-                              {demoHasRightIcon ? 'Aktif' : 'Nonaktif'}
-                            </Badge>
-                          </div>
-                          {demoHasRightIcon && (
-                            <div>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kanan dari Tabler:</span>
-                              <select
-                                value={demoRightIconName}
-                                onChange={(e) => setDemoRightIconName(e.target.value)}
-                                className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
-                              >
-                                <option value="IconArrowRight">IconArrowRight (Lanjut)</option>
-                                <option value="IconSend">IconSend (Kirim)</option>
                                 <option value="IconTrash">IconTrash (Hapus)</option>
-                                <option value="IconChevronDown">IconChevronDown (Dropdown)</option>
                                 <option value="IconSettings">IconSettings (Pengaturan)</option>
                               </select>
                             </div>
                           )}
                         </div>
+
+                        {/* Icon Kanan Toggle & Selector (Hanya bila bukan iconOnly) */}
+                        {!demoIsIconOnly && (
+                          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={demoHasRightIcon}
+                                  onChange={(e) => setDemoHasRightIcon(e.target.checked)}
+                                  className="rounded text-aposis-blue-60"
+                                />
+                                <span>Aktifkan Icon Kanan (rightIcon)</span>
+                              </label>
+                              <Badge variant={demoHasRightIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
+                                {demoHasRightIcon ? 'Aktif' : 'Nonaktif'}
+                              </Badge>
+                            </div>
+                            {demoHasRightIcon && (
+                              <div>
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kanan dari Tabler:</span>
+                                <select
+                                  value={demoRightIconName}
+                                  onChange={(e) => setDemoRightIconName(e.target.value)}
+                                  className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                                >
+                                  <option value="IconArrowRight">IconArrowRight (Lanjut)</option>
+                                  <option value="IconSend">IconSend (Kirim)</option>
+                                  <option value="IconTrash">IconTrash (Hapus)</option>
+                                  <option value="IconChevronDown">IconChevronDown (Dropdown)</option>
+                                  <option value="IconSettings">IconSettings (Pengaturan)</option>
+                                </select>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Custom ID & className inputs */}
                         <div className="grid grid-cols-2 gap-3">
@@ -1162,18 +1514,21 @@ export default function App() {
                           id={demoCustomId || undefined}
                           variant={demoVariant}
                           size={demoSize}
+                          iconOnly={demoIsIconOnly}
+                          skeleton={demoIsSkeleton}
                           isLoading={demoIsLoading}
                           disabled={demoIsDisabled}
                           className={demoCustomClass || undefined}
                           leftIcon={demoHasLeftIcon && demoIcons[demoLeftIconName] ? (
-                            <Icon icon={demoIcons[demoLeftIconName].icon} size={demoSize === 'lg' ? 'md' : 'sm'} />
+                            <Icon icon={demoIcons[demoLeftIconName].icon} size={demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'} />
                           ) : undefined}
-                          rightIcon={demoHasRightIcon && demoIcons[demoRightIconName] ? (
-                            <Icon icon={demoIcons[demoRightIconName].icon} size={demoSize === 'lg' ? 'md' : 'sm'} />
+                          rightIcon={demoHasRightIcon && !demoIsIconOnly && demoIcons[demoRightIconName] ? (
+                            <Icon icon={demoIcons[demoRightIconName].icon} size={demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'} />
                           ) : undefined}
                           onClick={() => alert(`Tombol diklik! id: "${demoCustomId}", variant: "${demoVariant}"`)}
+                          aria-label={demoIsIconOnly ? 'Tombol Aksi' : undefined}
                         >
-                          {demoButtonText}
+                          {!demoIsIconOnly && demoButtonText}
                         </Button>
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
@@ -1257,11 +1612,11 @@ export default function App() {
                   </CardContent>
                 </Card>
 
-                {/* Varian Tombol */}
+                {/* Varian Tombol Figma v3.1 */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Varian Tombol Standar</CardTitle>
-                    <CardDescription>Pilihan tema visual sesuai hirarki tindakan pengguna</CardDescription>
+                    <CardTitle>Varian Tombol Resmi (Figma v3.1)</CardTitle>
+                    <CardDescription>Pilihan tema visual lengkap sesuai hierarki tindakan dan peruntukan antarmuka</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap items-center gap-3">
@@ -1269,38 +1624,51 @@ export default function App() {
                       <Button variant="secondary">Secondary</Button>
                       <Button variant="outline">Outline</Button>
                       <Button variant="ghost">Ghost</Button>
-                      <Button variant="success">Success</Button>
+                      <Button variant="subtle">Subtle</Button>
                       <Button variant="danger">Danger</Button>
+                      <Button variant="danger-outline">Danger Outline</Button>
+                      <Button variant="danger-subtle">Danger Subtle</Button>
+                      <Button variant="success">Success</Button>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Ukuran Tombol */}
+                {/* Ukuran Tombol & Icon-Only */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Ukuran Tombol</CardTitle>
-                    <CardDescription>Tersedia dalam 3 ukuran standar: sm, md, dan lg</CardDescription>
+                    <CardTitle>4 Ukuran Tombol (LG, MD, SM, XS) &amp; Icon-Only</CardTitle>
+                    <CardDescription>Tersedia dalam 4 ukuran standar proporsional dengan dukungan tombol bujur sangkar (iconOnly)</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <Button size="sm">Small (sm)</Button>
-                      <Button size="md">Medium (md)</Button>
-                      <Button size="lg">Large (lg)</Button>
+                      <Button size="lg" leftIcon={<Icon icon={IconPlus} size="sm" />}>Large (48px)</Button>
+                      <Button size="md" leftIcon={<Icon icon={IconPlus} size="sm" />}>Medium (40px)</Button>
+                      <Button size="sm" leftIcon={<Icon icon={IconPlus} size="xs" />}>Small (32px)</Button>
+                      <Button size="xs" leftIcon={<Icon icon={IconPlus} size="xs" />}>Extra Small (28px)</Button>
+                    </div>
+                    <div className="flex items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-xs font-semibold text-slate-500">Icon Only:</span>
+                      <Button size="lg" iconOnly leftIcon={<Icon icon={IconPlus} size="sm" />} aria-label="Large Icon" />
+                      <Button size="md" iconOnly leftIcon={<Icon icon={IconPlus} size="sm" />} aria-label="Medium Icon" />
+                      <Button size="sm" iconOnly leftIcon={<Icon icon={IconPlus} size="xs" />} aria-label="Small Icon" />
+                      <Button size="xs" iconOnly leftIcon={<Icon icon={IconPlus} size="xs" />} aria-label="Extra Small Icon" />
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Status & Loading */}
+                {/* Status, Loading & Skeleton */}
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
                   <CardHeader>
-                    <CardTitle>Status Loading &amp; Disabled</CardTitle>
-                    <CardDescription>Indikator proses latar belakang dan status nonaktif</CardDescription>
+                    <CardTitle>Status Interaksi, Loading &amp; Skeleton</CardTitle>
+                    <CardDescription>Indikator proses latar belakang, status nonaktif, dan skeleton loading pulse</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap items-center gap-3">
                       <Button isLoading>Sedang Memproses...</Button>
                       <Button disabled>Disabled Button</Button>
                       <Button variant="outline" disabled>Outline Disabled</Button>
+                      <Button skeleton size="md">Placeholder</Button>
+                      <Button skeleton size="md" iconOnly />
                     </div>
                   </CardContent>
                 </Card>

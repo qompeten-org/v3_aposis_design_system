@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import type { Icon as TablerIconType, IconProps as TablerIconProps } from '@tabler/icons-react';
 
-export type IconSize = 'sm' | 'md' | 'lg';
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export interface IconProps extends Omit<TablerIconProps, 'size'> {
   icon: TablerIconType | React.ComponentType<any>;
@@ -11,6 +11,7 @@ export interface IconProps extends Omit<TablerIconProps, 'size'> {
 }
 
 export const iconSizes = {
+  xs: { size: 14, strokeWidth: 1.25 },
   sm: { size: 16, strokeWidth: 1.25 },
   md: { size: 20, strokeWidth: 1.5 },
   lg: { size: 24, strokeWidth: 2 },
