@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Button,
   type ButtonVariant,
@@ -17,7 +17,7 @@ import {
   Link,
   Radio,
   RadioGroup,
-} from '../atoms';
+} from "../atoms";
 import {
   FormField,
   SearchBar,
@@ -35,7 +35,8 @@ import {
   type NotificationPosition,
   type NotificationLayout,
   type NotificationMultiStyle,
-} from '../molecules';
+  Toggle,
+} from "../molecules";
 import {
   Card,
   CardHeader,
@@ -48,7 +49,7 @@ import {
   Sidebar,
   DataTable,
   type Column,
-} from '../organisms';
+} from "../organisms";
 import {
   IconComponents,
   IconLayout,
@@ -93,141 +94,193 @@ import {
   IconInfoCircle,
   IconHelpCircle,
   IconBell,
-} from '@tabler/icons-react';
-import { units } from '../tokens/units';
-import { primitiveColors } from '../tokens/colors';
+  IconToggleLeft
+} from "@tabler/icons-react";
+import { units } from "../tokens/units";
+import { primitiveColors } from "../tokens/colors";
 
 interface StudentData {
   id: string;
   name: string;
   nisn: string;
   class: string;
-  status: 'active' | 'graduated' | 'pending';
+  status: "active" | "graduated" | "pending";
   gpa: number;
 }
 
 const mockStudents: StudentData[] = [
-  { id: '1', name: 'Ahmad Fauzi', nisn: '0051283921', class: 'XII IPA 1', status: 'active', gpa: 3.85 },
-  { id: '2', name: 'Siti Rahmawati', nisn: '0058291032', class: 'XII IPA 2', status: 'active', gpa: 3.92 },
-  { id: '3', name: 'Budi Santoso', nisn: '0049281729', class: 'XII IPS 1', status: 'graduated', gpa: 3.65 },
-  { id: '4', name: 'Dewi Lestari', nisn: '0057192834', class: 'XI IPA 3', status: 'pending', gpa: 3.40 },
-  { id: '5', name: 'Rizky Pratama', nisn: '0053918274', class: 'X-B', status: 'active', gpa: 3.78 },
+  {
+    id: "1",
+    name: "Ahmad Fauzi",
+    nisn: "0051283921",
+    class: "XII IPA 1",
+    status: "active",
+    gpa: 3.85,
+  },
+  {
+    id: "2",
+    name: "Siti Rahmawati",
+    nisn: "0058291032",
+    class: "XII IPA 2",
+    status: "active",
+    gpa: 3.92,
+  },
+  {
+    id: "3",
+    name: "Budi Santoso",
+    nisn: "0049281729",
+    class: "XII IPS 1",
+    status: "graduated",
+    gpa: 3.65,
+  },
+  {
+    id: "4",
+    name: "Dewi Lestari",
+    nisn: "0057192834",
+    class: "XI IPA 3",
+    status: "pending",
+    gpa: 3.4,
+  },
+  {
+    id: "5",
+    name: "Rizky Pratama",
+    nisn: "0053918274",
+    class: "X-B",
+    status: "active",
+    gpa: 3.78,
+  },
 ];
 
 const BUTTON_SPEC_MODES = [
   {
-    id: 'primary',
-    name: 'Blue Mode (Primary)',
-    desc: 'Solid brand blue untuk tindakan utama / primer',
-    variant: 'primary' as ButtonVariant,
-    badge: 'Brand Blue',
-    badgeClass: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
-    hoverClass: 'bg-aposis-blue-70 shadow',
-    activeClass: 'bg-aposis-blue-80',
-    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+    id: "primary",
+    name: "Blue Mode (Primary)",
+    desc: "Solid brand blue untuk tindakan utama / primer",
+    variant: "primary" as ButtonVariant,
+    badge: "Brand Blue",
+    badgeClass: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+    hoverClass: "bg-aposis-blue-70 shadow",
+    activeClass: "bg-aposis-blue-80",
+    focusRing:
+      "ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900",
   },
   {
-    id: 'secondary',
-    name: 'Dark Mode (Secondary)',
-    desc: 'Solid dark slate / black untuk aksi netral kontras tinggi',
-    variant: 'secondary' as ButtonVariant,
-    badge: 'Slate 900',
-    badgeClass: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200',
-    hoverClass: 'bg-slate-800 dark:bg-slate-700',
-    activeClass: 'bg-slate-950 dark:bg-slate-900',
-    focusRing: 'ring-2 ring-offset-2 ring-slate-700 ring-offset-white dark:ring-offset-slate-900',
+    id: "secondary",
+    name: "Dark Mode (Secondary)",
+    desc: "Solid dark slate / black untuk aksi netral kontras tinggi",
+    variant: "secondary" as ButtonVariant,
+    badge: "Slate 900",
+    badgeClass:
+      "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200",
+    hoverClass: "bg-slate-800 dark:bg-slate-700",
+    activeClass: "bg-slate-950 dark:bg-slate-900",
+    focusRing:
+      "ring-2 ring-offset-2 ring-slate-700 ring-offset-white dark:ring-offset-slate-900",
   },
   {
-    id: 'outline',
-    name: 'Outline Mode',
-    desc: 'Bordered light background untuk tindakan sekunder',
-    variant: 'outline' as ButtonVariant,
-    badge: 'Bordered',
-    badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    hoverClass: 'bg-slate-100 border-slate-400 dark:bg-slate-800',
-    activeClass: 'bg-slate-200 dark:bg-slate-700',
-    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+    id: "outline",
+    name: "Outline Mode",
+    desc: "Bordered light background untuk tindakan sekunder",
+    variant: "outline" as ButtonVariant,
+    badge: "Bordered",
+    badgeClass:
+      "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+    hoverClass: "bg-slate-100 border-slate-400 dark:bg-slate-800",
+    activeClass: "bg-slate-200 dark:bg-slate-700",
+    focusRing:
+      "ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900",
   },
   {
-    id: 'subtle',
-    name: 'Subtle / Ghost Mode',
-    desc: 'Soft tint blue & transparan untuk aksi pendukung / tertier',
-    variant: 'subtle' as ButtonVariant,
-    badge: 'Soft Tint',
-    badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-    hoverClass: 'bg-blue-100 dark:bg-blue-950/80',
-    activeClass: 'bg-blue-200 dark:bg-blue-900/60',
-    focusRing: 'ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900',
+    id: "subtle",
+    name: "Subtle / Ghost Mode",
+    desc: "Soft tint blue & transparan untuk aksi pendukung / tertier",
+    variant: "subtle" as ButtonVariant,
+    badge: "Soft Tint",
+    badgeClass: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    hoverClass: "bg-blue-100 dark:bg-blue-950/80",
+    activeClass: "bg-blue-200 dark:bg-blue-900/60",
+    focusRing:
+      "ring-2 ring-offset-2 ring-aposis-blue-60 ring-offset-white dark:ring-offset-slate-900",
   },
   {
-    id: 'danger',
-    name: 'Red Mode (Danger / Destructive)',
-    desc: 'Solid rose red untuk tindakan destruktif atau peringatan kritis',
-    variant: 'danger' as ButtonVariant,
-    badge: 'Critical Action',
-    badgeClass: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
-    hoverClass: 'bg-rose-700 shadow',
-    activeClass: 'bg-rose-800',
-    focusRing: 'ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900',
+    id: "danger",
+    name: "Red Mode (Danger / Destructive)",
+    desc: "Solid rose red untuk tindakan destruktif atau peringatan kritis",
+    variant: "danger" as ButtonVariant,
+    badge: "Critical Action",
+    badgeClass: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
+    hoverClass: "bg-rose-700 shadow",
+    activeClass: "bg-rose-800",
+    focusRing:
+      "ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900",
   },
   {
-    id: 'danger-outline',
-    name: 'Red Outline & Subtle Mode',
-    desc: 'Border merah dan soft tint red untuk konfirmasi hapus',
-    variant: 'danger-outline' as ButtonVariant,
-    badge: 'Destructive Border',
-    badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
-    hoverClass: 'bg-rose-50 border-rose-400 dark:bg-rose-950/40',
-    activeClass: 'bg-rose-100 dark:bg-rose-950/70',
-    focusRing: 'ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900',
+    id: "danger-outline",
+    name: "Red Outline & Subtle Mode",
+    desc: "Border merah dan soft tint red untuk konfirmasi hapus",
+    variant: "danger-outline" as ButtonVariant,
+    badge: "Destructive Border",
+    badgeClass: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300",
+    hoverClass: "bg-rose-50 border-rose-400 dark:bg-rose-950/40",
+    activeClass: "bg-rose-100 dark:bg-rose-950/70",
+    focusRing:
+      "ring-2 ring-offset-2 ring-rose-500 ring-offset-white dark:ring-offset-slate-900",
   },
 ];
 
 function ButtonV31SpecMatrix() {
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
-  const filteredModes = selectedFilter === 'all'
-    ? BUTTON_SPEC_MODES
-    : BUTTON_SPEC_MODES.filter((m) => m.id === selectedFilter);
+  const filteredModes =
+    selectedFilter === "all"
+      ? BUTTON_SPEC_MODES
+      : BUTTON_SPEC_MODES.filter((m) => m.id === selectedFilter);
 
-  const sizesConfig: { size: ButtonSize; label: string; px: string; iconSize: 'xs' | 'sm' | 'md' }[] = [
-    { size: 'lg', label: 'Large (LG)', px: '48px', iconSize: 'sm' },
-    { size: 'md', label: 'Medium (MD)', px: '40px', iconSize: 'sm' },
-    { size: 'sm', label: 'Small (SM)', px: '32px', iconSize: 'xs' },
-    { size: 'xs', label: 'Extra Small (XS)', px: '28px', iconSize: 'xs' },
+  const sizesConfig: {
+    size: ButtonSize;
+    label: string;
+    px: string;
+    iconSize: "xs" | "sm" | "md";
+  }[] = [
+    { size: "lg", label: "Large (LG)", px: "48px", iconSize: "sm" },
+    { size: "md", label: "Medium (MD)", px: "40px", iconSize: "sm" },
+    { size: "sm", label: "Small (SM)", px: "32px", iconSize: "xs" },
+    { size: "xs", label: "Extra Small (XS)", px: "28px", iconSize: "xs" },
   ];
 
   const states = [
-    { id: 'default', label: 'Default', badge: 'Normal' },
-    { id: 'hover', label: 'Hover', badge: 'Mouse Over' },
-    { id: 'active', label: 'Pressed', badge: 'Active' },
-    { id: 'focus', label: 'Focus', badge: 'Ring 2px' },
-    { id: 'disabled', label: 'Disabled', badge: 'Nonaktif' },
-    { id: 'skeleton', label: 'Skeleton', badge: 'Loading Pulse' },
+    { id: "default", label: "Default", badge: "Normal" },
+    { id: "hover", label: "Hover", badge: "Mouse Over" },
+    { id: "active", label: "Pressed", badge: "Active" },
+    { id: "focus", label: "Focus", badge: "Ring 2px" },
+    { id: "disabled", label: "Disabled", badge: "Nonaktif" },
+    { id: "skeleton", label: "Skeleton", badge: "Loading Pulse" },
   ];
-
+  
   return (
-    <Card className="dark:bg-slate-900 dark:border-slate-800 overflow-hidden shadow-sm">
-      <CardHeader className="bg-slate-50/70 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <Card className="overflow-hidden shadow-sm dark:bg-slate-900 dark:border-slate-800">
+      <CardHeader className="border-b bg-slate-50/70 dark:bg-slate-800/60 border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
           <div>
             <CardTitle className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-aposis-blue-60 animate-pulse" />
               Matriks Spesifikasi Button v3.1 (Resmi Figma)
             </CardTitle>
             <CardDescription>
-              Hierarki varian tombol dalam 4 ukuran (LG, MD, SM, XS) serta 6 status interaksi (Default, Hover, Active, Focus, Disabled, Skeleton)
+              Hierarki varian tombol dalam 4 ukuran (LG, MD, SM, XS) serta 6
+              status interaksi (Default, Hover, Active, Focus, Disabled,
+              Skeleton)
             </CardDescription>
           </div>
           {/* Mode Filter Buttons */}
-          <div className="flex flex-wrap gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+          <div className="flex flex-wrap gap-1 p-1 text-xs bg-white border dark:bg-slate-900 rounded-xl border-slate-200 dark:border-slate-700">
             <button
               type="button"
-              onClick={() => setSelectedFilter('all')}
+              onClick={() => setSelectedFilter("all")}
               className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
-                selectedFilter === 'all'
-                  ? 'bg-aposis-blue-60 text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                selectedFilter === "all"
+                  ? "bg-aposis-blue-60 text-white shadow-xs"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               Semua Mode ({BUTTON_SPEC_MODES.length})
@@ -239,11 +292,11 @@ function ButtonV31SpecMatrix() {
                 onClick={() => setSelectedFilter(m.id)}
                 className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
                   selectedFilter === m.id
-                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? "bg-aposis-blue-60 text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {m.name.split(' ')[0]}
+                {m.name.split(" ")[0]}
               </button>
             ))}
           </div>
@@ -253,17 +306,25 @@ function ButtonV31SpecMatrix() {
         <div className="overflow-x-auto">
           <div className="min-w-[880px] divide-y divide-slate-100 dark:divide-slate-800">
             {/* Table Header: Sizes */}
-            <div className="grid grid-cols-9 bg-slate-100/70 dark:bg-slate-800/80 px-4 py-3 text-xs font-semibold text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-9 px-4 py-3 text-xs font-semibold border-b bg-slate-100/70 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700">
               <div className="col-span-1">Status / State</div>
               {sizesConfig.map((s) => (
                 <React.Fragment key={s.size}>
                   <div className="col-span-1 text-center">
-                    <span className="text-slate-900 dark:text-white font-bold">{s.label.split(' ')[0]}</span>
-                    <span className="text-[10px] text-slate-400 block font-normal">{s.px} • Text</span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {s.label.split(" ")[0]}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      {s.px} • Text
+                    </span>
                   </div>
                   <div className="col-span-1 text-center">
-                    <span className="text-slate-900 dark:text-white font-bold">{s.label.split(' ')[0]}</span>
-                    <span className="text-[10px] text-slate-400 block font-normal">Icon Only</span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {s.label.split(" ")[0]}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      Icon Only
+                    </span>
                   </div>
                 </React.Fragment>
               ))}
@@ -271,12 +332,19 @@ function ButtonV31SpecMatrix() {
 
             {/* Render Each Mode Section */}
             {filteredModes.map((mode) => (
-              <div key={mode.id} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+              <div
+                key={mode.id}
+                className="p-4 space-y-3 bg-white dark:bg-slate-900"
+              >
                 {/* Section Title */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-slate-900 dark:text-white">{mode.name}</span>
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${mode.badgeClass}`}>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                      {mode.name}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${mode.badgeClass}`}
+                    >
                       {mode.badge}
                     </span>
                   </div>
@@ -290,28 +358,32 @@ function ButtonV31SpecMatrix() {
                       key={st.id}
                       className="grid grid-cols-9 items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
                     >
-                      <div className="col-span-1 flex flex-col">
-                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{st.label}</span>
-                        <span className="text-[10px] text-slate-400">{st.badge}</span>
+                      <div className="flex flex-col col-span-1">
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                          {st.label}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {st.badge}
+                        </span>
                       </div>
 
                       {sizesConfig.map((s) => {
                         const icon = <Icon icon={IconPlus} size={s.iconSize} />;
-                        const isSkeleton = st.id === 'skeleton';
-                        const isDisabled = st.id === 'disabled';
+                        const isSkeleton = st.id === "skeleton";
+                        const isDisabled = st.id === "disabled";
                         const additionalClass =
-                          st.id === 'hover'
+                          st.id === "hover"
                             ? mode.hoverClass
-                            : st.id === 'active'
-                            ? mode.activeClass
-                            : st.id === 'focus'
-                            ? mode.focusRing
-                            : undefined;
+                            : st.id === "active"
+                              ? mode.activeClass
+                              : st.id === "focus"
+                                ? mode.focusRing
+                                : undefined;
 
                         return (
                           <React.Fragment key={s.size}>
                             {/* Text + Icon Button */}
-                            <div className="col-span-1 flex justify-center">
+                            <div className="flex justify-center col-span-1">
                               <Button
                                 variant={mode.variant}
                                 size={s.size}
@@ -325,7 +397,7 @@ function ButtonV31SpecMatrix() {
                             </div>
 
                             {/* Icon-Only Button */}
-                            <div className="col-span-1 flex justify-center">
+                            <div className="flex justify-center col-span-1">
                               <Button
                                 variant={mode.variant}
                                 size={s.size}
@@ -353,14 +425,15 @@ function ButtonV31SpecMatrix() {
 }
 
 export default function App() {
-  const [selectedId, setSelectedId] = useState('button');
+  const [selectedId, setSelectedId] = useState("button");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotifActive, setIsNotifActive] = useState<boolean>(false);
   const mainRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
-    mainRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    mainRef.current?.scrollTo({ top: 0, behavior: "instant" });
   }, [selectedId]);
 
   // Component test states
@@ -368,66 +441,81 @@ export default function App() {
   const [isAlertVisible, setIsAlertVisible] = useState(true);
   const [tablePage, setTablePage] = useState(1);
   const [sidebarDemoCollapsed, setSidebarDemoCollapsed] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [checkboxChecked, setCheckboxChecked] = useState(true);
-  const [activeTabDemo, setActiveTabDemo] = useState('tab1');
+  const [activeTabDemo, setActiveTabDemo] = useState("tab1");
   // Interactive Radio Configurator state
-  const [radioConfigVariant, setRadioConfigVariant] = useState<'default' | 'card'>('default');
-  const [radioConfigSize, setRadioConfigSize] = useState<'sm' | 'md' | 'lg'>('md');
-  const [radioConfigLabelPos, setRadioConfigLabelPos] = useState<'right' | 'left' | 'bottom' | 'top' | 'none'>('right');
-  const [radioConfigMode, setRadioConfigMode] = useState<'group' | 'single'>('group');
-  const [radioConfigOrientation, setRadioConfigOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [radioConfigVariant, setRadioConfigVariant] = useState<
+    "default" | "card"
+  >("default");
+  const [radioConfigSize, setRadioConfigSize] = useState<"sm" | "md" | "lg">(
+    "md",
+  );
+  const [radioConfigLabelPos, setRadioConfigLabelPos] = useState<
+    "right" | "left" | "bottom" | "top" | "none"
+  >("right");
+  const [radioConfigMode, setRadioConfigMode] = useState<"group" | "single">(
+    "group",
+  );
+  const [radioConfigOrientation, setRadioConfigOrientation] = useState<
+    "horizontal" | "vertical"
+  >("horizontal");
   const [radioConfigDisabled, setRadioConfigDisabled] = useState(false);
   const [radioConfigInvalid, setRadioConfigInvalid] = useState(false);
   const [radioConfigHasDesc, setRadioConfigHasDesc] = useState(false);
   const [radioConfigWrapForm, setRadioConfigWrapForm] = useState(false);
-  const [radioConfigSelected, setRadioConfigSelected] = useState('opt1');
-  const [radioConfigCustomLabel, setRadioConfigCustomLabel] = useState('Pilihan Utama');
+  const [radioConfigSelected, setRadioConfigSelected] = useState("opt1");
+  const [radioConfigCustomLabel, setRadioConfigCustomLabel] =
+    useState("Pilihan Utama");
 
   // Interactive Tooltip Configurator state
-  const [tooltipPos, setTooltipPos] = useState<TooltipPosition>('top');
-  const [tooltipSize, setTooltipSize] = useState<TooltipSize>('md');
-  const [tooltipVariant, setTooltipVariant] = useState<TooltipVariant>('default');
+  const [tooltipPos, setTooltipPos] = useState<TooltipPosition>("top");
+  const [tooltipSize, setTooltipSize] = useState<TooltipSize>("md");
+  const [tooltipVariant, setTooltipVariant] =
+    useState<TooltipVariant>("default");
   const [tooltipArrow, setTooltipArrow] = useState<boolean>(true);
-  const [tooltipText, setTooltipText] = useState<string>('Tooltip text');
-  const [tooltipTriggerText, setTooltipTriggerText] = useState<string>('Definition tooltip');
+  const [tooltipText, setTooltipText] = useState<string>("Tooltip text");
+  const [tooltipTriggerText, setTooltipTriggerText] =
+    useState<string>("Definition tooltip");
 
   // Interactive Notification Configurator state
-  const [notifVariant, setNotifVariant] = useState<NotificationVariant>('info');
-  const [notifPos, setNotifPos] = useState<NotificationPosition>('top-right');
-  const [notifMultiStyle, setNotifMultiStyle] = useState<NotificationMultiStyle>('default');
+  const [notifVariant, setNotifVariant] = useState<NotificationVariant>("info");
+  const [notifPos, setNotifPos] = useState<NotificationPosition>("top-right");
+  const [notifMultiStyle, setNotifMultiStyle] =
+    useState<NotificationMultiStyle>("default");
   const [notifShowProgress, setNotifShowProgress] = useState<boolean>(true);
-  const [notifTeks, setNotifTeks] = useState<string>('Notification');
+  const [notifTeks, setNotifTeks] = useState<string>("Notification");
   const [notifDescription, setNotifDescription] = useState<string>(
-    'Information notification message'
+    "Information notification message",
   );
   const [notifDuration, setNotifDuration] = useState<number>(4000);
   const [notifHasAction, setNotifHasAction] = useState<boolean>(true);
-  const [notifActionLabel, setNotifActionLabel] = useState<string>('Action');
+  const [notifActionLabel, setNotifActionLabel] = useState<string>("Action");
   const [notifCustomIcon, setNotifCustomIcon] = useState<boolean>(false);
   const [notifPreviewKey, setNotifPreviewKey] = useState<number>(0);
 
   // Interactive Button Configurator state
-  const [demoVariant, setDemoVariant] = useState<ButtonVariant>('primary');
-  const [demoSize, setDemoSize] = useState<ButtonSize>('md');
+  const [demoVariant, setDemoVariant] = useState<ButtonVariant>("primary");
+  const [demoSize, setDemoSize] = useState<ButtonSize>("md");
   const [demoIsIconOnly, setDemoIsIconOnly] = useState(false);
   const [demoIsSkeleton, setDemoIsSkeleton] = useState(false);
   const [demoHasLeftIcon, setDemoHasLeftIcon] = useState(true);
-  const [demoLeftIconName, setDemoLeftIconName] = useState<string>('IconPlus');
+  const [demoLeftIconName, setDemoLeftIconName] = useState<string>("IconPlus");
   const [demoHasRightIcon, setDemoHasRightIcon] = useState(false);
-  const [demoRightIconName, setDemoRightIconName] = useState<string>('IconArrowRight');
-  const [demoCustomId, setDemoCustomId] = useState('btn-simpan');
-  const [demoCustomClass, setDemoCustomClass] = useState('');
-  const [demoButtonText, setDemoButtonText] = useState('Button');
+  const [demoRightIconName, setDemoRightIconName] =
+    useState<string>("IconArrowRight");
+  const [demoCustomId, setDemoCustomId] = useState("btn-simpan");
+  const [demoCustomClass, setDemoCustomClass] = useState("");
+  const [demoButtonText, setDemoButtonText] = useState("Button");
   const [demoIsLoading, setDemoIsLoading] = useState(false);
   const [demoIsDisabled, setDemoIsDisabled] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   };
 
@@ -438,114 +526,163 @@ export default function App() {
   };
 
   const demoIcons: Record<string, { label: string; icon: any }> = {
-    IconPlus: { label: 'Plus (Tambah)', icon: IconPlus },
-    IconDeviceFloppy: { label: 'Floppy (Simpan)', icon: IconDeviceFloppy },
-    IconSearch: { label: 'Search (Cari)', icon: IconSearch },
-    IconDownload: { label: 'Download (Unduh)', icon: IconDownload },
-    IconEdit: { label: 'Edit (Ubah)', icon: IconEdit },
-    IconArrowRight: { label: 'ArrowRight (Lanjut)', icon: IconArrowRight },
-    IconSend: { label: 'Send (Kirim)', icon: IconSend },
-    IconTrash: { label: 'Trash (Hapus)', icon: IconTrash },
-    IconChevronDown: { label: 'ChevronDown (Dropdown)', icon: IconChevronDown },
-    IconSettings: { label: 'Settings (Pengaturan)', icon: IconSettings },
-    IconHeart: { label: 'Heart (Favorit)', icon: IconHeart },
+    IconPlus: { label: "Plus (Tambah)", icon: IconPlus },
+    IconDeviceFloppy: { label: "Floppy (Simpan)", icon: IconDeviceFloppy },
+    IconSearch: { label: "Search (Cari)", icon: IconSearch },
+    IconDownload: { label: "Download (Unduh)", icon: IconDownload },
+    IconEdit: { label: "Edit (Ubah)", icon: IconEdit },
+    IconArrowRight: { label: "ArrowRight (Lanjut)", icon: IconArrowRight },
+    IconSend: { label: "Send (Kirim)", icon: IconSend },
+    IconTrash: { label: "Trash (Hapus)", icon: IconTrash },
+    IconChevronDown: { label: "ChevronDown (Dropdown)", icon: IconChevronDown },
+    IconSettings: { label: "Settings (Pengaturan)", icon: IconSettings },
+    IconHeart: { label: "Heart (Favorit)", icon: IconHeart },
   };
 
   const dynamicButtonCode = useMemo(() => {
-    const imports = ['Button'];
-    if (demoHasLeftIcon || demoHasRightIcon) imports.push('Icon');
+    const imports = ["Button"];
+    if (demoHasLeftIcon || demoHasRightIcon) imports.push("Icon");
 
     const iconImports = new Set<string>();
     if (demoHasLeftIcon) iconImports.add(demoLeftIconName);
     if (demoHasRightIcon) iconImports.add(demoRightIconName);
 
-    let res = `import { ${imports.join(', ')} } from '@aposis/design-system';\n`;
+    let res = `import { ${imports.join(", ")} } from '@aposis/design-system';\n`;
     if (iconImports.size > 0) {
-      res += `import { ${Array.from(iconImports).join(', ')} } from '@tabler/icons-react';\n`;
+      res += `import { ${Array.from(iconImports).join(", ")} } from '@tabler/icons-react';\n`;
     }
     res += `\n<Button`;
     if (demoCustomId.trim()) res += `\n  id="${demoCustomId.trim()}"`;
-    if (demoVariant !== 'primary') res += `\n  variant="${demoVariant}"`;
-    if (demoSize !== 'md') res += `\n  size="${demoSize}"`;
+    if (demoVariant !== "primary") res += `\n  variant="${demoVariant}"`;
+    if (demoSize !== "md") res += `\n  size="${demoSize}"`;
     if (demoIsIconOnly) res += `\n  iconOnly`;
     if (demoIsSkeleton) res += `\n  skeleton`;
-    if (demoHasLeftIcon) res += `\n  leftIcon={<Icon icon={${demoLeftIconName}} size="${demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'}" />}`;
-    if (demoHasRightIcon && !demoIsIconOnly) res += `\n  rightIcon={<Icon icon={${demoRightIconName}} size="${demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'}" />}`;
+    if (demoHasLeftIcon)
+      res += `\n  leftIcon={<Icon icon={${demoLeftIconName}} size="${demoSize === "lg" ? "md" : demoSize === "xs" ? "xs" : "sm"}" />}`;
+    if (demoHasRightIcon && !demoIsIconOnly)
+      res += `\n  rightIcon={<Icon icon={${demoRightIconName}} size="${demoSize === "lg" ? "md" : demoSize === "xs" ? "xs" : "sm"}" />}`;
     if (demoIsLoading) res += `\n  isLoading`;
     if (demoIsDisabled) res += `\n  disabled`;
-    if (demoCustomClass.trim()) res += `\n  className="${demoCustomClass.trim()}"`;
+    if (demoCustomClass.trim())
+      res += `\n  className="${demoCustomClass.trim()}"`;
     if (demoIsIconOnly || demoIsSkeleton) {
       res += `\n/>`;
     } else {
       res += `\n>\n  ${demoButtonText}\n</Button>`;
     }
     return res;
-  }, [demoVariant, demoSize, demoIsIconOnly, demoIsSkeleton, demoHasLeftIcon, demoLeftIconName, demoHasRightIcon, demoRightIconName, demoCustomId, demoCustomClass, demoButtonText, demoIsLoading, demoIsDisabled]);
+  }, [
+    demoVariant,
+    demoSize,
+    demoIsIconOnly,
+    demoIsSkeleton,
+    demoHasLeftIcon,
+    demoLeftIconName,
+    demoHasRightIcon,
+    demoRightIconName,
+    demoCustomId,
+    demoCustomClass,
+    demoButtonText,
+    demoIsLoading,
+    demoIsDisabled,
+  ]);
 
   const dynamicRadioCode = useMemo(() => {
-    const isGroup = radioConfigMode === 'group';
+    const isGroup = radioConfigMode === "group";
     const imports = new Set<string>();
-    if (radioConfigWrapForm) imports.add('FormField');
-    if (isGroup) imports.add('RadioGroup');
-    imports.add('Radio');
+    if (radioConfigWrapForm) imports.add("FormField");
+    if (isGroup) imports.add("RadioGroup");
+    imports.add("Radio");
 
-    let code = `import React, { useState } from 'react';\nimport { ${Array.from(imports).join(', ')} } from '@aposis/design-system';\n\n`;
+    let code = `import React, { useState } from 'react';\nimport { ${Array.from(imports).join(", ")} } from '@aposis/design-system';\n\n`;
 
     const labelPosAttr =
-      radioConfigLabelPos !== 'right' && radioConfigLabelPos !== 'none'
+      radioConfigLabelPos !== "right" && radioConfigLabelPos !== "none"
         ? `\n  labelPosition="${radioConfigLabelPos}"`
-        : '';
-    const sizeAttr = radioConfigSize !== 'md' ? `\n  size="${radioConfigSize}"` : '';
-    const variantAttr = radioConfigVariant !== 'default' ? `\n  variant="${radioConfigVariant}"` : '';
-    const disabledAttr = radioConfigDisabled ? `\n  disabled` : '';
-    const invalidAttr = radioConfigInvalid ? `\n  isInvalid` : '';
+        : "";
+    const sizeAttr =
+      radioConfigSize !== "md" ? `\n  size="${radioConfigSize}"` : "";
+    const variantAttr =
+      radioConfigVariant !== "default"
+        ? `\n  variant="${radioConfigVariant}"`
+        : "";
+    const disabledAttr = radioConfigDisabled ? `\n  disabled` : "";
+    const invalidAttr = radioConfigInvalid ? `\n  isInvalid` : "";
 
     if (isGroup) {
       code += `const [selectedValue, setSelectedValue] = useState('${radioConfigSelected}');\n\n`;
 
       let groupContent = `<RadioGroup\n  name="pilihan"\n  value={selectedValue}\n  onChange={setSelectedValue}`;
-      if (radioConfigOrientation !== 'vertical') groupContent += `\n  orientation="${radioConfigOrientation}"`;
+      if (radioConfigOrientation !== "vertical")
+        groupContent += `\n  orientation="${radioConfigOrientation}"`;
       groupContent += `${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}`;
-      if (radioConfigVariant === 'card') groupContent += `\n  className="grid grid-cols-1 sm:grid-cols-2 gap-3"`;
+      if (radioConfigVariant === "card")
+        groupContent += `\n  className="grid grid-cols-1 gap-3 sm:grid-cols-2"`;
       groupContent += `\n>\n`;
 
       const options = [
-        { val: 'opt1', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Pertama', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 1' : undefined },
-        { val: 'opt2', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 2' : undefined },
-        { val: 'opt3', label: radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga', desc: radioConfigHasDesc ? 'Keterangan pembantu untuk opsi 3' : undefined },
+        {
+          val: "opt1",
+          label: radioConfigLabelPos === "none" ? undefined : "Opsi Pertama",
+          desc: radioConfigHasDesc
+            ? "Keterangan pembantu untuk opsi 1"
+            : undefined,
+        },
+        {
+          val: "opt2",
+          label: radioConfigLabelPos === "none" ? undefined : "Opsi Kedua",
+          desc: radioConfigHasDesc
+            ? "Keterangan pembantu untuk opsi 2"
+            : undefined,
+        },
+        {
+          val: "opt3",
+          label: radioConfigLabelPos === "none" ? undefined : "Opsi Ketiga",
+          desc: radioConfigHasDesc
+            ? "Keterangan pembantu untuk opsi 3"
+            : undefined,
+        },
       ];
 
       options.forEach((opt) => {
         groupContent += `  <Radio value="${opt.val}"`;
         if (opt.label) groupContent += ` label="${opt.label}"`;
         else groupContent += ` aria-label="Opsi ${opt.val}"`;
-        if (opt.desc && radioConfigLabelPos !== 'none') groupContent += ` description="${opt.desc}"`;
+        if (opt.desc && radioConfigLabelPos !== "none")
+          groupContent += ` description="${opt.desc}"`;
         groupContent += ` />\n`;
       });
       groupContent += `</RadioGroup>`;
 
       if (radioConfigWrapForm) {
-        code += `<FormField\n  label="Pilih Kategori"\n  required\n  helperText="Pilih salah satu opsi yang tersedia"${radioConfigInvalid ? '\n  error="Wajib memilih salah satu opsi"' : ''}\n>\n`;
-        code += groupContent.split('\n').map(line => `  ${line}`).join('\n');
+        code += `<FormField\n  label="Pilih Kategori"\n  required\n  helperText="Pilih salah satu opsi yang tersedia"${radioConfigInvalid ? '\n  error="Wajib memilih salah satu opsi"' : ""}\n>\n`;
+        code += groupContent
+          .split("\n")
+          .map((line) => `  ${line}`)
+          .join("\n");
         code += `\n</FormField>`;
       } else {
         code += groupContent;
       }
     } else {
-      code += `const [checked, setChecked] = useState(${radioConfigSelected === 'opt1'});\n\n`;
+      code += `const [checked, setChecked] = useState(${radioConfigSelected === "opt1"});\n\n`;
 
       let singleRadio = `<Radio\n  name="demo"\n  value="1"\n  checked={checked}\n  onChange={(e) => setChecked(e.target.checked)}`;
-      if (radioConfigLabelPos !== 'none') {
-        singleRadio += `\n  label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
-        if (radioConfigHasDesc) singleRadio += `\n  description="Keterangan pembantu di bawah label"`;
+      if (radioConfigLabelPos !== "none") {
+        singleRadio += `\n  label="${radioConfigCustomLabel || "Pilihan Utama"}"`;
+        if (radioConfigHasDesc)
+          singleRadio += `\n  description="Keterangan pembantu di bawah label"`;
       } else {
-        singleRadio += `\n  aria-label="${radioConfigCustomLabel || 'Pilihan Utama'}"`;
+        singleRadio += `\n  aria-label="${radioConfigCustomLabel || "Pilihan Utama"}"`;
       }
       singleRadio += `${sizeAttr}${variantAttr}${labelPosAttr}${disabledAttr}${invalidAttr}\n/>`;
 
       if (radioConfigWrapForm) {
-        code += `<FormField\n  label="Persetujuan"\n  required${radioConfigInvalid ? '\n  error="Harap setujui ketentuan ini"' : ''}\n>\n`;
-        code += singleRadio.split('\n').map(line => `  ${line}`).join('\n');
+        code += `<FormField\n  label="Persetujuan"\n  required${radioConfigInvalid ? '\n  error="Harap setujui ketentuan ini"' : ""}\n>\n`;
+        code += singleRadio
+          .split("\n")
+          .map((line) => `  ${line}`)
+          .join("\n");
         code += `\n</FormField>`;
       } else {
         code += singleRadio;
@@ -569,20 +706,20 @@ export default function App() {
 
   const dynamicTooltipCode = useMemo(() => {
     let code = `import { Tooltip } from '@aposis/design-system';\n`;
-    if (tooltipVariant === 'default') {
+    if (tooltipVariant === "default") {
       code += `import { IconHelpCircle } from '@tabler/icons-react';\n\n`;
     } else {
       code += `\n`;
     }
 
     code += `<Tooltip\n  text="${tooltipText}"`;
-    if (tooltipPos !== 'auto') {
+    if (tooltipPos !== "auto") {
       code += `\n  pos="${tooltipPos}"`;
     }
-    if (tooltipSize !== 'md') {
+    if (tooltipSize !== "md") {
       code += `\n  size="${tooltipSize}"`;
     }
-    if (tooltipVariant !== 'default') {
+    if (tooltipVariant !== "default") {
       code += `\n  variant="${tooltipVariant}"`;
     }
     if (!tooltipArrow) {
@@ -590,10 +727,10 @@ export default function App() {
     }
     code += `\n>\n`;
 
-    if (tooltipVariant === 'definition') {
+    if (tooltipVariant === "definition") {
       code += `  ${tooltipTriggerText}\n`;
     } else {
-      code += `  <button\n    type="button"\n    className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"\n  >\n    <IconHelpCircle size={20} />\n  </button>\n`;
+      code += `  <button\n    type="button"\n    className="p-2 transition-colors rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"\n  >\n    <IconHelpCircle size={20} />\n  </button>\n`;
     }
 
     code += `</Tooltip>`;
@@ -609,30 +746,30 @@ export default function App() {
 
   const tooltipSnippets = [
     {
-      label: 'Penggunaan Dasar (Icon Trigger)',
-      desc: 'Tooltip terhubung dengan tombol ikon bantuan (?) dengan posisi terarah.',
+      label: "Penggunaan Dasar (Icon Trigger)",
+      desc: "Tooltip terhubung dengan tombol ikon bantuan (?) dengan posisi terarah.",
       code: `import { Tooltip } from '@aposis/design-system';\nimport { IconHelpCircle } from '@tabler/icons-react';\n\n<Tooltip text="Tooltip text" pos="top">\n  <button type="button" aria-label="Bantuan">\n    <IconHelpCircle size={20} />\n  </button>\n</Tooltip>`,
     },
     {
-      label: 'Definition Tooltip',
-      desc: 'Teks dengan garis bawah titik-titik (dotted underline) untuk penjelasan istilah atau definisi kata.',
+      label: "Definition Tooltip",
+      desc: "Teks dengan garis bawah titik-titik (dotted underline) untuk penjelasan istilah atau definisi kata.",
       code: `import { Tooltip } from '@aposis/design-system';\n\n<p className="text-sm text-slate-600">\n  Sistem ini menerapkan standar akreditasi{' '}\n  <Tooltip text="Badan Akreditasi Nasional Sekolah/Madrasah" variant="definition">\n    BAN-S/M\n  </Tooltip>{' '}\n  secara berkala.\n</p>`,
     },
     {
       label: 'Posisi Otomatis (pos="auto")',
-      desc: 'Menghitung posisi ideal secara cerdas agar tidak keluar dari batas layar viewport.',
+      desc: "Menghitung posisi ideal secara cerdas agar tidak keluar dari batas layar viewport.",
       code: `import { Tooltip } from '@aposis/design-system';\n\n<Tooltip text="Otomatis menyesuaikan posisi layar" pos="auto">\n  <button className="px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-medium">\n    Arahkan Kursor ke Sini\n  </button>\n</Tooltip>`,
     },
     {
-      label: 'Kustom Styling via className',
-      desc: 'Warna latar, teks, dan garis tepi dapat disesuaikan secara bebas menggunakan class Tailwind.',
-      code: `import { Tooltip } from '@aposis/design-system';\n\n{/* Tooltip bertema Brand Biru */}\n<Tooltip text="Fitur Unggulan" className="bg-blue-600">\n  <span>Arahkan ke Sini</span>\n</Tooltip>\n\n{/* Tooltip bertema Terang (Light) */}\n<Tooltip text="Keterangan Ringan" className="bg-white text-slate-900 border border-slate-200 shadow-lg">\n  <span>Arahkan ke Sini</span>\n</Tooltip>`,
+      label: "Kustom Styling via className",
+      desc: "Warna latar, teks, dan garis tepi dapat disesuaikan secara bebas menggunakan class Tailwind.",
+      code: `import { Tooltip } from '@aposis/design-system';\n\n{/* Tooltip bertema Brand Biru */}\n<Tooltip text="Fitur Unggulan" className="bg-blue-600">\n  <span>Arahkan ke Sini</span>\n</Tooltip>\n\n{/* Tooltip bertema Terang (Light) */}\n<Tooltip text="Keterangan Ringan" className="bg-white border shadow-lg text-slate-900 border-slate-200">\n  <span>Arahkan ke Sini</span>\n</Tooltip>`,
     },
   ];
 
   const dynamicNotificationCode = useMemo(() => {
-    const isError = notifVariant === 'error' || notifVariant === 'danger';
-    const method = isError ? 'error' : notifVariant;
+    const isError = notifVariant === "error" || notifVariant === "danger";
+    const method = isError ? "error" : notifVariant;
 
     let code = `import { notification, Notification } from '@aposis/design-system';\n`;
     if (notifCustomIcon) {
@@ -654,9 +791,9 @@ export default function App() {
     }
     code += `});\n\n`;
     code += `// 2. Atau pasang sebagai Banner Komponen Statis:\n`;
-    code += `<Notification\n  variant="${notifVariant}"\n  teks="${notifTeks.replace(/"/g, '&quot;')}"\n`;
+    code += `<Notification\n  variant="${notifVariant}"\n  teks="${notifTeks.replace(/"/g, "&quot;")}"\n`;
     if (notifDescription.trim()) {
-      code += `  description="${notifDescription.replace(/"/g, '&quot;')}"\n`;
+      code += `  description="${notifDescription.replace(/"/g, "&quot;")}"\n`;
     }
     if (notifHasAction) {
       code += `  actionTrigger={{\n    label: '${notifActionLabel}',\n    onClick: () => console.log('Aksi dijalankan'),\n  }}\n`;
@@ -679,299 +816,630 @@ export default function App() {
 
   const notificationSnippets = [
     {
-      label: 'Dasar (Toast Mandiri)',
-      desc: 'Memanggil notifikasi toast melayang secara programatis pada posisi layar yang dipilih.',
+      label: "Dasar (Toast Mandiri)",
+      desc: "Memanggil notifikasi toast melayang secara programatis pada posisi layar yang dipilih.",
       code: `import { notification } from '@aposis/design-system';\n\n// Panggil kapan saja, misal setelah submit form atau async task:\nnotification.show({\n  teks: 'Notifikasi Berhasil',\n  description: 'Data profil guru telah tersimpan rapi.',\n  variant: 'success',\n  pos: 'top-right',\n  duration: 4000,\n});`,
     },
     {
-      label: '4 Varian Semantik',
-      desc: 'Mendukung varian info, success, warning, dan error dengan palet resmi Aposis.',
+      label: "4 Varian Semantik",
+      desc: "Mendukung varian info, success, warning, dan error dengan palet resmi Aposis.",
       code: `import { notification } from '@aposis/design-system';\n\nnotification.info({ teks: 'Informasi', description: 'Ada fitur kurikulum baru.' });\nnotification.success({ teks: 'Sukses', description: 'Nilai rapor berhasil dikirim.' });\nnotification.warning({ teks: 'Peringatan', description: 'Sisa kuota upload 10%.' });\nnotification.error({ teks: 'Kesalahan', description: 'Gagal menghubungi server database.' });`,
     },
     {
-      label: 'Multiple Notifikasi (Stacking vs Default)',
-      desc: 'Mendukung gaya bertumpuk (stacking deck) atau daftar lurus vertikal (default).',
+      label: "Multiple Notifikasi (Stacking vs Default)",
+      desc: "Mendukung gaya bertumpuk (stacking deck) atau daftar lurus vertikal (default).",
       code: `import { notification, NotificationContainer } from '@aposis/design-system';\n\n// Di root layout aplikasi:\n<NotificationContainer multiStyle="stacking" />\n\n// Panggil beberapa kali:\nnotification.info({ teks: 'Notifikasi 1', description: 'Pesan pertama' });\nnotification.success({ teks: 'Notifikasi 2', description: 'Pesan kedua' });\nnotification.warning({ teks: 'Notifikasi 3', description: 'Pesan ketiga' });`,
     },
     {
-      label: 'Action Trigger & Tombol Tutup',
-      desc: 'Menerima prop actionTrigger berupa objek { label, onClick } atau elemen kustom.',
+      label: "Action Trigger & Tombol Tutup",
+      desc: "Menerima prop actionTrigger berupa objek { label, onClick } atau elemen kustom.",
       code: `import { notification } from '@aposis/design-system';\n\nnotification.info({\n  teks: 'Pembaruan Tersedia',\n  description: 'Versi 3.2 aplikasi siap diunduh.',\n  actionTrigger: {\n    label: 'Perbarui Sekarang',\n    onClick: () => window.location.reload(),\n  },\n  pos: 'bottom-right',\n  duration: 6000,\n});`,
     },
     {
-      label: 'Komponen Statis / Inline',
-      desc: 'Bisa langsung dipasang di dalam halaman atau panel card sebagai banner notifikasi.',
+      label: "Komponen Statis / Inline",
+      desc: "Bisa langsung dipasang di dalam halaman atau panel card sebagai banner notifikasi.",
       code: `import { Notification } from '@aposis/design-system';\n\n<Notification\n  variant="warning"\n  teks="Perhatian"\n  description="Masa pengisian rapor semester ganjil berakhir 3 hari lagi."\n  actionTrigger={{ label: 'Isi Sekarang', onClick: () => alert('Isi') }}\n/>`,
     },
   ];
 
   const buttonSnippets = [
     {
-      label: 'Dasar',
-      desc: 'Penggunaan dasar Button dengan variant dan size standar.',
+      label: "Dasar",
+      desc: "Penggunaan dasar Button dengan variant dan size standar.",
       code: `import { Button } from '@aposis/design-system';\n\n<Button variant="primary" size="md">Simpan Perubahan</Button>`,
     },
     {
-      label: 'Icon di Kiri (leftIcon)',
+      label: "Icon di Kiri (leftIcon)",
       desc: 'Tambahkan prop leftIcon={<Icon icon={IconPlus} size="sm" />} untuk meletakkan ikon di sebelah kiri teks.',
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n<Button\n  variant="primary"\n  leftIcon={<Icon icon={IconPlus} size="sm" />}\n>\n  Tambah Data\n</Button>`,
     },
     {
-      label: 'Icon di Kanan (rightIcon)',
+      label: "Icon di Kanan (rightIcon)",
       desc: 'Tambahkan prop rightIcon={<Icon icon={IconArrowRight} size="sm" />} untuk tombol aksi atau langkah navigasi.',
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconArrowRight } from '@tabler/icons-react';\n\n<Button\n  variant="outline"\n  rightIcon={<Icon icon={IconArrowRight} size="sm" />}\n>\n  Langkah Selanjutnya\n</Button>`,
     },
     {
-      label: 'Icon-Only (Square)',
-      desc: 'Tombol khusus ikon berbentuk bujur sangkar proporsional dengan prop iconOnly.',
+      label: "Icon-Only (Square)",
+      desc: "Tombol khusus ikon berbentuk bujur sangkar proporsional dengan prop iconOnly.",
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n<Button\n  variant="primary"\n  size="md"\n  iconOnly\n  leftIcon={<Icon icon={IconPlus} size="sm" />}\n  aria-label="Tambah Data"\n/>`,
     },
     {
-      label: 'Skeleton State',
-      desc: 'Menampilkan placeholder animasi loading berdenyut (pulse) yang menyesuaikan ukuran button.',
+      label: "Skeleton State",
+      desc: "Menampilkan placeholder animasi loading berdenyut (pulse) yang menyesuaikan ukuran button.",
       code: `import { Button } from '@aposis/design-system';\n\n// Text Button Skeleton:\n<Button size="md" skeleton />\n\n// Icon-Only Skeleton:\n<Button size="md" iconOnly skeleton />`,
     },
     {
-      label: 'Kedua Icon (Kiri & Kanan)',
-      desc: 'Menampilkan ikon di kedua sisi tombol (misal tombol unduh dengan opsi dropdown).',
+      label: "Kedua Icon (Kiri & Kanan)",
+      desc: "Menampilkan ikon di kedua sisi tombol (misal tombol unduh dengan opsi dropdown).",
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconDownload, IconChevronDown } from '@tabler/icons-react';\n\n<Button\n  variant="secondary"\n  leftIcon={<Icon icon={IconDownload} size="sm" />}\n  rightIcon={<Icon icon={IconChevronDown} size="sm" />}\n>\n  Export Dokumen\n</Button>`,
     },
     {
-      label: 'Cara Ganti Ikon Lain',
-      desc: 'Pilih nama ikon dari ribuan pilihan di Tabler Icons lalu import dan pasang ke <Icon icon={...} />.',
+      label: "Cara Ganti Ikon Lain",
+      desc: "Pilih nama ikon dari ribuan pilihan di Tabler Icons lalu import dan pasang ke <Icon icon={...} />.",
       code: `import { Button, Icon } from '@aposis/design-system';\n// 1. Import nama ikon dari library Tabler Icons:\nimport {\n  IconTrash,\n  IconDeviceFloppy,\n  IconSearch,\n  IconSettings,\n  IconDownload\n} from '@tabler/icons-react';\n\n// 2. Tombol Hapus (Merah + Icon Trash):\n<Button variant="danger" leftIcon={<Icon icon={IconTrash} size="sm" />}>\n  Hapus Akun\n</Button>\n\n// 3. Tombol Simpan (Hijau + Icon Disket):\n<Button variant="success" leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}>\n  Simpan Perubahan\n</Button>\n\n// 4. Tombol Cari (Outline + Icon Kaca Pembesar):\n<Button variant="outline" leftIcon={<Icon icon={IconSearch} size="sm" />}>\n  Cari Siswa\n</Button>`,
     },
     {
-      label: 'Kustom id & className',
-      desc: 'Tiap atom menerima id unik dan kustom className Tailwind untuk penyesuaian khusus.',
+      label: "Kustom id & className",
+      desc: "Tiap atom menerima id unik dan kustom className Tailwind untuk penyesuaian khusus.",
       code: `import { Button, Icon } from '@aposis/design-system';\nimport { IconDeviceFloppy } from '@tabler/icons-react';\n\n<Button\n  id="btn-submit-form"\n  className="w-full shadow-lg hover:shadow-xl hover:scale-[1.02] bg-gradient-to-r from-blue-600 to-indigo-600"\n  leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}\n>\n  Simpan Data Guru\n</Button>`,
     },
   ];
 
   const inputSnippets = [
     {
-      label: 'Dasar',
-      desc: 'Input teks standar',
+      label: "Dasar",
+      desc: "Input teks standar",
       code: `import { Input } from '@aposis/design-system';\n\n<Input placeholder="Masukkan nama..." />`,
     },
     {
-      label: 'Icon Kiri (leftIcon)',
-      desc: 'Menampilkan ikon di sisi kiri input (misal ikon pencarian)',
+      label: "Icon Kiri (leftIcon)",
+      desc: "Menampilkan ikon di sisi kiri input (misal ikon pencarian)",
       code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconSearch } from '@tabler/icons-react';\n\n<Input\n  placeholder="Cari data siswa..."\n  leftIcon={<Icon icon={IconSearch} size="sm" />}\n/>`,
     },
     {
-      label: 'Icon Kanan (rightIcon)',
-      desc: 'Menampilkan ikon di sisi kanan input (misal indikator status atau aksi)',
+      label: "Icon Kanan (rightIcon)",
+      desc: "Menampilkan ikon di sisi kanan input (misal indikator status atau aksi)",
       code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconCheck } from '@tabler/icons-react';\n\n<Input\n  placeholder="Email terverifikasi"\n  rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}\n/>`,
     },
     {
-      label: 'Kedua Icon',
-      desc: 'Menampilkan ikon di sisi kiri dan kanan secara bersamaan',
+      label: "Kedua Icon",
+      desc: "Menampilkan ikon di sisi kiri dan kanan secara bersamaan",
       code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconUser, IconCheck } from '@tabler/icons-react';\n\n<Input\n  placeholder="Nama pengguna"\n  leftIcon={<Icon icon={IconUser} size="sm" />}\n  rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}\n/>`,
     },
     {
-      label: 'Kustom id & className',
-      desc: 'Dapat diberikan id unik dan custom styling className Tailwind serta containerClassName',
+      label: "Kustom id & className",
+      desc: "Dapat diberikan id unik dan custom styling className Tailwind serta containerClassName",
       code: `import { Input, Icon } from '@aposis/design-system';\nimport { IconSearch } from '@tabler/icons-react';\n\n<Input\n  id="field-search-siswa"\n  className="font-mono border-blue-400 focus:ring-blue-300"\n  containerClassName="max-w-md shadow-sm"\n  leftIcon={<Icon icon={IconSearch} size="sm" />}\n/>`,
     },
   ];
 
   const iconDocSnippets = [
     {
-      label: 'Dasar (Tabler)',
-      desc: 'Menggunakan ikon dari Tabler Icons dengan stroke otomatis sesuai ukuran',
+      label: "Dasar (Tabler)",
+      desc: "Menggunakan ikon dari Tabler Icons dengan stroke otomatis sesuai ukuran",
       code: `import { Icon } from '@aposis/design-system';\nimport { IconPlus, IconSearch, IconHeart } from '@tabler/icons-react';\n\n<Icon icon={IconPlus} size="md" />\n<Icon icon={IconSearch} size="sm" />`,
     },
     {
-      label: 'Standar Ukuran & Stroke',
-      desc: 'SM (16px / 1.25px stroke), MD (20px / 1.5px stroke), LG (24px / 2px stroke)',
+      label: "Standar Ukuran & Stroke",
+      desc: "SM (16px / 1.25px stroke), MD (20px / 1.5px stroke), LG (24px / 2px stroke)",
       code: `import { Icon } from '@aposis/design-system';\nimport { IconPlus } from '@tabler/icons-react';\n\n// SM: 16px (stroke 1.25px)\n<Icon icon={IconPlus} size="sm" />\n\n// MD: 20px (stroke 1.5px)\n<Icon icon={IconPlus} size="md" />\n\n// LG: 24px (stroke 2px)\n<Icon icon={IconPlus} size="lg" />`,
     },
     {
-      label: 'Ikon Kustom Figma',
-      desc: 'Ikon SVG resmi khusus Aposis (Bahasa ID, Bahasa EN, Rumus Matematika)',
+      label: "Ikon Kustom Figma",
+      desc: "Ikon SVG resmi khusus Aposis (Bahasa ID, Bahasa EN, Rumus Matematika)",
       code: `import { IconLanguageId, IconLanguageEn, IconMathSqrt } from '@aposis/design-system';\n\n<IconLanguageId size="md" />\n<IconLanguageEn size="md" />\n<IconMathSqrt size="md" />`,
     },
     {
-      label: 'Kustom id & className',
-      desc: 'Bisa diberi id unik, warna semantik, hover effect, atau animasi putar',
-      code: `import { Icon } from '@aposis/design-system';\nimport { IconHeart } from '@tabler/icons-react';\n\n<Icon\n  id="favorite-icon"\n  icon={IconHeart}\n  size="lg"\n  className="text-rose-500 hover:text-rose-600 hover:scale-125 cursor-pointer transition-transform"\n/>`,
+      label: "Kustom id & className",
+      desc: "Bisa diberi id unik, warna semantik, hover effect, atau animasi putar",
+      code: `import { Icon } from '@aposis/design-system';\nimport { IconHeart } from '@tabler/icons-react';\n\n<Icon\n  id="favorite-icon"\n  icon={IconHeart}\n  size="lg"\n  className="transition-transform cursor-pointer text-rose-500 hover:text-rose-600 hover:scale-125"\n/>`,
     },
   ];
 
   const studentColumns: Column<StudentData>[] = [
     {
-      key: 'name',
-      header: 'Nama Siswa',
+      key: "name",
+      header: "Nama Siswa",
       render: (row) => (
         <div className="flex items-center gap-2.5">
           <Avatar name={row.name} size="sm" />
           <div>
-            <div className="font-semibold text-slate-800 dark:text-slate-200">{row.name}</div>
+            <div className="font-semibold text-slate-800 dark:text-slate-200">
+              {row.name}
+            </div>
             <div className="text-[11px] text-slate-400">NISN: {row.nisn}</div>
           </div>
         </div>
       ),
     },
-    { key: 'class', header: 'Kelas' },
+    { key: "class", header: "Kelas" },
     {
-      key: 'status',
-      header: 'Status',
+      key: "status",
+      header: "Status",
       render: (row) => {
         const map = {
-          active: <Badge variant="success" dot appearance="subtle">Aktif</Badge>,
-          graduated: <Badge variant="primary" appearance="subtle">Lulus</Badge>,
-          pending: <Badge variant="warning" dot appearance="subtle">Menunggu</Badge>,
+          active: (
+            <Badge variant="success" dot appearance="subtle">
+              Aktif
+            </Badge>
+          ),
+          graduated: (
+            <Badge variant="primary" appearance="subtle">
+              Lulus
+            </Badge>
+          ),
+          pending: (
+            <Badge variant="warning" dot appearance="subtle">
+              Menunggu
+            </Badge>
+          ),
         };
         return map[row.status];
       },
     },
     {
-      key: 'gpa',
-      header: 'IPK / Rata-rata',
-      align: 'right',
-      render: (row) => <span className="font-bold text-slate-800 dark:text-slate-200">{row.gpa.toFixed(2)}</span>,
+      key: "gpa",
+      header: "IPK / Rata-rata",
+      align: "right",
+      render: (row) => (
+        <span className="font-bold text-slate-800 dark:text-slate-200">
+          {row.gpa.toFixed(2)}
+        </span>
+      ),
     },
   ];
 
   const sidebarNavGroups = [
     {
-      title: 'Tokens & Foundations',
+      title: "Tokens & Foundations",
       items: [
-        { id: 'palettes', label: 'Primitive Palettes', icon: IconPalette, badge: '7 Palet' },
-        { id: 'text-semantics', label: 'Text Semantics', icon: IconTypography, badge: '16 Warna' },
-        { id: 'bg-surface-semantics', label: 'Background & Surface', icon: IconLayersSubtract },
-        { id: 'layer-elevation', label: 'Layer & Elevation', icon: IconShadow },
-        { id: 'icon-border-semantics', label: 'Icon & Border', icon: IconBorderAll },
-        { id: 'typography-scale', label: 'Typography v3.1', icon: IconTypography, badge: 'Lexend' },
-        { id: 'unit-scale', label: 'Unit Scale v3.1', icon: IconRuler2, badge: 'px/rem' },
+        {
+          id: "palettes",
+          label: "Primitive Palettes",
+          icon: IconPalette,
+          badge: "7 Palet",
+        },
+        {
+          id: "text-semantics",
+          label: "Text Semantics",
+          icon: IconTypography,
+          badge: "16 Warna",
+        },
+        {
+          id: "bg-surface-semantics",
+          label: "Background & Surface",
+          icon: IconLayersSubtract,
+        },
+        { id: "layer-elevation", label: "Layer & Elevation", icon: IconShadow },
+        {
+          id: "icon-border-semantics",
+          label: "Icon & Border",
+          icon: IconBorderAll,
+        },
+        {
+          id: "typography-scale",
+          label: "Typography v3.1",
+          icon: IconTypography,
+          badge: "Lexend",
+        },
+        {
+          id: "unit-scale",
+          label: "Unit Scale v3.1",
+          icon: IconRuler2,
+          badge: "px/rem",
+        },
       ],
     },
     {
-      title: 'Atoms',
+      title: "Atoms",
       items: [
-        { id: 'button', label: 'Button', icon: IconClick },
-        { id: 'link', label: 'Link', icon: IconArrowRight },
-        { id: 'icon', label: 'Icon (Tabler)', icon: IconSparkles },
-        { id: 'input', label: 'Input', icon: IconForms },
-        { id: 'badge', label: 'Badge', icon: IconIdBadge },
-        { id: 'avatar', label: 'Avatar', icon: IconUser },
-        { id: 'checkbox', label: 'Checkbox', icon: IconCheckbox },
-        { id: 'radio', label: 'Radio', icon: IconCircleDot },
-        { id: 'spinner', label: 'Spinner', icon: IconLoader },
+        { id: "button", label: "Button", icon: IconClick },
+        { id: "link", label: "Link", icon: IconArrowRight },
+        { id: "icon", label: "Icon (Tabler)", icon: IconSparkles },
+        { id: "input", label: "Input", icon: IconForms },
+        { id: "badge", label: "Badge", icon: IconIdBadge },
+        { id: "avatar", label: "Avatar", icon: IconUser },
+        { id: "checkbox", label: "Checkbox", icon: IconCheckbox },
+        { id: "radio", label: "Radio", icon: IconCircleDot },
+        { id: "spinner", label: "Spinner", icon: IconLoader },
       ],
     },
     {
-      title: 'Molecules',
+      title: "Molecules",
       items: [
-        { id: 'form-field', label: 'FormField', icon: IconForms },
-        { id: 'search-bar', label: 'SearchBar', icon: IconSearch },
-        { id: 'alert', label: 'Alert', icon: IconAlertCircle },
-        { id: 'modal', label: 'Modal', icon: IconWindow },
-        { id: 'tabs', label: 'Tabs', icon: IconComponents },
-        { id: 'tooltip', label: 'Tooltip', icon: IconHelpCircle },
-        { id: 'notification', label: 'Notification', icon: IconBell },
+        { id: "form-field", label: "FormField", icon: IconForms },
+        { id: "search-bar", label: "SearchBar", icon: IconSearch },
+        { id: "alert", label: "Alert", icon: IconAlertCircle },
+        { id: "modal", label: "Modal", icon: IconWindow },
+        { id: "tabs", label: "Tabs", icon: IconComponents },
+        { id: "tooltip", label: "Tooltip", icon: IconHelpCircle },
+        { id: "toggle", label: "Toggle", icon: IconToggleLeft },
+        { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
     {
-      title: 'Organisms',
+      title: "Organisms",
       items: [
-        { id: 'navbar', label: 'Navbar', icon: IconLayout },
-        { id: 'sidebar', label: 'Sidebar', icon: IconLayout },
-        { id: 'stat-card', label: 'StatCard', icon: IconTrendingUp },
-        { id: 'data-table', label: 'DataTable', icon: IconCalendar },
-        { id: 'card', label: 'Card', icon: IconComponents },
+        { id: "navbar", label: "Navbar", icon: IconLayout },
+        { id: "sidebar", label: "Sidebar", icon: IconLayout },
+        { id: "stat-card", label: "StatCard", icon: IconTrendingUp },
+        { id: "data-table", label: "DataTable", icon: IconCalendar },
+        { id: "card", label: "Card", icon: IconComponents },
       ],
     },
     {
-      title: 'Panduan',
+      title: "Panduan",
       items: [
-        { id: 'microservices', label: 'Integrasi Microservices', icon: IconCode },
+        {
+          id: "microservices",
+          label: "Integrasi Microservices",
+          icon: IconCode,
+        },
       ],
     },
   ];
 
   const paletteCards = [
-    { name: 'Green Palette', key: 'green', color: primitiveColors.green },
-    { name: 'Cyan Palette', key: 'cyan', color: primitiveColors.cyan },
-    { name: 'Rose Palette', key: 'rose', color: primitiveColors.rose },
-    { name: 'Amber Palette', key: 'amber', color: primitiveColors.amber },
-    { name: 'Blue Palette', key: 'blue', color: primitiveColors.blue },
-    { name: 'Violet Palette', key: 'violet', color: primitiveColors.violet },
-    { name: 'Slate Palette', key: 'slate', color: primitiveColors.slate },
+    { name: "Green Palette", key: "green", color: primitiveColors.green },
+    { name: "Cyan Palette", key: "cyan", color: primitiveColors.cyan },
+    { name: "Rose Palette", key: "rose", color: primitiveColors.rose },
+    { name: "Amber Palette", key: "amber", color: primitiveColors.amber },
+    { name: "Blue Palette", key: "blue", color: primitiveColors.blue },
+    { name: "Violet Palette", key: "violet", color: primitiveColors.violet },
+    { name: "Slate Palette", key: "slate", color: primitiveColors.slate },
   ];
 
   const semanticTextRows = [
-    { name: 'text-disabled', value: 'Slate 100-alpha-24', light: 'rgba(15, 23, 42, 0.24)', dark: 'rgba(255, 255, 255, 0.24)' },
-    { name: 'text-error', value: 'Rose 60', light: '#E6212A', dark: '#E6212A' },
-    { name: 'text-error-hover', value: 'Rose 70', light: '#B81A22', dark: '#B81A22' },
-    { name: 'text-helper', value: 'Slate 60', light: '#64748B', dark: '#64748B' },
-    { name: 'text-interactive', value: 'Light: Blue 60 • Dark: Blue 50', light: '#0F62FE', dark: '#4589FF' },
-    { name: 'text-interactive-hover', value: 'Light: Blue 70 • Dark: Blue 50', light: '#0043CE', dark: '#4589FF' },
-    { name: 'text-inverse', value: 'White', light: '#FFFFFF', dark: '#FFFFFF' },
-    { name: 'text-on-color', value: 'White', light: '#FFFFFF', dark: '#FFFFFF' },
-    { name: 'text-on-color-disabled', value: 'Light: Slate 50 • Dark: Slate 60', light: '#94A3B8', dark: '#64748B' },
-    { name: 'text-placeholder', value: 'Light: Slate 50 • Dark: Slate 70', light: '#94A3B8', dark: '#475569' },
-    { name: 'text-primary', value: 'Light: Slate 100 • Dark: White', light: '#0F172A', dark: '#FFFFFF' },
-    { name: 'text-secondary', value: 'Light: Slate 70 • Dark: Slate 30', light: '#475569', dark: '#E2E8F0' },
-    { name: 'text-tertiary-amber', value: 'Light: Amber 80 • Dark: Amber 40', light: '#B45309', dark: '#FCD34D' },
-    { name: 'text-tertiary-cyan', value: 'Light: Cyan 80 • Dark: Cyan 40', light: '#0E7490', dark: '#67E8F9' },
-    { name: 'text-tertiary-green', value: 'Light: Green 80 • Dark: Green 40', light: '#15803D', dark: '#86EFAC' },
-    { name: 'text-tertiary-violet', value: 'Light: Violet 70 • Dark: Violet 40', light: '#9333EA', dark: '#D8B4FE' },
+    {
+      name: "text-disabled",
+      value: "Slate 100-alpha-24",
+      light: "rgba(15, 23, 42, 0.24)",
+      dark: "rgba(255, 255, 255, 0.24)",
+    },
+    { name: "text-error", value: "Rose 60", light: "#E6212A", dark: "#E6212A" },
+    {
+      name: "text-error-hover",
+      value: "Rose 70",
+      light: "#B81A22",
+      dark: "#B81A22",
+    },
+    {
+      name: "text-helper",
+      value: "Slate 60",
+      light: "#64748B",
+      dark: "#64748B",
+    },
+    {
+      name: "text-interactive",
+      value: "Light: Blue 60 • Dark: Blue 50",
+      light: "#0F62FE",
+      dark: "#4589FF",
+    },
+    {
+      name: "text-interactive-hover",
+      value: "Light: Blue 70 • Dark: Blue 50",
+      light: "#0043CE",
+      dark: "#4589FF",
+    },
+    { name: "text-inverse", value: "White", light: "#FFFFFF", dark: "#FFFFFF" },
+    {
+      name: "text-on-color",
+      value: "White",
+      light: "#FFFFFF",
+      dark: "#FFFFFF",
+    },
+    {
+      name: "text-on-color-disabled",
+      value: "Light: Slate 50 • Dark: Slate 60",
+      light: "#94A3B8",
+      dark: "#64748B",
+    },
+    {
+      name: "text-placeholder",
+      value: "Light: Slate 50 • Dark: Slate 70",
+      light: "#94A3B8",
+      dark: "#475569",
+    },
+    {
+      name: "text-primary",
+      value: "Light: Slate 100 • Dark: White",
+      light: "#0F172A",
+      dark: "#FFFFFF",
+    },
+    {
+      name: "text-secondary",
+      value: "Light: Slate 70 • Dark: Slate 30",
+      light: "#475569",
+      dark: "#E2E8F0",
+    },
+    {
+      name: "text-tertiary-amber",
+      value: "Light: Amber 80 • Dark: Amber 40",
+      light: "#B45309",
+      dark: "#FCD34D",
+    },
+    {
+      name: "text-tertiary-cyan",
+      value: "Light: Cyan 80 • Dark: Cyan 40",
+      light: "#0E7490",
+      dark: "#67E8F9",
+    },
+    {
+      name: "text-tertiary-green",
+      value: "Light: Green 80 • Dark: Green 40",
+      light: "#15803D",
+      dark: "#86EFAC",
+    },
+    {
+      name: "text-tertiary-violet",
+      value: "Light: Violet 70 • Dark: Violet 40",
+      light: "#9333EA",
+      dark: "#D8B4FE",
+    },
   ];
 
   const backgroundRows = [
-    { name: 'background-default', desc: 'Warna dasar utama (root) untuk canvas atau halaman aplikasi.', light: '#FFFFFF', dark: '#0F172A', val: 'Light: white • Dark: Slate 100' },
-    { name: 'background-subtle', desc: 'Warna latar sekunder untuk area halaman yang butuh sedikit kontras dari latar utama.', light: '#F8FAFC', dark: '#212B3C', val: 'Light: Slate 10 • Dark: Slate 90' },
+    {
+      name: "background-default",
+      desc: "Warna dasar utama (root) untuk canvas atau halaman aplikasi.",
+      light: "#FFFFFF",
+      dark: "#0F172A",
+      val: "Light: white • Dark: Slate 100",
+    },
+    {
+      name: "background-subtle",
+      desc: "Warna latar sekunder untuk area halaman yang butuh sedikit kontras dari latar utama.",
+      light: "#F8FAFC",
+      dark: "#212B3C",
+      val: "Light: Slate 10 • Dark: Slate 90",
+    },
   ];
 
   const surfaceRows = [
-    { name: 'field', val: 'Light: Slate 20 • Dark: Slate 90', light: '#F1F5F9', dark: '#212B3C', desc: 'Latar belakang untuk elemen input (text input, password input, dsb.)' },
-    { name: 'field-hover', val: 'Light: Slate 30 • Dark: Slate 80', light: '#E2E8F0', dark: '#283445', desc: 'Latar field saat elemen input di-hover.' },
-    { name: 'surface-brand', val: 'Light + Dark: Blue 60', light: '#0F62FE', dark: '#0F62FE', desc: 'Latar kontainer utama berbasis warna brand.' },
-    { name: 'surface-brand-active', val: 'Light + Dark: Blue 80', light: '#002D9C', dark: '#002D9C', desc: 'Efek warna saat kontainer brand ditekan/diklik.' },
-    { name: 'surface-brand-hover', val: 'Light + Dark: Blue 70', light: '#0043CE', dark: '#0043CE', desc: 'Efek warna saat kontainer brand di-hover.' },
-    { name: 'surface-brand-subtle', val: 'Light: Blue 10 • Dark: Blue 100', light: '#EDF5FF', dark: '#101831', desc: 'Latar kontainer brand dengan tona muda/transparan.' },
-    { name: 'surface-default', val: 'Light: white • Dark: Slate 100', light: '#FFFFFF', dark: '#0F172A', desc: 'Latar standar untuk kontainer utama seperti card, modal, atau side panel.' },
-    { name: 'surface-disabled', val: 'Light: Slate 40 • Dark: Slate 70', light: '#CBD5E1', dark: '#475569', desc: 'Latar belakang kontainer atau elemen dalam kondisi nonaktif.' },
-    { name: 'surface-green-subtle', val: 'Light: Green 10 • Dark: Green 100', light: '#F0FDF4', dark: '#052E16', desc: 'Latar kontainer Green (success) versi tint muda.' },
-    { name: 'surface-rose-subtle', val: 'Light: Rose 10 • Dark: Rose 100', light: '#FFEFEF', dark: '#43080C', desc: 'Latar kontainer Rose (danger) versi tint muda.' },
-    { name: 'surface-amber-subtle', val: 'Light: Amber 10 • Dark: Amber 90', light: '#FFFBEB', dark: '#83380B', desc: 'Latar kontainer Amber (warning) versi tint muda.' },
-    { name: 'surface-slate', val: 'Light: Slate 80 • Dark: Slate 90', light: '#283445', dark: '#212B3C', desc: 'Latar kontainer netral berbasis warna Slate.' },
+    {
+      name: "field",
+      val: "Light: Slate 20 • Dark: Slate 90",
+      light: "#F1F5F9",
+      dark: "#212B3C",
+      desc: "Latar belakang untuk elemen input (text input, password input, dsb.)",
+    },
+    {
+      name: "field-hover",
+      val: "Light: Slate 30 • Dark: Slate 80",
+      light: "#E2E8F0",
+      dark: "#283445",
+      desc: "Latar field saat elemen input di-hover.",
+    },
+    {
+      name: "surface-brand",
+      val: "Light + Dark: Blue 60",
+      light: "#0F62FE",
+      dark: "#0F62FE",
+      desc: "Latar kontainer utama berbasis warna brand.",
+    },
+    {
+      name: "surface-brand-active",
+      val: "Light + Dark: Blue 80",
+      light: "#002D9C",
+      dark: "#002D9C",
+      desc: "Efek warna saat kontainer brand ditekan/diklik.",
+    },
+    {
+      name: "surface-brand-hover",
+      val: "Light + Dark: Blue 70",
+      light: "#0043CE",
+      dark: "#0043CE",
+      desc: "Efek warna saat kontainer brand di-hover.",
+    },
+    {
+      name: "surface-brand-subtle",
+      val: "Light: Blue 10 • Dark: Blue 100",
+      light: "#EDF5FF",
+      dark: "#101831",
+      desc: "Latar kontainer brand dengan tona muda/transparan.",
+    },
+    {
+      name: "surface-default",
+      val: "Light: white • Dark: Slate 100",
+      light: "#FFFFFF",
+      dark: "#0F172A",
+      desc: "Latar standar untuk kontainer utama seperti card, modal, atau side panel.",
+    },
+    {
+      name: "surface-disabled",
+      val: "Light: Slate 40 • Dark: Slate 70",
+      light: "#CBD5E1",
+      dark: "#475569",
+      desc: "Latar belakang kontainer atau elemen dalam kondisi nonaktif.",
+    },
+    {
+      name: "surface-green-subtle",
+      val: "Light: Green 10 • Dark: Green 100",
+      light: "#F0FDF4",
+      dark: "#052E16",
+      desc: "Latar kontainer Green (success) versi tint muda.",
+    },
+    {
+      name: "surface-rose-subtle",
+      val: "Light: Rose 10 • Dark: Rose 100",
+      light: "#FFEFEF",
+      dark: "#43080C",
+      desc: "Latar kontainer Rose (danger) versi tint muda.",
+    },
+    {
+      name: "surface-amber-subtle",
+      val: "Light: Amber 10 • Dark: Amber 90",
+      light: "#FFFBEB",
+      dark: "#83380B",
+      desc: "Latar kontainer Amber (warning) versi tint muda.",
+    },
+    {
+      name: "surface-slate",
+      val: "Light: Slate 80 • Dark: Slate 90",
+      light: "#283445",
+      dark: "#212B3C",
+      desc: "Latar kontainer netral berbasis warna Slate.",
+    },
   ];
 
   const layerRows = [
-    { name: 'layer', val: 'Light: Slate 10 • Dark: Slate 90', light: '#F8FAFC', dark: '#212B3C', desc: 'Lapisan di atas surface (misal item baris tabel atau list item).' },
-    { name: 'layer-active', val: 'Light: Slate 30 • Dark: Slate 70', light: '#E2E8F0', dark: '#475569', desc: 'Efek warna saat elemen layer ditekan/diklik.' },
-    { name: 'layer-hover', val: 'Light: Slate 20 • Dark: Slate 80', light: '#F1F5F9', dark: '#283445', desc: 'Efek warna saat elemen layer di-hover.' },
-    { name: 'layer-brand-hover', val: 'Light: Blue 60-alpha-12 • Dark: Blue 60-alpha-32', light: 'rgba(15, 98, 254, 0.12)', dark: 'rgba(15, 98, 254, 0.32)', desc: 'Efek warna hover bertema brand untuk elemen layer.' },
-    { name: 'layer-tint', val: 'Light: Slate 60-alpha-4 • Dark: Slate 100-alpha-24', light: 'rgba(100, 116, 139, 0.04)', dark: 'rgba(15, 23, 42, 0.24)', desc: 'Lapisan bertona netral/transparan untuk menandai area di atas surface.' },
+    {
+      name: "layer",
+      val: "Light: Slate 10 • Dark: Slate 90",
+      light: "#F8FAFC",
+      dark: "#212B3C",
+      desc: "Lapisan di atas surface (misal item baris tabel atau list item).",
+    },
+    {
+      name: "layer-active",
+      val: "Light: Slate 30 • Dark: Slate 70",
+      light: "#E2E8F0",
+      dark: "#475569",
+      desc: "Efek warna saat elemen layer ditekan/diklik.",
+    },
+    {
+      name: "layer-hover",
+      val: "Light: Slate 20 • Dark: Slate 80",
+      light: "#F1F5F9",
+      dark: "#283445",
+      desc: "Efek warna saat elemen layer di-hover.",
+    },
+    {
+      name: "layer-brand-hover",
+      val: "Light: Blue 60-alpha-12 • Dark: Blue 60-alpha-32",
+      light: "rgba(15, 98, 254, 0.12)",
+      dark: "rgba(15, 98, 254, 0.32)",
+      desc: "Efek warna hover bertema brand untuk elemen layer.",
+    },
+    {
+      name: "layer-tint",
+      val: "Light: Slate 60-alpha-4 • Dark: Slate 100-alpha-24",
+      light: "rgba(100, 116, 139, 0.04)",
+      dark: "rgba(15, 23, 42, 0.24)",
+      desc: "Lapisan bertona netral/transparan untuk menandai area di atas surface.",
+    },
   ];
 
   const elevationRows = [
-    { name: 'elevation-high', val: 'black-alpha-16', desc: 'Bayangan paling tegas/dalam untuk elevasi hirarki tertinggi (misal modal dialog, drawer, floating notification).' },
-    { name: 'elevation-medium', val: 'black-alpha-12', desc: 'Bayangan sedang untuk komponen melayang (misal popover, menu) atau hover state.' },
-    { name: 'elevation-low', val: 'black-alpha-8', desc: 'Bayangan halus untuk komponen berpendar ringan (misal card rendah atau dropdown).' },
+    {
+      name: "elevation-high",
+      val: "black-alpha-16",
+      desc: "Bayangan paling tegas/dalam untuk elevasi hirarki tertinggi (misal modal dialog, drawer, floating notification).",
+    },
+    {
+      name: "elevation-medium",
+      val: "black-alpha-12",
+      desc: "Bayangan sedang untuk komponen melayang (misal popover, menu) atau hover state.",
+    },
+    {
+      name: "elevation-low",
+      val: "black-alpha-8",
+      desc: "Bayangan halus untuk komponen berpendar ringan (misal card rendah atau dropdown).",
+    },
   ];
 
   const iconSemanticRows = [
-    { name: 'icon-disabled', val: 'Slate 100-alpha-24', light: 'rgba(15, 23, 42, 0.24)', dark: 'rgba(255, 255, 255, 0.24)', desc: 'Warna ikon untuk elemen dalam kondisi nonaktif.' },
-    { name: 'icon-helper', val: 'Light: Slate 60 • Dark: Slate 50', light: '#64748B', dark: '#94A3B8', desc: 'Warna ikon pembantu (misal ikon petunjuk).' },
-    { name: 'icon-interactive', val: 'Light + Dark: Blue 60', light: '#0F62FE', dark: '#0F62FE', desc: 'Warna ikon untuk elemen interaktif (misal dapat diklik/di-hover).' },
-    { name: 'icon-primary', val: 'Light: Slate 100 • Dark: Slate 10', light: '#0F172A', dark: '#F8FAFC', desc: 'Warna utama untuk ikon penting atau hirarki tertinggi.' },
-    { name: 'icon-secondary', val: 'Light: Slate 70 • Dark: Slate 20', light: '#475569', dark: '#F1F5F9', desc: 'Warna sekunder untuk ikon pendukung dengan tingkat kontras lebih rendah.' },
-    { name: 'icon-tertiary-green', val: 'Light: Green 80 • Dark: Green 50', light: '#15803D', dark: '#4ADE80', desc: 'Warna ikon hijau untuk indikasi sukses/positif.' },
-    { name: 'icon-tertiary-rose', val: 'Light: Rose 60 • Dark: Rose 50', light: '#E6212A', dark: '#FF3941', desc: 'Warna ikon merah/rose untuk indikasi bahaya/eror.' },
+    {
+      name: "icon-disabled",
+      val: "Slate 100-alpha-24",
+      light: "rgba(15, 23, 42, 0.24)",
+      dark: "rgba(255, 255, 255, 0.24)",
+      desc: "Warna ikon untuk elemen dalam kondisi nonaktif.",
+    },
+    {
+      name: "icon-helper",
+      val: "Light: Slate 60 • Dark: Slate 50",
+      light: "#64748B",
+      dark: "#94A3B8",
+      desc: "Warna ikon pembantu (misal ikon petunjuk).",
+    },
+    {
+      name: "icon-interactive",
+      val: "Light + Dark: Blue 60",
+      light: "#0F62FE",
+      dark: "#0F62FE",
+      desc: "Warna ikon untuk elemen interaktif (misal dapat diklik/di-hover).",
+    },
+    {
+      name: "icon-primary",
+      val: "Light: Slate 100 • Dark: Slate 10",
+      light: "#0F172A",
+      dark: "#F8FAFC",
+      desc: "Warna utama untuk ikon penting atau hirarki tertinggi.",
+    },
+    {
+      name: "icon-secondary",
+      val: "Light: Slate 70 • Dark: Slate 20",
+      light: "#475569",
+      dark: "#F1F5F9",
+      desc: "Warna sekunder untuk ikon pendukung dengan tingkat kontras lebih rendah.",
+    },
+    {
+      name: "icon-tertiary-green",
+      val: "Light: Green 80 • Dark: Green 50",
+      light: "#15803D",
+      dark: "#4ADE80",
+      desc: "Warna ikon hijau untuk indikasi sukses/positif.",
+    },
+    {
+      name: "icon-tertiary-rose",
+      val: "Light: Rose 60 • Dark: Rose 50",
+      light: "#E6212A",
+      dark: "#FF3941",
+      desc: "Warna ikon merah/rose untuk indikasi bahaya/eror.",
+    },
   ];
 
   const borderSemanticRows = [
-    { name: 'border-alert', val: 'Amber 60', light: '#F59E0B', dark: '#F59E0B', desc: 'Garis tepi bertema Amber untuk status peringatan (warning/alert).' },
-    { name: 'border-card', val: 'Light: Slate 40 • Dark: Slate 70', light: '#CBD5E1', dark: '#475569', desc: 'Garis tepi khusus untuk kontainer berbentuk card.' },
-    { name: 'border-card-hover', val: 'Blue 60', light: '#0F62FE', dark: '#0F62FE', desc: 'Efek warna garis tepi card saat dalam kondisi di-hover.' },
-    { name: 'border-danger', val: 'Rose 50', light: '#FF3941', dark: '#FF3941', desc: 'Garis tepi bertema Rose untuk status bahaya atau eror (danger/error).' },
-    { name: 'border-disabled', val: 'Light: Slate 30 • Dark: Slate 70', light: '#E2E8F0', dark: '#475569', desc: 'Garis tepi untuk komponen dalam kondisi nonaktif (disabled).' },
-    { name: 'border-subtle-01', val: 'Light: Slate 20 • Dark: Slate 90', light: '#F1F5F9', dark: '#212B3C', desc: 'Garis tepi sangat tipis untuk pemisah antar elemen ringan.' },
-    { name: 'border-success', val: 'Green 70', light: '#16A34A', dark: '#16A34A', desc: 'Garis tepi bertema Green untuk status berhasil/sukses.' },
+    {
+      name: "border-alert",
+      val: "Amber 60",
+      light: "#F59E0B",
+      dark: "#F59E0B",
+      desc: "Garis tepi bertema Amber untuk status peringatan (warning/alert).",
+    },
+    {
+      name: "border-card",
+      val: "Light: Slate 40 • Dark: Slate 70",
+      light: "#CBD5E1",
+      dark: "#475569",
+      desc: "Garis tepi khusus untuk kontainer berbentuk card.",
+    },
+    {
+      name: "border-card-hover",
+      val: "Blue 60",
+      light: "#0F62FE",
+      dark: "#0F62FE",
+      desc: "Efek warna garis tepi card saat dalam kondisi di-hover.",
+    },
+    {
+      name: "border-danger",
+      val: "Rose 50",
+      light: "#FF3941",
+      dark: "#FF3941",
+      desc: "Garis tepi bertema Rose untuk status bahaya atau eror (danger/error).",
+    },
+    {
+      name: "border-disabled",
+      val: "Light: Slate 30 • Dark: Slate 70",
+      light: "#E2E8F0",
+      dark: "#475569",
+      desc: "Garis tepi untuk komponen dalam kondisi nonaktif (disabled).",
+    },
+    {
+      name: "border-subtle-01",
+      val: "Light: Slate 20 • Dark: Slate 90",
+      light: "#F1F5F9",
+      dark: "#212B3C",
+      desc: "Garis tepi sangat tipis untuk pemisah antar elemen ringan.",
+    },
+    {
+      name: "border-success",
+      val: "Green 70",
+      light: "#16A34A",
+      dark: "#16A34A",
+      desc: "Garis tepi bertema Green untuk status berhasil/sukses.",
+    },
   ];
 
   interface SnippetItem {
@@ -983,7 +1451,7 @@ export default function App() {
   // Helper component to render component documentation card with multiple snippet tabs
   const DocCard = ({
     title,
-    badgeText = 'Atom',
+    badgeText = "Atom",
     description,
     usageSnippet,
     snippets,
@@ -998,25 +1466,30 @@ export default function App() {
     tips?: React.ReactNode;
     children: React.ReactNode;
   }) => {
-    const allSnippets: SnippetItem[] = snippets && snippets.length > 0
-      ? snippets
-      : (usageSnippet ? [{ label: 'Kode TSX', code: usageSnippet }] : []);
+    const allSnippets: SnippetItem[] =
+      snippets && snippets.length > 0
+        ? snippets
+        : usageSnippet
+          ? [{ label: "Kode TSX", code: usageSnippet }]
+          : [];
     const [activeIdx, setActiveIdx] = useState(0);
     const activeItem = allSnippets[activeIdx] || allSnippets[0];
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-150">
-        <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
+      <div className="space-y-6 duration-150 animate-in fade-in">
+        <div className="pb-5 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="primary" appearance="solid" size="sm">
               {badgeText}
             </Badge>
-            <span className="text-xs font-mono text-slate-400">@aposis/design-system</span>
+            <span className="font-mono text-xs text-slate-400">
+              @aposis/design-system
+            </span>
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             {title}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-3xl leading-relaxed">
+          <p className="max-w-3xl mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
             {description}
           </p>
 
@@ -1025,10 +1498,14 @@ export default function App() {
 
           {/* Multi-Tab Code Snippet Box */}
           {allSnippets.length > 0 && (
-            <div className="mt-4 rounded-xl bg-slate-900 border border-slate-800 shadow-sm overflow-hidden">
-              <div className="flex flex-wrap items-center justify-between px-3 py-2 border-b border-slate-800 bg-slate-950/70 gap-2">
+            <div className="mt-4 overflow-hidden border shadow-sm rounded-xl bg-slate-900 border-slate-800">
+              <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-slate-800 bg-slate-950/70">
                 <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
-                  <Icon icon={IconCode} size="sm" className="text-aposis-blue-50 shrink-0 ml-1 mr-1" />
+                  <Icon
+                    icon={IconCode}
+                    size="sm"
+                    className="ml-1 mr-1 text-aposis-blue-50 shrink-0"
+                  />
                   {allSnippets.map((s, idx) => (
                     <button
                       key={idx}
@@ -1036,8 +1513,8 @@ export default function App() {
                       onClick={() => setActiveIdx(idx)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                         activeIdx === idx
-                          ? 'bg-aposis-blue-60 text-white shadow-xs'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                          ? "bg-aposis-blue-60 text-white shadow-xs"
+                          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
                       }`}
                     >
                       {s.label}
@@ -1046,21 +1523,31 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => copySnippet(activeItem?.code || '')}
+                  onClick={() => copySnippet(activeItem?.code || "")}
                   className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-sans font-medium active:scale-95 shrink-0"
                   title="Salin kode ini"
                 >
-                  {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
-                  <span>{copiedCode ? 'Tersalin!' : 'Salin Kode'}</span>
+                  {copiedCode ? (
+                    <Icon
+                      icon={IconCheck}
+                      size="sm"
+                      className="text-emerald-400"
+                    />
+                  ) : (
+                    <Icon icon={IconCopy} size="sm" />
+                  )}
+                  <span>{copiedCode ? "Tersalin!" : "Salin Kode"}</span>
                 </button>
               </div>
               {activeItem?.desc && (
-                <div className="px-4 py-2 text-xs bg-slate-950/50 text-slate-300 border-b border-slate-800 flex items-center gap-2">
-                  <span className="text-aposis-blue-40 font-semibold shrink-0">💡 Cara Pakai:</span>
+                <div className="flex items-center gap-2 px-4 py-2 text-xs border-b bg-slate-950/50 text-slate-300 border-slate-800">
+                  <span className="font-semibold text-aposis-blue-40 shrink-0">
+                    💡 Cara Pakai:
+                  </span>
                   <span>{activeItem.desc}</span>
                 </div>
               )}
-              <pre className="p-4 overflow-x-auto font-mono text-xs text-sky-300 whitespace-pre leading-relaxed select-all">
+              <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre select-all text-sky-300">
                 <code>{activeItem?.code}</code>
               </pre>
             </div>
@@ -1073,24 +1560,30 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
+    <div className="flex flex-col min-h-screen font-sans transition-colors duration-200 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <NotificationContainer multiStyle={notifMultiStyle} />
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between shadow-xs">
+      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 border-b shadow-xs bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-slate-200/80 dark:border-slate-800 sm:px-6">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="p-2 md:hidden rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           >
-            {isMobileMenuOpen ? <Icon icon={IconX} size="md" /> : <Icon icon={IconMenu2} size="md" />}
+            {isMobileMenuOpen ? (
+              <Icon icon={IconX} size="md" />
+            ) : (
+              <Icon icon={IconMenu2} size="md" />
+            )}
           </button>
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-aposis-blue-60 to-aposis-cyan-50 flex items-center justify-center text-white font-black text-sm shadow-sm">
+          <div className="flex items-center justify-center w-8 h-8 text-sm font-black text-white shadow-sm rounded-xl bg-gradient-to-tr from-aposis-blue-60 to-aposis-cyan-50">
             v3
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 dark:text-white tracking-tight">Aposis Design System</span>
+              <span className="font-bold tracking-tight text-slate-900 dark:text-white">
+                Aposis Design System
+              </span>
               <Badge variant="primary" appearance="subtle" size="sm">
                 v3.1
               </Badge>
@@ -1107,18 +1600,24 @@ export default function App() {
             onClick={toggleDarkMode}
             className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-semibold"
           >
-            {isDarkMode ? <Icon icon={IconSun} size="sm" className="text-amber-400" /> : <Icon icon={IconMoon} size="sm" />}
-            <span className="hidden sm:inline">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            {isDarkMode ? (
+              <Icon icon={IconSun} size="sm" className="text-amber-400" />
+            ) : (
+              <Icon icon={IconMoon} size="sm" />
+            )}
+            <span className="hidden sm:inline">
+              {isDarkMode ? "Light Mode" : "Dark Mode"}
+            </span>
           </button>
         </div>
       </header>
 
       {/* Main Two-Column Layout */}
-      <div className="flex-1 flex w-full min-h-0 relative">
+      <div className="relative flex flex-1 w-full min-h-0">
         {/* Mobile Backdrop Overlay */}
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-30 md:hidden transition-opacity"
+            className="fixed inset-0 z-30 transition-opacity bg-slate-950/60 backdrop-blur-xs md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-hidden="true"
           />
@@ -1127,7 +1626,9 @@ export default function App() {
         {/* Left Sidebar Navigation - Mentok Kiri */}
         <aside
           className={`fixed md:sticky top-[57px] left-0 h-[calc(100vh-57px)] w-72 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 overflow-y-auto z-40 transition-transform duration-200 ${
-            isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
+            isMobileMenuOpen
+              ? "translate-x-0 shadow-2xl"
+              : "-translate-x-full md:translate-x-0"
           }`}
         >
           <div className="space-y-6">
@@ -1149,20 +1650,24 @@ export default function App() {
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                         isActive
-                          ? 'bg-aposis-blue-60 text-white shadow-xs'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? "bg-aposis-blue-60 text-white shadow-xs"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
-                        <Icon icon={IconComp} size="sm" className={isActive ? 'text-white' : 'text-slate-400'} />
+                        <Icon
+                          icon={IconComp}
+                          size="sm"
+                          className={isActive ? "text-white" : "text-slate-400"}
+                        />
                         <span className="truncate">{item.label}</span>
                       </div>
                       {item.badge && (
                         <span
                           className={`text-[10px] px-1.5 py-0.5 rounded-md ${
                             isActive
-                              ? 'bg-white/20 text-white'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                              ? "bg-white/20 text-white"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                           }`}
                         >
                           {item.badge}
@@ -1177,2863 +1682,3916 @@ export default function App() {
         </aside>
 
         {/* Right Main Content Area */}
-        <main ref={mainRef} className="flex-1 min-w-0 p-6 sm:p-10 overflow-y-auto">
+        <main
+          ref={mainRef}
+          className="flex-1 min-w-0 p-6 overflow-y-auto sm:p-10"
+        >
           <div className="max-w-5xl mx-auto space-y-6">
-          {/* 1. BUTTON ATOM */}
-          {selectedId === 'button' && (
-            <DocCard
-              title="Button"
-              badgeText="Atom"
-              description="Komponen tombol aksi resmi Aposis dengan berbagai pilihan varian, ukuran, status loading/disabled, dukungan penempatan ikon (kiri/kanan), serta atribut kustom id & className."
-              snippets={buttonSnippets}
-              tips={
-                <div className="p-4 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200 space-y-2">
-                  <div className="font-bold flex items-center gap-1.5 text-sm text-aposis-blue-70 dark:text-aposis-blue-40">
-                    <Icon icon={IconInfoCircle} size="sm" />
-                    Panduan Lengkap: Mengganti Ikon, Posisi Kiri/Kanan & Kustomisasi
+            {/* 1. BUTTON ATOM */}
+            {selectedId === "button" && (
+              <DocCard
+                title="Button"
+                badgeText="Atom"
+                description="Komponen tombol aksi resmi Aposis dengan berbagai pilihan varian, ukuran, status loading/disabled, dukungan penempatan ikon (kiri/kanan), serta atribut kustom id & className."
+                snippets={buttonSnippets}
+                tips={
+                  <div className="p-4 space-y-2 text-xs text-blue-900 border border-blue-200 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 dark:border-blue-900/60 dark:text-blue-200">
+                    <div className="font-bold flex items-center gap-1.5 text-sm text-aposis-blue-70 dark:text-aposis-blue-40">
+                      <Icon icon={IconInfoCircle} size="sm" />
+                      Panduan Lengkap: Mengganti Ikon, Posisi Kiri/Kanan &
+                      Kustomisasi
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-3">
+                      <div className="p-3 border border-blue-100 rounded-lg bg-white/80 dark:bg-slate-900/60 dark:border-blue-900/40">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                          1. Posisi Ikon (Kiri / Kanan)
+                        </div>
+                        <div className="mt-1 text-slate-500 dark:text-slate-400">
+                          Gunakan prop{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            leftIcon
+                          </code>{" "}
+                          atau{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            rightIcon
+                          </code>
+                          . Anda bisa menyisipkan ikon di sisi kiri, kanan, atau
+                          keduanya sekaligus.
+                        </div>
+                      </div>
+                      <div className="p-3 border border-blue-100 rounded-lg bg-white/80 dark:bg-slate-900/60 dark:border-blue-900/40">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                          2. Cara Mengganti Ikon
+                        </div>
+                        <div className="mt-1 text-slate-500 dark:text-slate-400">
+                          Import ikon apa pun dari{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            @tabler/icons-react
+                          </code>{" "}
+                          (ribuan ikon tersedia) lalu bungkus ke dalam{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            &lt;Icon icon=&#123;IconNama&#125; size="sm" /&gt;
+                          </code>
+                          .
+                        </div>
+                      </div>
+                      <div className="p-3 border border-blue-100 rounded-lg bg-white/80 dark:bg-slate-900/60 dark:border-blue-900/40">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                          3. Editable: id & className
+                        </div>
+                        <div className="mt-1 text-slate-500 dark:text-slate-400">
+                          Semua atom menerima prop standar seperti{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            id="custom-id"
+                          </code>{" "}
+                          dan tambahan{" "}
+                          <code className="font-semibold text-aposis-blue-60">
+                            className="..."
+                          </code>{" "}
+                          tanpa merusak style bawaan.
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">1. Posisi Ikon (Kiri / Kanan)</div>
-                      <div className="text-slate-500 dark:text-slate-400 mt-1">Gunakan prop <code className="text-aposis-blue-60 font-semibold">leftIcon</code> atau <code className="text-aposis-blue-60 font-semibold">rightIcon</code>. Anda bisa menyisipkan ikon di sisi kiri, kanan, atau keduanya sekaligus.</div>
-                    </div>
-                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">2. Cara Mengganti Ikon</div>
-                      <div className="text-slate-500 dark:text-slate-400 mt-1">Import ikon apa pun dari <code className="text-aposis-blue-60 font-semibold">@tabler/icons-react</code> (ribuan ikon tersedia) lalu bungkus ke dalam <code className="text-aposis-blue-60 font-semibold">&lt;Icon icon=&#123;IconNama&#125; size="sm" /&gt;</code>.</div>
-                    </div>
-                    <div className="bg-white/80 dark:bg-slate-900/60 p-3 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">3. Editable: id & className</div>
-                      <div className="text-slate-500 dark:text-slate-400 mt-1">Semua atom menerima prop standar seperti <code className="text-aposis-blue-60 font-semibold">id="custom-id"</code> dan tambahan <code className="text-aposis-blue-60 font-semibold">className="..."</code> tanpa merusak style bawaan.</div>
-                    </div>
-                  </div>
-                </div>
-              }
-            >
-              <div className="space-y-8">
-                {/* Figma Button v3.1 Official Header Card */}
-                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-6">
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold tracking-wider text-aposis-blue-60 uppercase flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-aposis-blue-60" />
-                      APOSIS Design System
-                    </div>
-                    <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                      Button v3.1
-                    </h2>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        PROPERTIES
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-aposis-blue-70 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                        VARIANTS
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                        v3.1 SPEC
-                      </span>
-                    </div>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-1.5 min-w-[240px]">
-                    <div className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">About</div>
-                    <div className="text-slate-900 dark:text-white font-bold text-sm">Button Variations</div>
-                    <div className="text-aposis-blue-60 font-semibold">Over 200+ Variations</div>
-                    <ul className="text-slate-600 dark:text-slate-400 space-y-1 pt-1 text-[11px]">
-                      <li className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-aposis-blue-60 shrink-0" />
-                        Blue Mode (Primary Brand)
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-900 shrink-0" />
-                        Dark Mode (Secondary Slate)
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0" />
-                        Red Mode (Danger Solid &amp; Outline)
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                        Outline, Subtle &amp; Ghost
-                      </li>
-                      <li className="flex items-center gap-1.5 text-slate-500">
-                        <span>• 4 Ukuran: LG (48), MD (40), SM (32), XS (28)</span>
-                      </li>
-                      <li className="flex items-center gap-1.5 text-slate-500">
-                        <span>• 6 Status: Default, Hover, Active, Focus, Disabled, Skeleton</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                {/* 1. Full Figma v3.1 Spec Matrix */}
-                <ButtonV31SpecMatrix />
-
-                {/* 2. Interactive Live Button Builder */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60 shadow-sm">
-                  <CardHeader className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
-                          Interactive Button Builder (Coba Ganti Ikon, id &amp; className)
-                        </CardTitle>
-                        <CardDescription>
-                          Ubah konfigurasi di bawah untuk melihat hasil tombol secara langsung dan salin kode TSX yang ter-generate otomatis!
-                        </CardDescription>
+                }
+              >
+                <div className="space-y-8">
+                  {/* Figma Button v3.1 Official Header Card */}
+                  <div className="flex flex-col justify-between gap-6 p-6 bg-white border shadow-xs rounded-2xl dark:bg-slate-900 border-slate-200 dark:border-slate-800 md:flex-row md:items-start">
+                    <div className="space-y-3">
+                      <div className="text-xs font-bold tracking-wider text-aposis-blue-60 uppercase flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-aposis-blue-60" />
+                        APOSIS Design System
                       </div>
-                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 pt-6">
-                    {/* Controls Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left column: Variant, Size, Text, State toggles */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            1. Pilih Varian Tombol (Figma v3.1):
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(
-                              [
-                                'primary',
-                                'secondary',
-                                'outline',
-                                'ghost',
-                                'subtle',
-                                'danger',
-                                'danger-outline',
-                                'danger-subtle',
-                                'success',
-                              ] as const
-                            ).map((v) => (
-                              <button
-                                key={v}
-                                type="button"
-                                onClick={() => setDemoVariant(v)}
-                                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                                  demoVariant === v
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                                }`}
-                              >
-                                {v}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            2. Pilih Ukuran (Size):
-                          </label>
-                          <div className="flex gap-2">
-                            {(['xs', 'sm', 'md', 'lg'] as const).map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() => setDemoSize(s)}
-                                className={`px-3 py-1 rounded-lg uppercase font-medium transition-all ${
-                                  demoSize === s
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                                }`}
-                              >
-                                {s}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {!demoIsIconOnly && (
-                          <div>
-                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              3. Teks Tombol:
-                            </label>
-                            <input
-                              type="text"
-                              value={demoButtonText}
-                              onChange={(e) => setDemoButtonText(e.target.value)}
-                              className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
-                              placeholder="Teks tombol..."
-                            />
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-2 pt-1 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={demoIsIconOnly}
-                              onChange={(e) => setDemoIsIconOnly(e.target.checked)}
-                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-semibold">Icon Only (Square)</span>
-                          </label>
-
-                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={demoIsSkeleton}
-                              onChange={(e) => setDemoIsSkeleton(e.target.checked)}
-                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-semibold">Skeleton State</span>
-                          </label>
-
-                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={demoIsLoading}
-                              onChange={(e) => setDemoIsLoading(e.target.checked)}
-                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300">Status Loading</span>
-                          </label>
-
-                          <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={demoIsDisabled}
-                              onChange={(e) => setDemoIsDisabled(e.target.checked)}
-                              className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300">Status Disabled</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Right column: Icon Kiri, Icon Kanan, ID & className */}
-                      <div className="space-y-4">
-                        {/* Icon Kiri Toggle & Selector */}
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={demoHasLeftIcon}
-                                onChange={(e) => setDemoHasLeftIcon(e.target.checked)}
-                                className="rounded text-aposis-blue-60"
-                              />
-                              <span>{demoIsIconOnly ? 'Ikon Tombol (iconOnly)' : 'Aktifkan Icon Kiri (leftIcon)'}</span>
-                            </label>
-                            <Badge variant={demoHasLeftIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
-                              {demoHasLeftIcon ? 'Aktif' : 'Nonaktif'}
-                            </Badge>
-                          </div>
-                          {demoHasLeftIcon && (
-                            <div>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon dari Tabler:</span>
-                              <select
-                                value={demoLeftIconName}
-                                onChange={(e) => setDemoLeftIconName(e.target.value)}
-                                className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
-                              >
-                                <option value="IconPlus">IconPlus (Tambah Data)</option>
-                                <option value="IconDeviceFloppy">IconDeviceFloppy (Simpan)</option>
-                                <option value="IconSearch">IconSearch (Cari)</option>
-                                <option value="IconDownload">IconDownload (Unduh)</option>
-                                <option value="IconEdit">IconEdit (Ubah)</option>
-                                <option value="IconHeart">IconHeart (Suka)</option>
-                                <option value="IconTrash">IconTrash (Hapus)</option>
-                                <option value="IconSettings">IconSettings (Pengaturan)</option>
-                              </select>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Icon Kanan Toggle & Selector (Hanya bila bukan iconOnly) */}
-                        {!demoIsIconOnly && (
-                          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={demoHasRightIcon}
-                                  onChange={(e) => setDemoHasRightIcon(e.target.checked)}
-                                  className="rounded text-aposis-blue-60"
-                                />
-                                <span>Aktifkan Icon Kanan (rightIcon)</span>
-                              </label>
-                              <Badge variant={demoHasRightIcon ? 'success' : 'neutral'} appearance="subtle" size="sm">
-                                {demoHasRightIcon ? 'Aktif' : 'Nonaktif'}
-                              </Badge>
-                            </div>
-                            {demoHasRightIcon && (
-                              <div>
-                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Pilih Ikon Kanan dari Tabler:</span>
-                                <select
-                                  value={demoRightIconName}
-                                  onChange={(e) => setDemoRightIconName(e.target.value)}
-                                  className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
-                                >
-                                  <option value="IconArrowRight">IconArrowRight (Lanjut)</option>
-                                  <option value="IconSend">IconSend (Kirim)</option>
-                                  <option value="IconTrash">IconTrash (Hapus)</option>
-                                  <option value="IconChevronDown">IconChevronDown (Dropdown)</option>
-                                  <option value="IconSettings">IconSettings (Pengaturan)</option>
-                                </select>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Custom ID & className inputs */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              Kustom id:
-                            </label>
-                            <input
-                              type="text"
-                              value={demoCustomId}
-                              onChange={(e) => setDemoCustomId(e.target.value)}
-                              placeholder="misal: btn-submit"
-                              className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              Kustom className:
-                            </label>
-                            <input
-                              type="text"
-                              value={demoCustomClass}
-                              onChange={(e) => setDemoCustomClass(e.target.value)}
-                              placeholder="misal: shadow-lg"
-                              className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Live Preview Area */}
-                    <div className="p-5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-3">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hasil Render Tombol (Live Component):</span>
-                      <div className="py-2">
-                        <Button
-                          id={demoCustomId || undefined}
-                          variant={demoVariant}
-                          size={demoSize}
-                          iconOnly={demoIsIconOnly}
-                          skeleton={demoIsSkeleton}
-                          isLoading={demoIsLoading}
-                          disabled={demoIsDisabled}
-                          className={demoCustomClass || undefined}
-                          leftIcon={demoHasLeftIcon && demoIcons[demoLeftIconName] ? (
-                            <Icon icon={demoIcons[demoLeftIconName].icon} size={demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'} />
-                          ) : undefined}
-                          rightIcon={demoHasRightIcon && !demoIsIconOnly && demoIcons[demoRightIconName] ? (
-                            <Icon icon={demoIcons[demoRightIconName].icon} size={demoSize === 'lg' ? 'md' : demoSize === 'xs' ? 'xs' : 'sm'} />
-                          ) : undefined}
-                          onClick={() => alert(`Tombol diklik! id: "${demoCustomId}", variant: "${demoVariant}"`)}
-                          aria-label={demoIsIconOnly ? 'Tombol Aksi' : undefined}
-                        >
-                          {!demoIsIconOnly && demoButtonText}
-                        </Button>
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
-                        Coba klik tombol di atas! Atribut <code className="font-mono text-aposis-blue-60">id="{demoCustomId}"</code> dan <code className="font-mono text-aposis-blue-60">className="{demoCustomClass || 'default'}"</code> aktif diaplikasikan.
-                      </div>
-                    </div>
-
-                    {/* Live Generated TSX Code */}
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5">
-                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
-                          Kode TSX:
+                      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                        Button v3.1
+                      </h2>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                          PROPERTIES
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => copySnippet(dynamicButtonCode)}
-                          className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px]"
-                        >
-                          {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
-                          <span>{copiedCode ? 'Tersalin!' : 'Salin Kode'}</span>
-                        </button>
-                      </div>
-                      <pre className="p-4 text-xs font-mono text-sky-300 overflow-x-auto whitespace-pre leading-relaxed select-all">
-                        <code>{dynamicButtonCode}</code>
-                      </pre>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Real-World Combinations */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Koleksi Contoh Ikon Kiri & Kanan Populer (Siap Pakai)</CardTitle>
-                    <CardDescription>Berbagai skenario umum penempatan ikon dan aksi tombol</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Tambah (Icon Kiri)</div>
-                        <Button variant="primary" size="sm" leftIcon={<Icon icon={IconPlus} size="sm" />}>
-                          Tambah Data Siswa
-                        </Button>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Simpan (Icon Kiri)</div>
-                        <Button variant="success" size="sm" leftIcon={<Icon icon={IconDeviceFloppy} size="sm" />}>
-                          Simpan Perubahan
-                        </Button>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Lanjut (Icon Kanan)</div>
-                        <Button variant="outline" size="sm" rightIcon={<Icon icon={IconArrowRight} size="sm" />}>
-                          Langkah Berikutnya
-                        </Button>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Kirim (Icon Kanan)</div>
-                        <Button variant="primary" size="sm" rightIcon={<Icon icon={IconSend} size="sm" />}>
-                          Kirim Pengumuman
-                        </Button>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Kedua Sisi (Unduh + Dropdown)</div>
-                        <Button variant="secondary" size="sm" leftIcon={<Icon icon={IconDownload} size="sm" />} rightIcon={<Icon icon={IconChevronDown} size="sm" />}>
-                          Export Format CSV
-                        </Button>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
-                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Aksi Hapus (Danger + Icon)</div>
-                        <Button variant="danger" size="sm" leftIcon={<Icon icon={IconTrash} size="sm" />}>
-                          Hapus Catatan
-                        </Button>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-aposis-blue-70 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                          VARIANTS
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                          v3.1 SPEC
+                        </span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Varian Tombol Figma v3.1 */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Varian Tombol Resmi (Figma v3.1)</CardTitle>
-                    <CardDescription>Pilihan tema visual lengkap sesuai hierarki tindakan dan peruntukan antarmuka</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <Button variant="primary">Primary</Button>
-                      <Button variant="secondary">Secondary</Button>
-                      <Button variant="outline">Outline</Button>
-                      <Button variant="ghost">Ghost</Button>
-                      <Button variant="subtle">Subtle</Button>
-                      <Button variant="danger">Danger</Button>
-                      <Button variant="danger-outline">Danger Outline</Button>
-                      <Button variant="danger-subtle">Danger Subtle</Button>
-                      <Button variant="success">Success</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Ukuran Tombol & Icon-Only */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>4 Ukuran Tombol (LG, MD, SM, XS) &amp; Icon-Only</CardTitle>
-                    <CardDescription>Tersedia dalam 4 ukuran standar proporsional dengan dukungan tombol bujur sangkar (iconOnly)</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <Button size="lg" leftIcon={<Icon icon={IconPlus} size="sm" />}>Large (48px)</Button>
-                      <Button size="md" leftIcon={<Icon icon={IconPlus} size="sm" />}>Medium (40px)</Button>
-                      <Button size="sm" leftIcon={<Icon icon={IconPlus} size="xs" />}>Small (32px)</Button>
-                      <Button size="xs" leftIcon={<Icon icon={IconPlus} size="xs" />}>Extra Small (28px)</Button>
-                    </div>
-                    <div className="flex items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span className="text-xs font-semibold text-slate-500">Icon Only:</span>
-                      <Button size="lg" iconOnly leftIcon={<Icon icon={IconPlus} size="sm" />} aria-label="Large Icon" />
-                      <Button size="md" iconOnly leftIcon={<Icon icon={IconPlus} size="sm" />} aria-label="Medium Icon" />
-                      <Button size="sm" iconOnly leftIcon={<Icon icon={IconPlus} size="xs" />} aria-label="Small Icon" />
-                      <Button size="xs" iconOnly leftIcon={<Icon icon={IconPlus} size="xs" />} aria-label="Extra Small Icon" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Status, Loading & Skeleton */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Status Interaksi, Loading &amp; Skeleton</CardTitle>
-                    <CardDescription>Indikator proses latar belakang, status nonaktif, dan skeleton loading pulse</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <Button isLoading>Sedang Memproses...</Button>
-                      <Button disabled>Disabled Button</Button>
-                      <Button variant="outline" disabled>Outline Disabled</Button>
-                      <Button skeleton size="md">Placeholder</Button>
-                      <Button skeleton size="md" iconOnly />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* LINK ATOM */}
-          {selectedId === 'link' && (
-            <DocCard
-              title="Link"
-              badgeText="Atom"
-              description="Komponen tautan navigasi resmi Aposis v3 dengan warna biru resmi, dukungan panah arah (kiri/kanan/none), 3 variasi ukuran, gaya garis bawah (default/underlined), serta status disabled."
-              snippets={[
-                {
-                  label: 'Penggunaan Dasar & Arah Panah',
-                  desc: 'Tautan standar berwarna biru Aposis dengan opsi panah kanan, kiri, atau tanpa panah.',
-                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="/dashboard" arrow="right">Lihat Dashboard</Link>\n<Link to="/kembali" arrow="left">Kembali</Link>\n<Link to="#">Tautan Standar</Link>`,
-                },
-                {
-                  label: 'Underlined vs Default',
-                  desc: 'Gunakan variant="underlined" untuk tautan yang selalu memiliki garis bawah.',
-                  code: `import { Link } from '@aposis/design-system';\n\n<Link to="#" variant="default">Underline saat hover</Link>\n<Link to="#" variant="underlined">Selalu bergaris bawah</Link>`,
-                },
-              ]}
-            >
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Varian Tautan Resmi (Default Biru)</CardTitle>
-                    <CardDescription>
-                      Komponen tautan resmi Aposis dengan warna bawaan biru, dukungan arah panah, garis bawah, serta status disabled.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="overflow-x-auto p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                      <table className="w-full min-w-[640px] text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                            <th className="pb-3 pr-4">Tipe Tautan</th>
-                            <th className="pb-3 px-4">Panah Kanan</th>
-                            <th className="pb-3 px-4">Panah Kiri</th>
-                            <th className="pb-3 px-4">Tanpa Panah</th>
-                            <th className="pb-3 px-4">Underlined</th>
-                            <th className="pb-3 pl-4">Disabled</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                          <tr>
-                            <td className="py-3.5 pr-4 text-xs font-semibold text-slate-700 dark:text-slate-300">Default (Biru Resmi)</td>
-                            <td className="py-3.5 px-4"><Link to="#" arrow="right">Lihat Detail</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" arrow="left">Kembali</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#">Tautan</Link></td>
-                            <td className="py-3.5 px-4"><Link to="#" variant="underlined">Tautan</Link></td>
-                            <td className="py-3.5 pl-4"><Link to="#" disabled arrow="right">Tautan</Link></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Skala Ukuran */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Perbandingan Ukuran (sm, md, lg)</div>
-                      <div className="flex flex-wrap items-center gap-8">
-                        <div className="space-y-1">
-                          <span className="text-[11px] text-slate-400 block font-mono">size="lg" (16px)</span>
-                          <Link to="#" size="lg" arrow="right">Link Action Large</Link>
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-[11px] text-slate-400 block font-mono">size="md" (14px - Default)</span>
-                          <Link to="#" size="md" arrow="right">Link Action Medium</Link>
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-[11px] text-slate-400 block font-mono">size="sm" (12px)</span>
-                          <Link to="#" size="sm" arrow="right">Link Action Small</Link>
-                        </div>
+                    <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-1.5 min-w-[240px]">
+                      <div className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                        About
                       </div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">
+                        Button Variations
+                      </div>
+                      <div className="font-semibold text-aposis-blue-60">
+                        Over 200+ Variations
+                      </div>
+                      <ul className="text-slate-600 dark:text-slate-400 space-y-1 pt-1 text-[11px]">
+                        <li className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-aposis-blue-60 shrink-0" />
+                          Blue Mode (Primary Brand)
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-900 shrink-0" />
+                          Dark Mode (Secondary Slate)
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0" />
+                          Red Mode (Danger Solid &amp; Outline)
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                          Outline, Subtle &amp; Ghost
+                        </li>
+                        <li className="flex items-center gap-1.5 text-slate-500">
+                          <span>
+                            • 4 Ukuran: LG (48), MD (40), SM (32), XS (28)
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-1.5 text-slate-500">
+                          <span>
+                            • 6 Status: Default, Hover, Active, Focus, Disabled,
+                            Skeleton
+                          </span>
+                        </li>
+                      </ul>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
+                  </div>
 
-          {/* 2. ICON ATOM */}
-          {selectedId === 'icon' && (
-            <DocCard
-              title="Icon (Tabler & Custom)"
-              badgeText="Atom"
-              description="Standar komponen ikon Aposis berbasis Tabler Icons dengan ketebalan garis (stroke width) proporsional resmi: SM (16px / 1.25px), MD (20px / 1.5px), LG (24px / 2px), serta ikon khusus Figma."
-              snippets={iconDocSnippets}
-            >
-              <div className="space-y-6">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Standar Ukuran & Stroke Width</CardTitle>
-                    <CardDescription>Ketebalan garis secara otomatis menyesuaikan ukuran ikon</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-aposis-blue-60">
-                          <Icon icon={IconPlus} size="sm" />
-                        </div>
+                  {/* 1. Full Figma v3.1 Spec Matrix */}
+                  <ButtonV31SpecMatrix />
+
+                  {/* 2. Interactive Live Button Builder */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60">
+                    <CardHeader className="border-b bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-slate-100 dark:border-slate-800">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <div className="text-sm font-bold">SM: 16px</div>
-                          <div className="text-xs text-slate-400">Stroke: 1.25px</div>
+                          <CardTitle className="flex items-center gap-2">
+                            <Icon
+                              icon={IconAdjustmentsHorizontal}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Button Builder (Coba Ganti Ikon, id
+                            &amp; className)
+                          </CardTitle>
+                          <CardDescription>
+                            Ubah konfigurasi di bawah untuk melihat hasil tombol
+                            secara langsung dan salin kode TSX yang ter-generate
+                            otomatis!
+                          </CardDescription>
                         </div>
+                        <Badge variant="primary" appearance="solid" size="sm">
+                          Live Tester
+                        </Badge>
                       </div>
-
-                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-aposis-blue-60">
-                          <Icon icon={IconPlus} size="md" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold">MD: 20px</div>
-                          <div className="text-xs text-slate-400">Stroke: 1.5px</div>
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-aposis-blue-60">
-                          <Icon icon={IconPlus} size="lg" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold">LG: 24px</div>
-                          <div className="text-xs text-slate-400">Stroke: 2px</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Ikon Kustom Figma</CardTitle>
-                    <CardDescription>Komponen kustom bahasa dan rumus matematika</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="p-4 rounded-xl border border-dashed border-purple-300 dark:border-purple-800 bg-purple-50/30 dark:bg-purple-950/20 flex flex-wrap items-center gap-6">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <IconLanguageId size="md" />
-                        </div>
-                        <span className="text-xs font-semibold">Language ID</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <IconLanguageEn size="md" />
-                        </div>
-                        <span className="text-xs font-semibold">Language EN</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <IconMathSqrt size="md" />
-                        </div>
-                        <span className="text-xs font-semibold">Math √x</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* 3. INPUT ATOM */}
-          {selectedId === 'input' && (
-            <DocCard
-              title="Input"
-              badgeText="Atom"
-              description="Elemen masukan teks dengan status fokus elegan, error highlight, dan slot ikon di sisi kiri atau kanan."
-              snippets={inputSnippets}
-              tips={
-                <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
-                  <div className="font-semibold mb-1 flex items-center gap-1.5">
-                    <Icon icon={IconInfoCircle} size="sm" />
-                    Penempatan Ikon & Kustomisasi Input:
-                  </div>
-                  Gunakan prop <code className="text-aposis-blue-60 font-semibold">leftIcon</code> atau <code className="text-aposis-blue-60 font-semibold">rightIcon</code> untuk menyisipkan ikon. Anda juga dapat memberikan atribut <code className="text-aposis-blue-60 font-semibold">id="input-id"</code>, <code className="text-aposis-blue-60 font-semibold">className="..."</code>, dan <code className="text-aposis-blue-60 font-semibold">containerClassName="..."</code>.
-                </div>
-              }
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-5">
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
-                      1. Input Normal (Kustom id & className)
-                    </label>
-                    <Input
-                      id="input-nama-lengkap"
-                      placeholder="Masukkan nama lengkap..."
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white font-sans"
-                    />
-                    <span className="text-[11px] text-slate-400 mt-1 block">id="input-nama-lengkap"</span>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
-                      2. Input dengan Icon Kiri (leftIcon)
-                    </label>
-                    <Input
-                      id="input-search-siswa"
-                      placeholder="Cari siswa berdasarkan NISN atau nama..."
-                      leftIcon={<Icon icon={IconSearch} size="sm" />}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
-                      3. Input dengan Icon Kanan (rightIcon)
-                    </label>
-                    <Input
-                      id="input-email-status"
-                      defaultValue="ahmad.fauzi@aposis.sch.id"
-                      rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
-                      4. Input dengan Kedua Icon (Kiri & Kanan)
-                    </label>
-                    <Input
-                      id="input-user-verified"
-                      placeholder="Username sistem..."
-                      defaultValue="ahmad_fauzi"
-                      leftIcon={<Icon icon={IconUser} size="sm" />}
-                      rightIcon={<Icon icon={IconCheck} size="sm" className="text-emerald-500" />}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
-                      5. Input dengan Status Error
-                    </label>
-                    <Input
-                      id="input-email-error"
-                      placeholder="email@domain.com"
-                      defaultValue="email-salah-format"
-                      error="Format alamat email tidak valid"
-                      leftIcon={<Icon icon={IconAlertCircle} size="sm" className="text-rose-500" />}
-                      className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* 4. BADGE ATOM */}
-          {selectedId === 'badge' && (
-            <DocCard
-              title="Badge"
-              badgeText="Atom"
-              description="Pill label status untuk menandai kondisi data aktif, menunggu, selesai, atau kategori."
-              usageSnippet={`import { Badge } from '@aposis/design-system';\n\n<Badge variant="success" dot>Aktif</Badge>`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-4">
-                  <div className="flex flex-wrap gap-2.5">
-                    <Badge variant="primary">Primary</Badge>
-                    <Badge variant="success" dot>Success</Badge>
-                    <Badge variant="warning" dot>Warning</Badge>
-                    <Badge variant="danger" dot>Danger</Badge>
-                    <Badge variant="secondary">Secondary</Badge>
-                    <Badge variant="neutral">Neutral</Badge>
-                    <Badge variant="primary" appearance="solid">Solid</Badge>
-                    <Badge variant="success" appearance="outline">Outline</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* 5. AVATAR ATOM */}
-          {selectedId === 'avatar' && (
-            <DocCard
-              title="Avatar"
-              badgeText="Atom"
-              description="Komponen foto profil pengguna dengan inisial nama otomatis dan indikator status online/busy/away/offline."
-              usageSnippet={`import { Avatar } from '@aposis/design-system';\n\n<Avatar name="Ahmad Fauzi" size="md" status="online" />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4">
-                    <Avatar name="Ahmad Fauzi" size="xs" status="online" />
-                    <Avatar name="Budi Santoso" size="sm" status="away" />
-                    <Avatar name="Citra Kirana" size="md" status="busy" />
-                    <Avatar name="Dewi Lestari" size="lg" status="online" />
-                    <Avatar name="Eko Prasetyo" size="xl" status="offline" />
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* 6. CHECKBOX ATOM */}
-          {selectedId === 'checkbox' && (
-            <DocCard
-              title="Checkbox"
-              badgeText="Atom"
-              description="Kotak centang aksesibel dengan animasi transisi centang dan deskripsi pembantu."
-              usageSnippet={`import { Checkbox } from '@aposis/design-system';\n\n<Checkbox label="Setuju syarat & ketentuan" />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-3">
-                  <Checkbox
-                    checked={checkboxChecked}
-                    onChange={(e) => setCheckboxChecked(e.target.checked)}
-                    label="Kirimkan notifikasi email ketika ada pembaruan data"
-                    description="Anda dapat mengubah preferensi ini kapan saja di pengaturan profil."
-                  />
-                  <Checkbox label="Saya menyetujui syarat dan ketentuan penggunaan sistem Aposis" />
-                  <Checkbox disabled checked label="Fitur enkripsi end-to-end (Wajib aktif secara sistem)" />
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* RADIO ATOM */}
-          {selectedId === 'radio' && (
-            <DocCard
-              title="Radio"
-              badgeText="Atom"
-              description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, dan RadioGroup helper."
-              snippets={[
-                {
-                  label: 'Penggunaan Dasar',
-                  desc: 'Radio individual dengan label atau posisi label fleksibel.',
-                  code: `import { Radio } from '@aposis/design-system';\n\n<Radio name="pilihan" value="1" label="Opsi Pertama" defaultChecked />\n<Radio name="pilihan" value="2" label="Opsi Kedua" />\n<Radio name="pilihan" value="3" label="Opsi Ketiga" labelPosition="bottom" />`,
-                },
-                {
-                  label: 'RadioGroup',
-                  desc: 'Pembungkus terpadu untuk mengelola nilai grup, label, deskripsi, dan pesan error.',
-                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup\n  label="Metode Pembayaran"\n  name="payment"\n  value={selectedPayment}\n  onChange={(val) => setSelectedPayment(val)}\n  orientation="horizontal"\n>\n  <Radio value="transfer" label="Transfer Bank" />\n  <Radio value="qris" label="QRIS" />\n  <Radio value="card" label="Kartu Kredit" />\n</RadioGroup>`,
-                },
-                {
-                  label: 'Varian Card',
-                  desc: 'Tampilan kotak kartu yang dapat diklik dengan deskripsi pembantu.',
-                  code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup value={plan} onChange={setPlan} className="grid grid-cols-1 sm:grid-cols-2 gap-3">\n  <Radio variant="card" value="starter" label="Starter" description="Untuk pengguna individu" />\n  <Radio variant="card" value="pro" label="Pro" description="Fitur lengkap untuk tim" />\n</RadioGroup>`,
-                },
-                {
-                  label: 'Di dalam FormField',
-                  desc: 'Dibungkus FormField dengan validasi dan penanganan error otomatis.',
-                  code: `import { FormField, RadioGroup, Radio } from '@aposis/design-system';\n\n<FormField label="Metode Pembayaran" required helperText="Pilih salah satu" error={error}>\n  <RadioGroup name="payment" value={payment} onChange={setPayment} orientation="horizontal">\n    <Radio value="qris" label="QRIS Instan" />\n    <Radio value="va" label="Virtual Account" />\n  </RadioGroup>\n</FormField>`,
-                },
-              ]}
-            >
-              <div className="space-y-6">
-                {/* 1. Interactive Live Radio Builder */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60 shadow-sm">
-                  <CardHeader className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <Icon icon={IconAdjustmentsHorizontal} size="sm" className="text-aposis-blue-60" />
-                          Interactive Radio Builder (Pilih Varian, Ukuran & Posisi Label)
-                        </CardTitle>
-                        <CardDescription>
-                          Pilih konfigurasi di bawah untuk melihat preview interaktif. Default bergaris tepi hitam/netral dan otomatis berubah menjadi biru saat dipilih.
-                        </CardDescription>
-                      </div>
-                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 pt-6">
-                    {/* Controls Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left column: Variant, Size, LabelPosition */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            1. Pilih Varian Tampilan:
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(['default', 'card'] as const).map((v) => (
-                              <button
-                                key={v}
-                                type="button"
-                                onClick={() => setRadioConfigVariant(v)}
-                                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
-                                  radioConfigVariant === v
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {v === 'default' ? 'Lingkaran Biasa (Default)' : 'Varian Kartu (Card)'}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            2. Pilih Ukuran (Size):
-                          </label>
-                          <div className="flex gap-2">
-                            {(['sm', 'md', 'lg'] as const).map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() => setRadioConfigSize(s)}
-                                className={`px-3 py-1 rounded-lg uppercase font-medium transition-all cursor-pointer ${
-                                  radioConfigSize === s
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {s === 'sm' ? 'SM (16px)' : s === 'md' ? 'MD (20px)' : 'LG (24px)'}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            3. Posisi Label (labelPosition):
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(
-                              [
-                                { id: 'right', label: 'Kanan (Default)' },
-                                { id: 'left', label: 'Kiri' },
-                                { id: 'bottom', label: 'Bawah (Stacked)' },
-                                { id: 'top', label: 'Atas' },
-                                { id: 'none', label: 'Tanpa Label (Circle Only)' },
-                              ] as const
-                            ).map((pos) => (
-                              <button
-                                key={pos.id}
-                                type="button"
-                                onClick={() => setRadioConfigLabelPos(pos.id)}
-                                className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
-                                  radioConfigLabelPos === pos.id
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {pos.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right column: Mode, Orientation, Toggles, Custom Label */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            4. Mode Komponen:
-                          </label>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setRadioConfigMode('group')}
-                              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
-                                radioConfigMode === 'group'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              RadioGroup (Multi-opsi)
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setRadioConfigMode('single')}
-                              className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
-                                radioConfigMode === 'single'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              Single Radio (Atom)
-                            </button>
-                          </div>
-                        </div>
-
-                        {radioConfigMode === 'group' && (
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Controls Grid */}
+                      <div className="grid grid-cols-1 gap-5 text-xs md:grid-cols-2">
+                        {/* Left column: Variant, Size, Text, State toggles */}
+                        <div className="space-y-4">
                           <div>
                             <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                              5. Orientasi Susunan Grup:
+                              1. Pilih Varian Tombol (Figma v3.1):
                             </label>
-                            <div className="flex gap-2">
-                              {(['horizontal', 'vertical'] as const).map((ori) => (
+                            <div className="flex flex-wrap gap-1.5">
+                              {(
+                                [
+                                  "primary",
+                                  "secondary",
+                                  "outline",
+                                  "ghost",
+                                  "subtle",
+                                  "danger",
+                                  "danger-outline",
+                                  "danger-subtle",
+                                  "success",
+                                ] as const
+                              ).map((v) => (
                                 <button
-                                  key={ori}
+                                  key={v}
                                   type="button"
-                                  onClick={() => setRadioConfigOrientation(ori)}
-                                  className={`px-3 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
-                                    radioConfigOrientation === ori
-                                      ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                  onClick={() => setDemoVariant(v)}
+                                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                                    demoVariant === v
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                                   }`}
                                 >
-                                  {ori}
+                                  {v}
                                 </button>
                               ))}
                             </div>
                           </div>
-                        )}
 
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
-                            6. Status & Opsi Tambahan:
-                          </span>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
-                                checked={radioConfigDisabled}
-                                onChange={(e) => setRadioConfigDisabled(e.target.checked)}
-                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                              />
-                              <span className="text-slate-700 dark:text-slate-300">Status Disabled</span>
-                            </label>
-
-                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
-                                checked={radioConfigInvalid}
-                                onChange={(e) => setRadioConfigInvalid(e.target.checked)}
-                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                              />
-                              <span className="text-slate-700 dark:text-slate-300">Status Error (isInvalid)</span>
-                            </label>
-
-                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
-                                checked={radioConfigHasDesc}
-                                onChange={(e) => setRadioConfigHasDesc(e.target.checked)}
-                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                              />
-                              <span className="text-slate-700 dark:text-slate-300">Sertakan Deskripsi</span>
-                            </label>
-
-                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
-                                checked={radioConfigWrapForm}
-                                onChange={(e) => setRadioConfigWrapForm(e.target.checked)}
-                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
-                              />
-                              <span className="text-slate-700 dark:text-slate-300">Bungkus FormField</span>
-                            </label>
-                          </div>
-                        </div>
-
-                        {radioConfigLabelPos !== 'none' && (
                           <div>
-                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              7. Kustom Teks Label:
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              2. Pilih Ukuran (Size):
                             </label>
-                            <input
-                              type="text"
-                              value={radioConfigCustomLabel}
-                              onChange={(e) => setRadioConfigCustomLabel(e.target.value)}
-                              className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
-                              placeholder="Teks label radio..."
-                            />
+                            <div className="flex gap-2">
+                              {(["xs", "sm", "md", "lg"] as const).map((s) => (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  onClick={() => setDemoSize(s)}
+                                  className={`px-3 py-1 rounded-lg uppercase font-medium transition-all ${
+                                    demoSize === s
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                                  }`}
+                                >
+                                  {s}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
 
-                    {/* Live Preview Area */}
-                    <div className="p-6 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-4">
-                      <div className="flex items-center justify-between w-full border-b border-slate-200/80 dark:border-slate-700/80 pb-2">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                          Hasil Render Radio (Live Component):
-                        </span>
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
-                          Pilihan Aktif: <strong className="font-mono text-blue-600 dark:text-blue-400">{radioConfigSelected}</strong>
-                        </span>
-                      </div>
-
-                      <div className="py-2 w-full flex justify-center">
-                        {radioConfigWrapForm ? (
-                          <FormField
-                            label="Pilih Kategori Layanan"
-                            required
-                            helperText="Silakan tentukan salah satu opsi untuk melanjutkan proses."
-                            error={radioConfigInvalid ? 'Wajib memilih salah satu opsi layanan.' : undefined}
-                            className="max-w-lg"
-                          >
-                            {radioConfigMode === 'group' ? (
-                              <RadioGroup
-                                name="interactive_builder_radio"
-                                value={radioConfigSelected}
-                                onChange={(val) => setRadioConfigSelected(val)}
-                                size={radioConfigSize}
-                                variant={radioConfigVariant}
-                                orientation={radioConfigOrientation}
-                                labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
-                                disabled={radioConfigDisabled}
-                                isInvalid={radioConfigInvalid}
-                                className={radioConfigVariant === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3 w-full' : undefined}
-                              >
-                                <Radio
-                                  value="opt1"
-                                  label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Opsi Pertama')}
-                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Pertama' : undefined}
-                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 1' : undefined}
-                                />
-                                <Radio
-                                  value="opt2"
-                                  label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua'}
-                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Kedua' : undefined}
-                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 2' : undefined}
-                                />
-                                <Radio
-                                  value="opt3"
-                                  label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga'}
-                                  aria-label={radioConfigLabelPos === 'none' ? 'Opsi Ketiga' : undefined}
-                                  description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 3' : undefined}
-                                />
-                              </RadioGroup>
-                            ) : (
-                              <Radio
-                                name="interactive_single_radio"
-                                value="opt1"
-                                checked={radioConfigSelected === 'opt1'}
-                                onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
-                                size={radioConfigSize}
-                                variant={radioConfigVariant}
-                                labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
-                                label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Pilihan Utama')}
-                                aria-label={radioConfigLabelPos === 'none' ? 'Pilihan Utama' : undefined}
-                                description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu di bawah label' : undefined}
-                                disabled={radioConfigDisabled}
-                                isInvalid={radioConfigInvalid}
-                              />
-                            )}
-                          </FormField>
-                        ) : radioConfigMode === 'group' ? (
-                          <RadioGroup
-                            name="interactive_builder_radio"
-                            value={radioConfigSelected}
-                            onChange={(val) => setRadioConfigSelected(val)}
-                            size={radioConfigSize}
-                            variant={radioConfigVariant}
-                            orientation={radioConfigOrientation}
-                            labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
-                            disabled={radioConfigDisabled}
-                            isInvalid={radioConfigInvalid}
-                            className={radioConfigVariant === 'card' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg' : undefined}
-                          >
-                            <Radio
-                              value="opt1"
-                              label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Opsi Pertama')}
-                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Pertama' : undefined}
-                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 1' : undefined}
-                            />
-                            <Radio
-                              value="opt2"
-                              label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Kedua'}
-                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Kedua' : undefined}
-                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 2' : undefined}
-                            />
-                            <Radio
-                              value="opt3"
-                              label={radioConfigLabelPos === 'none' ? undefined : 'Opsi Ketiga'}
-                              aria-label={radioConfigLabelPos === 'none' ? 'Opsi Ketiga' : undefined}
-                              description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu untuk opsi 3' : undefined}
-                            />
-                          </RadioGroup>
-                        ) : (
-                          <Radio
-                            name="interactive_single_radio"
-                            value="opt1"
-                            checked={radioConfigSelected === 'opt1'}
-                            onChange={() => setRadioConfigSelected(radioConfigSelected === 'opt1' ? '' : 'opt1')}
-                            size={radioConfigSize}
-                            variant={radioConfigVariant}
-                            labelPosition={radioConfigLabelPos === 'none' ? 'right' : radioConfigLabelPos}
-                            label={radioConfigLabelPos === 'none' ? undefined : (radioConfigCustomLabel || 'Pilihan Utama')}
-                            aria-label={radioConfigLabelPos === 'none' ? 'Pilihan Utama' : undefined}
-                            description={radioConfigHasDesc && radioConfigLabelPos !== 'none' ? 'Keterangan pembantu di bawah label' : undefined}
-                            disabled={radioConfigDisabled}
-                            isInvalid={radioConfigInvalid}
-                          />
-                        )}
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
-                        Coba klik pilihan di atas untuk menguji respons visual, orientasi label, dan status error secara langsung!
-                      </div>
-                    </div>
-
-                    {/* Live Reactive TSX Code */}
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5">
-                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
-                          Kode TSX:
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => copySnippet(dynamicRadioCode)}
-                          className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-                        >
-                          {copiedCode ? <Icon icon={IconCheck} size="sm" className="text-emerald-400" /> : <Icon icon={IconCopy} size="sm" />}
-                          <span>{copiedCode ? 'Tersalin!' : 'Salin Kode'}</span>
-                        </button>
-                      </div>
-                      <pre className="p-4 text-xs font-mono text-sky-300 overflow-x-auto whitespace-pre leading-relaxed select-all">
-                        <code>{dynamicRadioCode}</code>
-                      </pre>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* 2. Real-World Presets / Skenario Populer */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle>Koleksi Contoh Skenario Populer (Siap Pakai)</CardTitle>
-                    <CardDescription>
-                      Preset siap pakai untuk varian card interaktif dan orientasi stacked vertikal sesuai board Figma.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      {/* Preset 1: Card Selector */}
-                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            Preset 1: Pilihan Peran Akun (Card Variant)
-                          </span>
-                          <Badge variant="primary" size="sm">Varian Card</Badge>
-                        </div>
-                        <RadioGroup defaultValue="teacher" orientation="vertical" className="gap-2.5">
-                          <Radio
-                            variant="card"
-                            value="teacher"
-                            label="Tenaga Pendidik"
-                            description="Input nilai, absensi, dan jadwal mengajar harian"
-                          />
-                          <Radio
-                            variant="card"
-                            value="staff"
-                            label="Staf Tata Usaha"
-                            description="Pengelolaan arsip surat dan administrasi sekolah"
-                          />
-                        </RadioGroup>
-                      </div>
-
-                      {/* Preset 2: Stacked Vertical (Figma Board) */}
-                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            Preset 2: Posisi Label Bawah (Stacked Vertikal)
-                          </span>
-                          <Badge variant="neutral" size="sm">Figma 53-3380</Badge>
-                        </div>
-                        <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
-                          <RadioGroup defaultValue="sem1" orientation="horizontal" className="justify-around py-2">
-                            <Radio value="sem1" labelPosition="bottom" label="Semester 1" />
-                            <Radio value="sem2" labelPosition="bottom" label="Semester 2" />
-                            <Radio value="pend" labelPosition="bottom" label="Remedial" />
-                          </RadioGroup>
-                        </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                          Sangat cocok untuk tata letak ringkas horizontal dengan teks yang berpusat di bawah lingkaran radio.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* TOOLTIP MOLECULE */}
-          {selectedId === 'tooltip' && (
-            <DocCard
-              title="Tooltip"
-              badgeText="Molecule"
-              description="Komponen tooltip tingkat molekul aksesibel dengan dukungan panah penunjuk (beak arrow), penentuan posisi otomatis (auto) atau terarah, kustomisasi styling via className, varian definition (garis bawah titik-titik), serta navigasi keyboard."
-              snippets={tooltipSnippets}
-            >
-              <div className="space-y-6">
-                {/* 1. Interactive Live Tester */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60 dark:border-slate-800 shadow-sm">
-                  <CardHeader className="border-b border-slate-100 dark:border-slate-800/80 pb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Icon icon={IconHelpCircle} size="sm" className="text-aposis-blue-60" />
-                          Interactive Tooltip Tester
-                        </CardTitle>
-                        <CardDescription className="text-xs mt-1">
-                          Pilih konfigurasi di bawah untuk menguji respons visual hover / keyboard focus serta menyalin kode TSX reaktif.
-                        </CardDescription>
-                      </div>
-                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-6 pt-6">
-                    {/* Controls Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            1. Posisi Penempatan (pos):
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(
-                              [
-                                { id: 'auto', label: 'Auto (Pintar)' },
-                                { id: 'top', label: 'Top' },
-                                { id: 'top-start', label: 'Top Start' },
-                                { id: 'top-end', label: 'Top End' },
-                                { id: 'bottom', label: 'Bottom' },
-                                { id: 'bottom-start', label: 'Bottom Start' },
-                                { id: 'bottom-end', label: 'Bottom End' },
-                                { id: 'left', label: 'Left' },
-                                { id: 'right', label: 'Right' },
-                              ] as const
-                            ).map((p) => (
-                              <button
-                                key={p.id}
-                                type="button"
-                                onClick={() => setTooltipPos(p.id)}
-                                className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
-                                  tooltipPos === p.id
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {p.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            2. Pilih Ukuran (Size):
-                          </label>
-                          <div className="flex gap-2">
-                            {(['sm', 'md', 'lg'] as const).map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() => setTooltipSize(s)}
-                                className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer uppercase ${
-                                  tooltipSize === s
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {s}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            3. Varian Trigger (variant):
-                          </label>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setTooltipVariant('default')}
-                              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                tooltipVariant === 'default'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              Default (Icon / Tombol)
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setTooltipVariant('definition')}
-                              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                tooltipVariant === 'definition'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              Definition (Dotted Underline)
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
-                            4. Opsi Tambahan:
-                          </span>
-                          <label className="flex items-center gap-2 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={tooltipArrow}
-                              onChange={(e) => setTooltipArrow(e.target.checked)}
-                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-40"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-medium">Tampilkan Panah Petunjuk (Arrow)</span>
-                          </label>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                            5. Teks Konten Tooltip:
-                          </label>
-                          <input
-                            type="text"
-                            value={tooltipText}
-                            onChange={(e) => setTooltipText(e.target.value)}
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
-                            placeholder="Tuliskan pesan tooltip..."
-                          />
-                        </div>
-
-                        {tooltipVariant === 'definition' && (
-                          <div>
-                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                              6. Teks Istilah (Trigger):
-                            </label>
-                            <input
-                              type="text"
-                              value={tooltipTriggerText}
-                              onChange={(e) => setTooltipTriggerText(e.target.value)}
-                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
-                              placeholder="Tuliskan kata atau istilah..."
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Preview Interactive Arena */}
-                    <div className="p-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-950/50 flex flex-col items-center justify-center min-h-[160px] gap-3">
-                      <div className="py-6 flex items-center justify-center">
-                        <Tooltip
-                          text={tooltipText || 'Tooltip text'}
-                          pos={tooltipPos}
-                          size={tooltipSize}
-                          variant={tooltipVariant}
-                          arrow={tooltipArrow}
-                        >
-                          {tooltipVariant === 'definition' ? (
-                            tooltipTriggerText || 'Definition tooltip'
-                          ) : (
-                            <button
-                              type="button"
-                              className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 shadow-xs hover:border-blue-400 transition-colors cursor-pointer"
-                              aria-label="Contoh Pemicu Tooltip"
-                            >
-                              <IconHelpCircle size={24} />
-                            </button>
-                          )}
-                        </Tooltip>
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
-                        Arahkan kursor atau gunakan tombol Tab pada keyboard untuk menguji respons visual kemunculan tooltip!
-                      </div>
-                    </div>
-
-                    {/* Live Reactive TSX Code */}
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5">
-                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
-                          Kode TSX:
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => copySnippet(dynamicTooltipCode)}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                        >
-                          {copiedCode ? (
-                            <Icon icon={IconCheck} size="sm" className="text-emerald-400" />
-                          ) : (
-                            <Icon icon={IconCopy} size="sm" />
-                          )}
-                          {copiedCode ? 'Tersalin' : 'Salin Kode'}
-                        </button>
-                      </div>
-                      <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
-                        <code>{dynamicTooltipCode}</code>
-                      </pre>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* 2. Full Figma Board Showcase (Node 67-1714) */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <CardTitle className="text-base">Spesifikasi Lengkap Figma (Node 67-1714)</CardTitle>
-                    <CardDescription className="text-xs">
-                      Seluruh variasi orientasi panah dan bentuk trigger sesuai rancangan resmi Figma Aposis.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-8">
-                    {/* Section A: Icon Trigger Tooltips */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Variasi 1: Icon Trigger dengan Ragam Posisi & Arah Panah
-                        </span>
-                        <Badge variant="neutral" size="sm">Figma 67-1714</Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
-                        {/* Column 1: Top (Panah Bawah) */}
-                        <div className="space-y-10 flex flex-col items-center">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-                            Posisi Atas (Top)
-                          </span>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top-start" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top-end" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                        </div>
-
-                        {/* Column 2: Bottom (Panah Atas) */}
-                        <div className="space-y-10 flex flex-col items-center">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-                            Posisi Bawah (Bottom)
-                          </span>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom-start" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom-end" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                        </div>
-
-                        {/* Column 3: Samping (Left & Right) */}
-                        <div className="space-y-10 flex flex-col items-center">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-                            Posisi Samping (Left / Right)
-                          </span>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="left" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="right" isOpen>
-                              <div className="p-2 text-slate-600 dark:text-slate-300">
-                                <IconHelpCircle size={22} />
-                              </div>
-                            </Tooltip>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Section B: Definition Tooltips */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Variasi 2: Definition Tooltip (Teks Bergaris Titik-titik)
-                        </span>
-                        <Badge variant="neutral" size="sm">Figma 67-1714</Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-6 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
-                        {/* Definition Tooltip Top */}
-                        <div className="flex flex-col items-center gap-12">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-                            Definition (Top)
-                          </span>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top-start" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="top-end" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                        </div>
-
-                        {/* Definition Tooltip Bottom */}
-                        <div className="flex flex-col items-center gap-12">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-                            Definition (Bottom)
-                          </span>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom-start" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                          <div className="py-4">
-                            <Tooltip text="Tooltip text" pos="bottom-end" variant="definition" isOpen>
-                              Definition tooltip
-                            </Tooltip>
-                          </div>
-                        </div>
-
-                        {/* Definition Tooltip Inline Prose Demo */}
-                        <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-1">
-                          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                            Penerapan dalam Kalimat
-                          </span>
-                          <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                            Aplikasi raport terpadu Aposis telah sesuai dengan format kurikulum nasional{' '}
-                            <Tooltip text="Kurikulum Merdeka Belajar Kementerian Pendidikan RI" variant="definition">
-                              Kumer
-                            </Tooltip>{' '}
-                            dan otomatis menghasilkan laporan capaian kompetensi{' '}
-                            <Tooltip text="Rencana Pelaksanaan Pembelajaran Harian Terstandar" variant="definition">
-                              RPPH
-                            </Tooltip>{' '}
-                            bagi guru dan wali kelas.
-                          </div>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                            Arahkan kursor pada kata yang bergaris bawah titik-titik untuk membaca penjelasannya.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* 7. SPINNER ATOM */}
-          {selectedId === 'spinner' && (
-            <DocCard
-              title="Spinner"
-              badgeText="Atom"
-              description="Animasi pemuatan SVG ringan dalam berbagai ukuran dan warna."
-              usageSnippet={`import { Spinner } from '@aposis/design-system';\n\n<Spinner size="md" variant="primary" />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4">
-                    <Spinner size="xs" />
-                    <Spinner size="sm" />
-                    <Spinner size="md" />
-                    <Spinner size="lg" />
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: FORM FIELD */}
-          {selectedId === 'form-field' && (
-            <DocCard
-              title="FormField"
-              badgeText="Molecule"
-              description="Komponen pembungkus terpadu yang menyatukan label, tanda wajib (*), input kontrol, helper text, dan pesan error."
-              usageSnippet={`import { FormField, Input } from '@aposis/design-system';\n\n<FormField label="NISN" required helperText="10 digit nomor">\n  <Input placeholder="0051283921" />\n</FormField>`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-4 max-w-md">
-                  <FormField label="Nomor Induk Siswa Nasional (NISN)" required helperText="10 digit angka resmi dari Kemdikbud">
-                    <Input placeholder="Contoh: 0051283921" className="dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
-                  </FormField>
-                  <FormField label="Kata Sandi Baru" required error="Kata sandi minimal 8 karakter">
-                    <Input type="password" placeholder="••••••••" className="dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
-                  </FormField>
-                  <FormField label="Status Keaktifan Akademik" required helperText="Pilih salah satu status administratif siswa">
-                    <RadioGroup name="student_status_demo" defaultValue="aktif" orientation="horizontal">
-                      <Radio value="aktif" label="Aktif" />
-                      <Radio value="cuti" label="Cuti Akademik" />
-                      <Radio value="pindah" label="Pindah Sekolah" />
-                    </RadioGroup>
-                  </FormField>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: SEARCH BAR */}
-          {selectedId === 'search-bar' && (
-            <DocCard
-              title="SearchBar"
-              badgeText="Molecule"
-              description="Input pencarian data dengan tombol pembersih (clear) instan dan indikator shortcut keyboard."
-              usageSnippet={`import { SearchBar } from '@aposis/design-system';\n\n<SearchBar placeholder="Cari data..." onSearch={(val) => console.log(val)} />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <SearchBar placeholder="Cari siswa, guru, kelas..." onSearch={(q) => alert(`Mencari: ${q}`)} />
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: ALERT */}
-          {selectedId === 'alert' && (
-            <DocCard
-              title="Alert"
-              badgeText="Molecule"
-              description="Banner notifikasi kontekstual untuk memberikan umpan balik (info, success, warning, danger) kepada pengguna."
-              usageSnippet={`import { Alert } from '@aposis/design-system';\n\n<Alert variant="success" title="Berhasil">Data telah disimpan.</Alert>`}
-            >
-              <div className="space-y-3">
-                {isAlertVisible && (
-                  <Alert variant="info" title="Pembaruan Sistem Tersedia" onClose={() => setIsAlertVisible(false)}>
-                    Versi 3.1 dari Aposis Design System telah dimuat.
-                  </Alert>
-                )}
-                <Alert variant="success" title="Sinkronisasi Berhasil">Data 500 siswa telah berhasil diperbarui.</Alert>
-                <Alert variant="warning" title="Peringatan">Koneksi database kedua mengalami latensi tinggi.</Alert>
-                <Alert variant="danger" title="Gagal Menyimpan">Token autentikasi sesi telah kedaluwarsa.</Alert>
-              </div>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: MODAL */}
-          {selectedId === 'modal' && (
-            <DocCard
-              title="Modal"
-              badgeText="Molecule"
-              description="Jendela dialog mengambang aksesibel dengan backdrop blur, header, body yang dapat di-scroll, dan action footer."
-              usageSnippet={`import { Modal, Button } from '@aposis/design-system';\n\n<Modal isOpen={open} onClose={() => setOpen(false)} title="Hapus Data">\n  <p>Konfirmasi tindakan?</p>\n</Modal>`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <Button onClick={() => setIsModalOpen(true)}>Buka Contoh Modal Dialog</Button>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: TABS */}
-          {selectedId === 'tabs' && (
-            <DocCard
-              title="Tabs"
-              badgeText="Molecule"
-              description="Navigasi tab dengan dua varian tampilan: garis bawah (underline) dan tombol kapsul (pills)."
-              usageSnippet={`import { Tabs } from '@aposis/design-system';\n\n<Tabs items={[{ id: 'tab1', label: 'Tab 1' }]} activeTab={active} onChange={setActive} />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-6">
-                  <div>
-                    <span className="text-xs font-semibold text-slate-500 mb-2 block">Varian Underline</span>
-                    <Tabs
-                      items={[
-                        { id: 'tab1', label: 'Profil Siswa' },
-                        { id: 'tab2', label: 'Riwayat Nilai' },
-                        { id: 'tab3', label: 'Dokumen' },
-                      ]}
-                      activeTab={activeTabDemo}
-                      onChange={setActiveTabDemo}
-                      variant="underline"
-                    />
-                  </div>
-
-                  <div>
-                    <span className="text-xs font-semibold text-slate-500 mb-2 block">Varian Pills</span>
-                    <Tabs
-                      items={[
-                        { id: 'tab1', label: 'Harian' },
-                        { id: 'tab2', label: 'Mingguan' },
-                        { id: 'tab3', label: 'Bulanan' },
-                      ]}
-                      activeTab={activeTabDemo}
-                      onChange={setActiveTabDemo}
-                      variant="pills"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* MOLECULES: NOTIFICATION */}
-          {selectedId === 'notification' && (
-            <DocCard
-              title="Notification"
-              badgeText="Molecule"
-              description="Komponen notifikasi tingkat molekul dengan 4 varian semantik resmi (info, success, warning, error). Mendukung pemanggilan toast melayang secara programatis via notification.show(), progress bar durasi otomatis di atas atau di bawah tergantung posisi, animasi masuk, tombol aksi (actionTrigger), serta 2 gaya multiple notifikasi: default (daftar berurutan) dan stacking (kartu bertumpuk)."
-              snippets={notificationSnippets}
-            >
-              <div className="space-y-6">
-                {/* 1. Interactive Live Tester */}
-                <Card className="dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60 dark:border-slate-800 shadow-sm">
-                  <CardHeader className="border-b border-slate-100 dark:border-slate-800/80 pb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Icon icon={IconBell} size="sm" className="text-aposis-blue-60" />
-                          Interactive Notification Tester & Live Trigger
-                        </CardTitle>
-                        <CardDescription className="text-xs mt-1">
-                          Sesuaikan konfigurasi props di bawah, lalu klik tombol uji untuk memunculkan notifikasi melayang (toast) secara interaktif dengan animasi masuk.
-                        </CardDescription>
-                      </div>
-                      <Badge variant="primary" appearance="solid" size="sm">Live Tester</Badge>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-6 pt-6">
-                    {/* Controls Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            1. Varian Semantik (variant):
-                          </label>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            {(
-                              [
-                                { id: 'info', label: 'Info (Biru)', bg: 'bg-blue-600' },
-                                { id: 'success', label: 'Success (Hijau)', bg: 'bg-emerald-600' },
-                                { id: 'warning', label: 'Warning (Kuning)', bg: 'bg-amber-500' },
-                                { id: 'error', label: 'Error (Merah)', bg: 'bg-rose-600' },
-                              ] as const
-                            ).map((v) => (
-                              <button
-                                key={v.id}
-                                type="button"
-                                onClick={() => setNotifVariant(v.id)}
-                                className={`px-2.5 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
-                                  notifVariant === v.id
-                                    ? `${v.bg} text-white shadow-xs font-semibold ring-2 ring-offset-1 ring-slate-400`
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {v.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            2. Posisi Layar (pos):
-                          </label>
-                          <div className="grid grid-cols-3 gap-1.5">
-                            {(
-                              [
-                                { id: 'top-left', label: 'Top Left' },
-                                { id: 'top-center', label: 'Top Center' },
-                                { id: 'top-right', label: 'Top Right' },
-                                { id: 'bottom-left', label: 'Bottom Left' },
-                                { id: 'bottom-center', label: 'Bottom Center' },
-                                { id: 'bottom-right', label: 'Bottom Right' },
-                              ] as const
-                            ).map((p) => (
-                              <button
-                                key={p.id}
-                                type="button"
-                                onClick={() => setNotifPos(p.id)}
-                                className={`px-2 py-1 rounded-lg font-medium text-center transition-all cursor-pointer text-[11px] ${
-                                  notifPos === p.id
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {p.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            3. Durasi Otomatis (duration):
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {(
-                              [
-                                { val: 2000, label: '2 Detik (2000ms)' },
-                                { val: 4000, label: '4 Detik (Default)' },
-                                { val: 8000, label: '8 Detik' },
-                                { val: 0, label: 'Manual (Permanen)' },
-                              ] as const
-                            ).map((d) => (
-                              <button
-                                key={d.val}
-                                type="button"
-                                onClick={() => setNotifDuration(d.val)}
-                                className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                  notifDuration === d.val
-                                    ? 'bg-aposis-blue-60 text-white shadow-xs'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                              >
-                                {d.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            4. Gaya Multiple Notifikasi (multiStyle):
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setNotifMultiStyle('default');
-                                notification.setMultiStyle('default');
-                              }}
-                              className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
-                                notifMultiStyle === 'default'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs font-semibold'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              Default (Daftar)
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setNotifMultiStyle('stacking');
-                                notification.setMultiStyle('stacking');
-                              }}
-                              className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
-                                notifMultiStyle === 'stacking'
-                                  ? 'bg-aposis-blue-60 text-white shadow-xs font-semibold'
-                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                              }`}
-                            >
-                              Stacking (Bertumpuk)
-                            </button>
-                          </div>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                            {notifMultiStyle === 'stacking'
-                              ? 'Mode Stacking: Notifikasi bertumpuk rapi seperti deck kartu, dan memanjang saat kursor di-hover.'
-                              : 'Mode Default: Notifikasi tersusun berurutan dalam daftar vertikal.'}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                            5. Teks Judul Notifikasi (teks):
-                          </label>
-                          <input
-                            type="text"
-                            value={notifTeks}
-                            onChange={(e) => setNotifTeks(e.target.value)}
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
-                            placeholder="Contoh: Notification"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                            6. Deskripsi / Keterangan (description):
-                          </label>
-                          <textarea
-                            rows={2}
-                            value={notifDescription}
-                            onChange={(e) => setNotifDescription(e.target.value)}
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50 resize-none"
-                            placeholder="Contoh: Information notification message"
-                          />
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={notifHasAction}
-                              onChange={(e) => setNotifHasAction(e.target.checked)}
-                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-medium">
-                              Aktifkan Tombol Aksi (actionTrigger)
-                            </span>
-                          </label>
-
-                          {notifHasAction && (
-                            <div className="pl-6 pt-1">
-                              <label className="font-semibold text-slate-600 dark:text-slate-400 block mb-1">
-                                Label Aksi:
+                          {!demoIsIconOnly && (
+                            <div>
+                              <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                                3. Teks Tombol:
                               </label>
                               <input
                                 type="text"
-                                value={notifActionLabel}
-                                onChange={(e) => setNotifActionLabel(e.target.value)}
-                                className="w-full px-3 py-1 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
-                                placeholder="Contoh: Action"
+                                value={demoButtonText}
+                                onChange={(e) =>
+                                  setDemoButtonText(e.target.value)
+                                }
+                                className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
+                                placeholder="Teks tombol..."
                               />
                             </div>
                           )}
 
-                          <label className="flex items-center gap-2 cursor-pointer pt-1 border-t border-slate-200 dark:border-slate-700/60">
-                            <input
-                              type="checkbox"
-                              checked={notifShowProgress}
-                              onChange={(e) => setNotifShowProgress(e.target.checked)}
-                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-medium">
-                              Progress Bar Durasi ({notifPos.startsWith('bottom') ? 'di atas notifikasi' : 'di bawah notifikasi'})
-                            </span>
-                          </label>
-
-                          <label className="flex items-center gap-2 cursor-pointer pt-1 border-t border-slate-200 dark:border-slate-700/60">
-                            <input
-                              type="checkbox"
-                              checked={notifCustomIcon}
-                              onChange={(e) => setNotifCustomIcon(e.target.checked)}
-                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
-                            />
-                            <span className="text-slate-700 dark:text-slate-300 font-medium">
-                              Gunakan Ikon Kustom (IconBell)
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Dedicated Trigger Button & Toast Tester Area */}
-                    <div className="p-5 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50/40 dark:bg-blue-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-slate-900 dark:text-white">
-                            Tombol Pengujian Notifikasi
-                          </span>
-                          <Badge variant="primary" size="sm">Interaktif</Badge>
-                        </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-                          Klik tombol di sebelah kanan untuk memicu notifikasi mengambang dengan animasi masuk ke posisi <code className="font-mono bg-blue-100 dark:bg-blue-900/60 px-1 py-0.5 rounded text-blue-800 dark:text-blue-200">{notifPos}</code>. Progress bar durasi otomatis berada <strong className="text-slate-800 dark:text-slate-200">{notifPos.startsWith('bottom') ? 'di atas' : 'di bawah'}</strong> kartu dengan countdown yang tetap berjalan saat kursor di-hover.
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        {/* 1 Main Testing Button */}
-                        <Button
-                          variant="primary"
-                          size="md"
-                          leftIcon={<Icon icon={IconBell} size="sm" />}
-                          onClick={() => {
-                            notification.show({
-                              variant: notifVariant,
-                              teks: notifTeks || 'Notification',
-                              description: notifDescription || undefined,
-                              pos: notifPos,
-                              duration: notifDuration === 0 ? null : notifDuration,
-                              showProgress: notifShowProgress,
-                              actionTrigger: notifHasAction
-                                ? {
-                                    label: notifActionLabel || 'Action',
-                                    onClick: () => alert(`Aksi "${notifActionLabel}" diklik!`),
-                                  }
-                                : undefined,
-                              icon: notifCustomIcon ? (
-                                <Icon icon={IconBell} size="sm" className="text-blue-500" />
-                              ) : undefined,
-                            });
-                          }}
-                          className="shadow-sm hover:shadow-md font-semibold active:scale-95 transition-all"
-                        >
-                          Munculkan Notifikasi
-                        </Button>
-
-                        {/* Multiple Toast Tester Button */}
-                        <Button
-                          variant="outline"
-                          size="md"
-                          onClick={() => {
-                            const activeDuration = notifDuration === 0 ? null : notifDuration;
-                            notification.info({
-                              teks: 'Notifikasi Pertama',
-                              description: 'Pesan urutan awal dalam antrian.',
-                              pos: notifPos,
-                              duration: activeDuration,
-                              showProgress: notifShowProgress,
-                            });
-                            setTimeout(() => {
-                              notification.success({
-                                teks: 'Notifikasi Kedua',
-                                description: 'Pesan kedua dengan tombol aksi.',
-                                pos: notifPos,
-                                duration: activeDuration,
-                                showProgress: notifShowProgress,
-                                actionTrigger: { label: 'Lihat', onClick: () => alert('Aksi 2 diklik') },
-                              });
-                            }, 200);
-                            setTimeout(() => {
-                              notification.warning({
-                                teks: 'Notifikasi Ketiga',
-                                description: `Pesan ketiga menguji mode ${notifMultiStyle}.`,
-                                pos: notifPos,
-                                duration: activeDuration,
-                                showProgress: notifShowProgress,
-                              });
-                            }, 400);
-                          }}
-                          className="font-medium"
-                        >
-                          Uji 3 Notifikasi ({notifMultiStyle})
-                        </Button>
-
-                        <button
-                          type="button"
-                          onClick={() => notification.dismissAll()}
-                          className="px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-                          title="Hapus semua toast yang sedang tampil"
-                        >
-                          Bersihkan Toast
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Live Static Preview Card */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Pratinjau Komponen Langsung (In-Place Preview):
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setNotifPreviewKey((k) => k + 1)}
-                          className="text-xs text-aposis-blue-60 hover:underline cursor-pointer"
-                        >
-                          Reset Pratinjau
-                        </button>
-                      </div>
-
-                      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-                        <Notification
-                          key={notifPreviewKey}
-                          variant={notifVariant}
-                          teks={notifTeks || 'Notification'}
-                          description={notifDescription || undefined}
-                          pos={notifPos}
-                          duration={notifDuration === 0 ? null : notifDuration}
-                          showProgress={notifShowProgress}
-                          actionTrigger={
-                            notifHasAction
-                              ? {
-                                  label: notifActionLabel || 'Action',
-                                  onClick: () => alert(`Aksi "${notifActionLabel}" diklik!`),
+                          <div className="grid grid-cols-2 gap-2 p-3 pt-1 border bg-slate-50 dark:bg-slate-800/40 rounded-xl border-slate-200 dark:border-slate-700">
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={demoIsIconOnly}
+                                onChange={(e) =>
+                                  setDemoIsIconOnly(e.target.checked)
                                 }
-                              : undefined
-                          }
-                          icon={
-                            notifCustomIcon ? (
-                              <Icon icon={IconBell} size="sm" className="text-blue-500" />
-                            ) : undefined
-                          }
-                          onClose={() => console.log('Notification ditutup')}
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                Icon Only (Square)
+                              </span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={demoIsSkeleton}
+                                onChange={(e) =>
+                                  setDemoIsSkeleton(e.target.checked)
+                                }
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                Skeleton State
+                              </span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={demoIsLoading}
+                                onChange={(e) =>
+                                  setDemoIsLoading(e.target.checked)
+                                }
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">
+                                Status Loading
+                              </span>
+                            </label>
+
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={demoIsDisabled}
+                                onChange={(e) =>
+                                  setDemoIsDisabled(e.target.checked)
+                                }
+                                className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="text-slate-700 dark:text-slate-300">
+                                Status Disabled
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Right column: Icon Kiri, Icon Kanan, ID & className */}
+                        <div className="space-y-4">
+                          {/* Icon Kiri Toggle & Selector */}
+                          <div className="p-3 space-y-2 border rounded-xl bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center justify-between">
+                              <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={demoHasLeftIcon}
+                                  onChange={(e) =>
+                                    setDemoHasLeftIcon(e.target.checked)
+                                  }
+                                  className="rounded text-aposis-blue-60"
+                                />
+                                <span>
+                                  {demoIsIconOnly
+                                    ? "Ikon Tombol (iconOnly)"
+                                    : "Aktifkan Icon Kiri (leftIcon)"}
+                                </span>
+                              </label>
+                              <Badge
+                                variant={
+                                  demoHasLeftIcon ? "success" : "neutral"
+                                }
+                                appearance="subtle"
+                                size="sm"
+                              >
+                                {demoHasLeftIcon ? "Aktif" : "Nonaktif"}
+                              </Badge>
+                            </div>
+                            {demoHasLeftIcon && (
+                              <div>
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">
+                                  Pilih Ikon dari Tabler:
+                                </span>
+                                <select
+                                  value={demoLeftIconName}
+                                  onChange={(e) =>
+                                    setDemoLeftIconName(e.target.value)
+                                  }
+                                  className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                                >
+                                  <option value="IconPlus">
+                                    IconPlus (Tambah Data)
+                                  </option>
+                                  <option value="IconDeviceFloppy">
+                                    IconDeviceFloppy (Simpan)
+                                  </option>
+                                  <option value="IconSearch">
+                                    IconSearch (Cari)
+                                  </option>
+                                  <option value="IconDownload">
+                                    IconDownload (Unduh)
+                                  </option>
+                                  <option value="IconEdit">
+                                    IconEdit (Ubah)
+                                  </option>
+                                  <option value="IconHeart">
+                                    IconHeart (Suka)
+                                  </option>
+                                  <option value="IconTrash">
+                                    IconTrash (Hapus)
+                                  </option>
+                                  <option value="IconSettings">
+                                    IconSettings (Pengaturan)
+                                  </option>
+                                </select>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Icon Kanan Toggle & Selector (Hanya bila bukan iconOnly) */}
+                          {!demoIsIconOnly && (
+                            <div className="p-3 space-y-2 border rounded-xl bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
+                              <div className="flex items-center justify-between">
+                                <label className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={demoHasRightIcon}
+                                    onChange={(e) =>
+                                      setDemoHasRightIcon(e.target.checked)
+                                    }
+                                    className="rounded text-aposis-blue-60"
+                                  />
+                                  <span>Aktifkan Icon Kanan (rightIcon)</span>
+                                </label>
+                                <Badge
+                                  variant={
+                                    demoHasRightIcon ? "success" : "neutral"
+                                  }
+                                  appearance="subtle"
+                                  size="sm"
+                                >
+                                  {demoHasRightIcon ? "Aktif" : "Nonaktif"}
+                                </Badge>
+                              </div>
+                              {demoHasRightIcon && (
+                                <div>
+                                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">
+                                    Pilih Ikon Kanan dari Tabler:
+                                  </span>
+                                  <select
+                                    value={demoRightIconName}
+                                    onChange={(e) =>
+                                      setDemoRightIconName(e.target.value)
+                                    }
+                                    className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                                  >
+                                    <option value="IconArrowRight">
+                                      IconArrowRight (Lanjut)
+                                    </option>
+                                    <option value="IconSend">
+                                      IconSend (Kirim)
+                                    </option>
+                                    <option value="IconTrash">
+                                      IconTrash (Hapus)
+                                    </option>
+                                    <option value="IconChevronDown">
+                                      IconChevronDown (Dropdown)
+                                    </option>
+                                    <option value="IconSettings">
+                                      IconSettings (Pengaturan)
+                                    </option>
+                                  </select>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Custom ID & className inputs */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                                Kustom id:
+                              </label>
+                              <input
+                                type="text"
+                                value={demoCustomId}
+                                onChange={(e) =>
+                                  setDemoCustomId(e.target.value)
+                                }
+                                placeholder="misal: btn-submit"
+                                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                              />
+                            </div>
+                            <div>
+                              <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                                Kustom className:
+                              </label>
+                              <input
+                                type="text"
+                                value={demoCustomClass}
+                                onChange={(e) =>
+                                  setDemoCustomClass(e.target.value)
+                                }
+                                placeholder="misal: shadow-lg"
+                                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Area */}
+                      <div className="flex flex-col items-center justify-center gap-3 p-5 border rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                          Hasil Render Tombol (Live Component):
+                        </span>
+                        <div className="py-2">
+                          <Button
+                            id={demoCustomId || undefined}
+                            variant={demoVariant}
+                            size={demoSize}
+                            iconOnly={demoIsIconOnly}
+                            skeleton={demoIsSkeleton}
+                            isLoading={demoIsLoading}
+                            disabled={demoIsDisabled}
+                            className={demoCustomClass || undefined}
+                            leftIcon={
+                              demoHasLeftIcon && demoIcons[demoLeftIconName] ? (
+                                <Icon
+                                  icon={demoIcons[demoLeftIconName].icon}
+                                  size={
+                                    demoSize === "lg"
+                                      ? "md"
+                                      : demoSize === "xs"
+                                        ? "xs"
+                                        : "sm"
+                                  }
+                                />
+                              ) : undefined
+                            }
+                            rightIcon={
+                              demoHasRightIcon &&
+                              !demoIsIconOnly &&
+                              demoIcons[demoRightIconName] ? (
+                                <Icon
+                                  icon={demoIcons[demoRightIconName].icon}
+                                  size={
+                                    demoSize === "lg"
+                                      ? "md"
+                                      : demoSize === "xs"
+                                        ? "xs"
+                                        : "sm"
+                                  }
+                                />
+                              ) : undefined
+                            }
+                            onClick={() =>
+                              alert(
+                                `Tombol diklik! id: "${demoCustomId}", variant: "${demoVariant}"`,
+                              )
+                            }
+                            aria-label={
+                              demoIsIconOnly ? "Tombol Aksi" : undefined
+                            }
+                          >
+                            {!demoIsIconOnly && demoButtonText}
+                          </Button>
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                          Coba klik tombol di atas! Atribut{" "}
+                          <code className="font-mono text-aposis-blue-60">
+                            id="{demoCustomId}"
+                          </code>{" "}
+                          dan{" "}
+                          <code className="font-mono text-aposis-blue-60">
+                            className="{demoCustomClass || "default"}"
+                          </code>{" "}
+                          aktif diaplikasikan.
+                        </div>
+                      </div>
+
+                      {/* Live Generated TSX Code */}
+                      <div className="overflow-hidden border shadow-xs rounded-xl bg-slate-950 border-slate-800">
+                        <div className="flex items-center justify-between px-4 py-2 font-mono text-xs border-b border-slate-800 bg-slate-900/90 text-slate-300">
+                          <span className="flex items-center gap-1.5">
+                            <Icon
+                              icon={IconCode}
+                              size="sm"
+                              className="text-aposis-blue-40"
+                            />
+                            Kode TSX:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => copySnippet(dynamicButtonCode)}
+                            className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px]"
+                          >
+                            {copiedCode ? (
+                              <Icon
+                                icon={IconCheck}
+                                size="sm"
+                                className="text-emerald-400"
+                              />
+                            ) : (
+                              <Icon icon={IconCopy} size="sm" />
+                            )}
+                            <span>
+                              {copiedCode ? "Tersalin!" : "Salin Kode"}
+                            </span>
+                          </button>
+                        </div>
+                        <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre select-all text-sky-300">
+                          <code>{dynamicButtonCode}</code>
+                        </pre>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Real-World Combinations */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        Koleksi Contoh Ikon Kiri & Kanan Populer (Siap Pakai)
+                      </CardTitle>
+                      <CardDescription>
+                        Berbagai skenario umum penempatan ikon dan aksi tombol
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Aksi Tambah (Icon Kiri)
+                          </div>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            leftIcon={<Icon icon={IconPlus} size="sm" />}
+                          >
+                            Tambah Data Siswa
+                          </Button>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Aksi Simpan (Icon Kiri)
+                          </div>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            leftIcon={
+                              <Icon icon={IconDeviceFloppy} size="sm" />
+                            }
+                          >
+                            Simpan Perubahan
+                          </Button>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Aksi Lanjut (Icon Kanan)
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            rightIcon={<Icon icon={IconArrowRight} size="sm" />}
+                          >
+                            Langkah Berikutnya
+                          </Button>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Aksi Kirim (Icon Kanan)
+                          </div>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            rightIcon={<Icon icon={IconSend} size="sm" />}
+                          >
+                            Kirim Pengumuman
+                          </Button>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Kedua Sisi (Unduh + Dropdown)
+                          </div>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            leftIcon={<Icon icon={IconDownload} size="sm" />}
+                            rightIcon={
+                              <Icon icon={IconChevronDown} size="sm" />
+                            }
+                          >
+                            Export Format CSV
+                          </Button>
+                        </div>
+
+                        <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Aksi Hapus (Danger + Icon)
+                          </div>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            leftIcon={<Icon icon={IconTrash} size="sm" />}
+                          >
+                            Hapus Catatan
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Varian Tombol Figma v3.1 */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Varian Tombol Resmi (Figma v3.1)</CardTitle>
+                      <CardDescription>
+                        Pilihan tema visual lengkap sesuai hierarki tindakan dan
+                        peruntukan antarmuka
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Button variant="primary">Primary</Button>
+                        <Button variant="secondary">Secondary</Button>
+                        <Button variant="outline">Outline</Button>
+                        <Button variant="ghost">Ghost</Button>
+                        <Button variant="subtle">Subtle</Button>
+                        <Button variant="danger">Danger</Button>
+                        <Button variant="danger-outline">Danger Outline</Button>
+                        <Button variant="danger-subtle">Danger Subtle</Button>
+                        <Button variant="success">Success</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Ukuran Tombol & Icon-Only */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        4 Ukuran Tombol (LG, MD, SM, XS) &amp; Icon-Only
+                      </CardTitle>
+                      <CardDescription>
+                        Tersedia dalam 4 ukuran standar proporsional dengan
+                        dukungan tombol bujur sangkar (iconOnly)
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Button
+                          size="lg"
+                          leftIcon={<Icon icon={IconPlus} size="sm" />}
+                        >
+                          Large (48px)
+                        </Button>
+                        <Button
+                          size="md"
+                          leftIcon={<Icon icon={IconPlus} size="sm" />}
+                        >
+                          Medium (40px)
+                        </Button>
+                        <Button
+                          size="sm"
+                          leftIcon={<Icon icon={IconPlus} size="xs" />}
+                        >
+                          Small (32px)
+                        </Button>
+                        <Button
+                          size="xs"
+                          leftIcon={<Icon icon={IconPlus} size="xs" />}
+                        >
+                          Extra Small (28px)
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <span className="text-xs font-semibold text-slate-500">
+                          Icon Only:
+                        </span>
+                        <Button
+                          size="lg"
+                          iconOnly
+                          leftIcon={<Icon icon={IconPlus} size="sm" />}
+                          aria-label="Large Icon"
+                        />
+                        <Button
+                          size="md"
+                          iconOnly
+                          leftIcon={<Icon icon={IconPlus} size="sm" />}
+                          aria-label="Medium Icon"
+                        />
+                        <Button
+                          size="sm"
+                          iconOnly
+                          leftIcon={<Icon icon={IconPlus} size="xs" />}
+                          aria-label="Small Icon"
+                        />
+                        <Button
+                          size="xs"
+                          iconOnly
+                          leftIcon={<Icon icon={IconPlus} size="xs" />}
+                          aria-label="Extra Small Icon"
                         />
                       </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Status, Loading & Skeleton */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        Status Interaksi, Loading &amp; Skeleton
+                      </CardTitle>
+                      <CardDescription>
+                        Indikator proses latar belakang, status nonaktif, dan
+                        skeleton loading pulse
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Button isLoading>Sedang Memproses...</Button>
+                        <Button disabled>Disabled Button</Button>
+                        <Button variant="outline" disabled>
+                          Outline Disabled
+                        </Button>
+                        <Button skeleton size="md">
+                          Placeholder
+                        </Button>
+                        <Button skeleton size="md" iconOnly />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* LINK ATOM */}
+            {selectedId === "link" && (
+              <DocCard
+                title="Link"
+                badgeText="Atom"
+                description="Komponen tautan navigasi resmi Aposis v3 dengan warna biru resmi, dukungan panah arah (kiri/kanan/none), 3 variasi ukuran, gaya garis bawah (default/underlined), serta status disabled."
+                snippets={[
+                  {
+                    label: "Penggunaan Dasar & Arah Panah",
+                    desc: "Tautan standar berwarna biru Aposis dengan opsi panah kanan, kiri, atau tanpa panah.",
+                    code: `import { Link } from '@aposis/design-system';\n\n<Link to="/dashboard" arrow="right">Lihat Dashboard</Link>\n<Link to="/kembali" arrow="left">Kembali</Link>\n<Link to="#">Tautan Standar</Link>`,
+                  },
+                  {
+                    label: "Underlined vs Default",
+                    desc: 'Gunakan variant="underlined" untuk tautan yang selalu memiliki garis bawah.',
+                    code: `import { Link } from '@aposis/design-system';\n\n<Link to="#" variant="default">Underline saat hover</Link>\n<Link to="#" variant="underlined">Selalu bergaris bawah</Link>`,
+                  },
+                ]}
+              >
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Varian Tautan Resmi (Default Biru)</CardTitle>
+                      <CardDescription>
+                        Komponen tautan resmi Aposis dengan warna bawaan biru,
+                        dukungan arah panah, garis bawah, serta status disabled.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="p-4 overflow-x-auto border bg-slate-50 dark:bg-slate-900/50 rounded-xl border-slate-200 dark:border-slate-800">
+                        <table className="w-full min-w-[640px] text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                              <th className="pb-3 pr-4">Tipe Tautan</th>
+                              <th className="px-4 pb-3">Panah Kanan</th>
+                              <th className="px-4 pb-3">Panah Kiri</th>
+                              <th className="px-4 pb-3">Tanpa Panah</th>
+                              <th className="px-4 pb-3">Underlined</th>
+                              <th className="pb-3 pl-4">Disabled</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                            <tr>
+                              <td className="py-3.5 pr-4 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                Default (Biru Resmi)
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <Link to="#" arrow="right">
+                                  Lihat Detail
+                                </Link>
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <Link to="#" arrow="left">
+                                  Kembali
+                                </Link>
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <Link to="#">Tautan</Link>
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <Link to="#" variant="underlined">
+                                  Tautan
+                                </Link>
+                              </td>
+                              <td className="py-3.5 pl-4">
+                                <Link to="#" disabled arrow="right">
+                                  Tautan
+                                </Link>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Skala Ukuran */}
+                      <div className="p-4 space-y-3 border bg-slate-50 dark:bg-slate-900/50 rounded-xl border-slate-200 dark:border-slate-800">
+                        <div className="text-xs font-semibold tracking-wider uppercase text-slate-400">
+                          Perbandingan Ukuran (sm, md, lg)
+                        </div>
+                        <div className="flex flex-wrap items-center gap-8">
+                          <div className="space-y-1">
+                            <span className="text-[11px] text-slate-400 block font-mono">
+                              size="lg" (16px)
+                            </span>
+                            <Link to="#" size="lg" arrow="right">
+                              Link Action Large
+                            </Link>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[11px] text-slate-400 block font-mono">
+                              size="md" (14px - Default)
+                            </span>
+                            <Link to="#" size="md" arrow="right">
+                              Link Action Medium
+                            </Link>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[11px] text-slate-400 block font-mono">
+                              size="sm" (12px)
+                            </span>
+                            <Link to="#" size="sm" arrow="right">
+                              Link Action Small
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* 2. ICON ATOM */}
+            {selectedId === "icon" && (
+              <DocCard
+                title="Icon (Tabler & Custom)"
+                badgeText="Atom"
+                description="Standar komponen ikon Aposis berbasis Tabler Icons dengan ketebalan garis (stroke width) proporsional resmi: SM (16px / 1.25px), MD (20px / 1.5px), LG (24px / 2px), serta ikon khusus Figma."
+                snippets={iconDocSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Standar Ukuran & Stroke Width</CardTitle>
+                      <CardDescription>
+                        Ketebalan garis secara otomatis menyesuaikan ukuran ikon
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div className="flex items-center gap-4 p-4 border rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <div className="flex items-center justify-center w-10 h-10 bg-white border rounded-xl dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-aposis-blue-60">
+                            <Icon icon={IconPlus} size="sm" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold">SM: 16px</div>
+                            <div className="text-xs text-slate-400">
+                              Stroke: 1.25px
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 p-4 border rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <div className="flex items-center justify-center w-10 h-10 bg-white border rounded-xl dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-aposis-blue-60">
+                            <Icon icon={IconPlus} size="md" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold">MD: 20px</div>
+                            <div className="text-xs text-slate-400">
+                              Stroke: 1.5px
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 p-4 border rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <div className="flex items-center justify-center w-10 h-10 bg-white border rounded-xl dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-aposis-blue-60">
+                            <Icon icon={IconPlus} size="lg" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold">LG: 24px</div>
+                            <div className="text-xs text-slate-400">
+                              Stroke: 2px
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Ikon Kustom Figma</CardTitle>
+                      <CardDescription>
+                        Komponen kustom bahasa dan rumus matematika
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap items-center gap-6 p-4 border border-purple-300 border-dashed rounded-xl dark:border-purple-800 bg-purple-50/30 dark:bg-purple-950/20">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white border rounded-lg dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <IconLanguageId size="md" />
+                          </div>
+                          <span className="text-xs font-semibold">
+                            Language ID
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white border rounded-lg dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <IconLanguageEn size="md" />
+                          </div>
+                          <span className="text-xs font-semibold">
+                            Language EN
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white border rounded-lg dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <IconMathSqrt size="md" />
+                          </div>
+                          <span className="text-xs font-semibold">Math √x</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* 3. INPUT ATOM */}
+            {selectedId === "input" && (
+              <DocCard
+                title="Input"
+                badgeText="Atom"
+                description="Elemen masukan teks dengan status fokus elegan, error highlight, dan slot ikon di sisi kiri atau kanan."
+                snippets={inputSnippets}
+                tips={
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
+                    <div className="font-semibold mb-1 flex items-center gap-1.5">
+                      <Icon icon={IconInfoCircle} size="sm" />
+                      Penempatan Ikon & Kustomisasi Input:
+                    </div>
+                    Gunakan prop{" "}
+                    <code className="font-semibold text-aposis-blue-60">
+                      leftIcon
+                    </code>{" "}
+                    atau{" "}
+                    <code className="font-semibold text-aposis-blue-60">
+                      rightIcon
+                    </code>{" "}
+                    untuk menyisipkan ikon. Anda juga dapat memberikan atribut{" "}
+                    <code className="font-semibold text-aposis-blue-60">
+                      id="input-id"
+                    </code>
+                    ,{" "}
+                    <code className="font-semibold text-aposis-blue-60">
+                      className="..."
+                    </code>
+                    , dan{" "}
+                    <code className="font-semibold text-aposis-blue-60">
+                      containerClassName="..."
+                    </code>
+                    .
+                  </div>
+                }
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-5">
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                        1. Input Normal (Kustom id & className)
+                      </label>
+                      <Input
+                        id="input-nama-lengkap"
+                        placeholder="Masukkan nama lengkap..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        className="font-sans dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                      <span className="text-[11px] text-slate-400 mt-1 block">
+                        id="input-nama-lengkap"
+                      </span>
                     </div>
 
-                    {/* Live Reactive TSX Code */}
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xs">
-                      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/90 text-xs font-mono text-slate-300">
-                        <span className="flex items-center gap-1.5">
-                          <Icon icon={IconCode} size="sm" className="text-aposis-blue-40" />
-                          Kode TSX:
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => copySnippet(dynamicNotificationCode)}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                        >
-                          {copiedCode ? (
-                            <Icon icon={IconCheck} size="sm" className="text-emerald-400" />
-                          ) : (
-                            <Icon icon={IconCopy} size="sm" />
-                          )}
-                          {copiedCode ? 'Tersalin' : 'Salin Kode'}
-                        </button>
-                      </div>
-                      <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
-                        <code>{dynamicNotificationCode}</code>
-                      </pre>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                        2. Input dengan Icon Kiri (leftIcon)
+                      </label>
+                      <Input
+                        id="input-search-siswa"
+                        placeholder="Cari siswa berdasarkan NISN atau nama..."
+                        leftIcon={<Icon icon={IconSearch} size="sm" />}
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                        3. Input dengan Icon Kanan (rightIcon)
+                      </label>
+                      <Input
+                        id="input-email-status"
+                        defaultValue="ahmad.fauzi@aposis.sch.id"
+                        rightIcon={
+                          <Icon
+                            icon={IconCheck}
+                            size="sm"
+                            className="text-emerald-500"
+                          />
+                        }
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                        4. Input dengan Kedua Icon (Kiri & Kanan)
+                      </label>
+                      <Input
+                        id="input-user-verified"
+                        placeholder="Username sistem..."
+                        defaultValue="ahmad_fauzi"
+                        leftIcon={<Icon icon={IconUser} size="sm" />}
+                        rightIcon={
+                          <Icon
+                            icon={IconCheck}
+                            size="sm"
+                            className="text-emerald-500"
+                          />
+                        }
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">
+                        5. Input dengan Status Error
+                      </label>
+                      <Input
+                        id="input-email-error"
+                        placeholder="email@domain.com"
+                        defaultValue="email-salah-format"
+                        error="Format alamat email tidak valid"
+                        leftIcon={
+                          <Icon
+                            icon={IconAlertCircle}
+                            size="sm"
+                            className="text-rose-500"
+                          />
+                        }
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
                     </div>
                   </CardContent>
                 </Card>
+              </DocCard>
+            )}
 
-                {/* 2. Galeri Varian Semantik */}
+            {/* 4. BADGE ATOM */}
+            {selectedId === "badge" && (
+              <DocCard
+                title="Badge"
+                badgeText="Atom"
+                description="Pill label status untuk menandai kondisi data aktif, menunggu, selesai, atau kategori."
+                usageSnippet={`import { Badge } from '@aposis/design-system';\n\n<Badge variant="success" dot>Aktif</Badge>`}
+              >
                 <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">Galeri Varian Notifikasi Semantik</CardTitle>
-                      <Badge variant="neutral" size="sm">4 Varian</Badge>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="flex flex-wrap gap-2.5">
+                      <Badge variant="primary">Primary</Badge>
+                      <Badge variant="success" dot>
+                        Success
+                      </Badge>
+                      <Badge variant="warning" dot>
+                        Warning
+                      </Badge>
+                      <Badge variant="danger" dot>
+                        Danger
+                      </Badge>
+                      <Badge variant="secondary">Secondary</Badge>
+                      <Badge variant="neutral">Neutral</Badge>
+                      <Badge variant="primary" appearance="solid">
+                        Solid
+                      </Badge>
+                      <Badge variant="success" appearance="outline">
+                        Outline
+                      </Badge>
                     </div>
-                    <CardDescription className="text-xs">
-                      Matriks 4 varian semantik resmi (Information, Success, Warning, Error) dengan garis border kiri tebal, warna latar tint lembut, teks tebal, tombol aksi, dan tombol tutup.
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* 5. AVATAR ATOM */}
+            {selectedId === "avatar" && (
+              <DocCard
+                title="Avatar"
+                badgeText="Atom"
+                description="Komponen foto profil pengguna dengan inisial nama otomatis dan indikator status online/busy/away/offline."
+                usageSnippet={`import { Avatar } from '@aposis/design-system';\n\n<Avatar name="Ahmad Fauzi" size="md" status="online" />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <Avatar name="Ahmad Fauzi" size="xs" status="online" />
+                      <Avatar name="Budi Santoso" size="sm" status="away" />
+                      <Avatar name="Citra Kirana" size="md" status="busy" />
+                      <Avatar name="Dewi Lestari" size="lg" status="online" />
+                      <Avatar name="Eko Prasetyo" size="xl" status="offline" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* 6. CHECKBOX ATOM */}
+            {selectedId === "checkbox" && (
+              <DocCard
+                title="Checkbox"
+                badgeText="Atom"
+                description="Kotak centang aksesibel dengan animasi transisi centang dan deskripsi pembantu."
+                usageSnippet={`import { Checkbox } from '@aposis/design-system';\n\n<Checkbox label="Setuju syarat & ketentuan" />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-3">
+                    <Checkbox
+                      checked={checkboxChecked}
+                      onChange={(e) => setCheckboxChecked(e.target.checked)}
+                      label="Kirimkan notifikasi email ketika ada pembaruan data"
+                      description="Anda dapat mengubah preferensi ini kapan saja di pengaturan profil."
+                    />
+                    <Checkbox label="Saya menyetujui syarat dan ketentuan penggunaan sistem Aposis" />
+                    <Checkbox
+                      disabled
+                      checked
+                      label="Fitur enkripsi end-to-end (Wajib aktif secara sistem)"
+                    />
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* RADIO ATOM */}
+            {selectedId === "radio" && (
+              <DocCard
+                title="Radio"
+                badgeText="Atom"
+                description="Elemen pilihan tunggal aksesibel berbasis Tailwind CSS murni dengan dukungan orientasi label (kanan, kiri, bawah, atas), varian card, dan RadioGroup helper."
+                snippets={[
+                  {
+                    label: "Penggunaan Dasar",
+                    desc: "Radio individual dengan label atau posisi label fleksibel.",
+                    code: `import { Radio } from '@aposis/design-system';\n\n<Radio name="pilihan" value="1" label="Opsi Pertama" defaultChecked />\n<Radio name="pilihan" value="2" label="Opsi Kedua" />\n<Radio name="pilihan" value="3" label="Opsi Ketiga" labelPosition="bottom" />`,
+                  },
+                  {
+                    label: "RadioGroup",
+                    desc: "Pembungkus terpadu untuk mengelola nilai grup, label, deskripsi, dan pesan error.",
+                    code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup\n  label="Metode Pembayaran"\n  name="payment"\n  value={selectedPayment}\n  onChange={(val) => setSelectedPayment(val)}\n  orientation="horizontal"\n>\n  <Radio value="transfer" label="Transfer Bank" />\n  <Radio value="qris" label="QRIS" />\n  <Radio value="card" label="Kartu Kredit" />\n</RadioGroup>`,
+                  },
+                  {
+                    label: "Varian Card",
+                    desc: "Tampilan kotak kartu yang dapat diklik dengan deskripsi pembantu.",
+                    code: `import { RadioGroup, Radio } from '@aposis/design-system';\n\n<RadioGroup value={plan} onChange={setPlan} className="grid grid-cols-1 gap-3 sm:grid-cols-2">\n  <Radio variant="card" value="starter" label="Starter" description="Untuk pengguna individu" />\n  <Radio variant="card" value="pro" label="Pro" description="Fitur lengkap untuk tim" />\n</RadioGroup>`,
+                  },
+                  {
+                    label: "Di dalam FormField",
+                    desc: "Dibungkus FormField dengan validasi dan penanganan error otomatis.",
+                    code: `import { FormField, RadioGroup, Radio } from '@aposis/design-system';\n\n<FormField label="Metode Pembayaran" required helperText="Pilih salah satu" error={error}>\n  <RadioGroup name="payment" value={payment} onChange={setPayment} orientation="horizontal">\n    <Radio value="qris" label="QRIS Instan" />\n    <Radio value="va" label="Virtual Account" />\n  </RadioGroup>\n</FormField>`,
+                  },
+                ]}
+              >
+                <div className="space-y-6">
+                  {/* 1. Interactive Live Radio Builder */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-200/80 dark:border-blue-900/60">
+                    <CardHeader className="border-b bg-gradient-to-r from-blue-50/70 to-indigo-50/50 dark:from-slate-800/80 dark:to-slate-900/80 border-slate-100 dark:border-slate-800">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <CardTitle className="flex items-center gap-2">
+                            <Icon
+                              icon={IconAdjustmentsHorizontal}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Radio Builder (Pilih Varian, Ukuran &
+                            Posisi Label)
+                          </CardTitle>
+                          <CardDescription>
+                            Pilih konfigurasi di bawah untuk melihat preview
+                            interaktif. Default bergaris tepi hitam/netral dan
+                            otomatis berubah menjadi biru saat dipilih.
+                          </CardDescription>
+                        </div>
+                        <Badge variant="primary" appearance="solid" size="sm">
+                          Live Tester
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Controls Grid */}
+                      <div className="grid grid-cols-1 gap-5 text-xs md:grid-cols-2">
+                        {/* Left column: Variant, Size, LabelPosition */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              1. Pilih Varian Tampilan:
+                            </label>
+                            <div className="flex flex-wrap gap-1.5">
+                              {(["default", "card"] as const).map((v) => (
+                                <button
+                                  key={v}
+                                  type="button"
+                                  onClick={() => setRadioConfigVariant(v)}
+                                  className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
+                                    radioConfigVariant === v
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {v === "default"
+                                    ? "Lingkaran Biasa (Default)"
+                                    : "Varian Kartu (Card)"}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              2. Pilih Ukuran (Size):
+                            </label>
+                            <div className="flex gap-2">
+                              {(["sm", "md", "lg"] as const).map((s) => (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  onClick={() => setRadioConfigSize(s)}
+                                  className={`px-3 py-1 rounded-lg uppercase font-medium transition-all cursor-pointer ${
+                                    radioConfigSize === s
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {s === "sm"
+                                    ? "SM (16px)"
+                                    : s === "md"
+                                      ? "MD (20px)"
+                                      : "LG (24px)"}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              3. Posisi Label (labelPosition):
+                            </label>
+                            <div className="flex flex-wrap gap-1.5">
+                              {(
+                                [
+                                  { id: "right", label: "Kanan (Default)" },
+                                  { id: "left", label: "Kiri" },
+                                  { id: "bottom", label: "Bawah (Stacked)" },
+                                  { id: "top", label: "Atas" },
+                                  {
+                                    id: "none",
+                                    label: "Tanpa Label (Circle Only)",
+                                  },
+                                ] as const
+                              ).map((pos) => (
+                                <button
+                                  key={pos.id}
+                                  type="button"
+                                  onClick={() => setRadioConfigLabelPos(pos.id)}
+                                  className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                    radioConfigLabelPos === pos.id
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {pos.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right column: Mode, Orientation, Toggles, Custom Label */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              4. Mode Komponen:
+                            </label>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setRadioConfigMode("group")}
+                                className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                  radioConfigMode === "group"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                RadioGroup (Multi-opsi)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setRadioConfigMode("single")}
+                                className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                  radioConfigMode === "single"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                Single Radio (Atom)
+                              </button>
+                            </div>
+                          </div>
+
+                          {radioConfigMode === "group" && (
+                            <div>
+                              <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                                5. Orientasi Susunan Grup:
+                              </label>
+                              <div className="flex gap-2">
+                                {(["horizontal", "vertical"] as const).map(
+                                  (ori) => (
+                                    <button
+                                      key={ori}
+                                      type="button"
+                                      onClick={() =>
+                                        setRadioConfigOrientation(ori)
+                                      }
+                                      className={`px-3 py-1 rounded-lg capitalize font-medium transition-all cursor-pointer ${
+                                        radioConfigOrientation === ori
+                                          ? "bg-aposis-blue-60 text-white shadow-xs"
+                                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                      }`}
+                                    >
+                                      {ori}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
+                              6. Status & Opsi Tambahan:
+                            </span>
+                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={radioConfigDisabled}
+                                  onChange={(e) =>
+                                    setRadioConfigDisabled(e.target.checked)
+                                  }
+                                  className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                                />
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  Status Disabled
+                                </span>
+                              </label>
+
+                              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={radioConfigInvalid}
+                                  onChange={(e) =>
+                                    setRadioConfigInvalid(e.target.checked)
+                                  }
+                                  className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                                />
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  Status Error (isInvalid)
+                                </span>
+                              </label>
+
+                              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={radioConfigHasDesc}
+                                  onChange={(e) =>
+                                    setRadioConfigHasDesc(e.target.checked)
+                                  }
+                                  className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                                />
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  Sertakan Deskripsi
+                                </span>
+                              </label>
+
+                              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={radioConfigWrapForm}
+                                  onChange={(e) =>
+                                    setRadioConfigWrapForm(e.target.checked)
+                                  }
+                                  className="rounded text-aposis-blue-60 focus:ring-aposis-blue-50"
+                                />
+                                <span className="text-slate-700 dark:text-slate-300">
+                                  Bungkus FormField
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+
+                          {radioConfigLabelPos !== "none" && (
+                            <div>
+                              <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                                7. Kustom Teks Label:
+                              </label>
+                              <input
+                                type="text"
+                                value={radioConfigCustomLabel}
+                                onChange={(e) =>
+                                  setRadioConfigCustomLabel(e.target.value)
+                                }
+                                className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-aposis-blue-50"
+                                placeholder="Teks label radio..."
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Live Preview Area */}
+                      <div className="flex flex-col items-center justify-center gap-4 p-6 border rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center justify-between w-full pb-2 border-b border-slate-200/80 dark:border-slate-700/80">
+                          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            Hasil Render Radio (Live Component):
+                          </span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            Pilihan Aktif:{" "}
+                            <strong className="font-mono text-blue-600 dark:text-blue-400">
+                              {radioConfigSelected}
+                            </strong>
+                          </span>
+                        </div>
+
+                        <div className="flex justify-center w-full py-2">
+                          {radioConfigWrapForm ? (
+                            <FormField
+                              label="Pilih Kategori Layanan"
+                              required
+                              helperText="Silakan tentukan salah satu opsi untuk melanjutkan proses."
+                              error={
+                                radioConfigInvalid
+                                  ? "Wajib memilih salah satu opsi layanan."
+                                  : undefined
+                              }
+                              className="max-w-lg"
+                            >
+                              {radioConfigMode === "group" ? (
+                                <RadioGroup
+                                  name="interactive_builder_radio"
+                                  value={radioConfigSelected}
+                                  onChange={(val) =>
+                                    setRadioConfigSelected(val)
+                                  }
+                                  size={radioConfigSize}
+                                  variant={radioConfigVariant}
+                                  orientation={radioConfigOrientation}
+                                  labelPosition={
+                                    radioConfigLabelPos === "none"
+                                      ? "right"
+                                      : radioConfigLabelPos
+                                  }
+                                  disabled={radioConfigDisabled}
+                                  isInvalid={radioConfigInvalid}
+                                  className={
+                                    radioConfigVariant === "card"
+                                      ? "grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
+                                      : undefined
+                                  }
+                                >
+                                  <Radio
+                                    value="opt1"
+                                    label={
+                                      radioConfigLabelPos === "none"
+                                        ? undefined
+                                        : radioConfigCustomLabel ||
+                                          "Opsi Pertama"
+                                    }
+                                    aria-label={
+                                      radioConfigLabelPos === "none"
+                                        ? "Opsi Pertama"
+                                        : undefined
+                                    }
+                                    description={
+                                      radioConfigHasDesc &&
+                                      radioConfigLabelPos !== "none"
+                                        ? "Keterangan pembantu untuk opsi 1"
+                                        : undefined
+                                    }
+                                  />
+                                  <Radio
+                                    value="opt2"
+                                    label={
+                                      radioConfigLabelPos === "none"
+                                        ? undefined
+                                        : "Opsi Kedua"
+                                    }
+                                    aria-label={
+                                      radioConfigLabelPos === "none"
+                                        ? "Opsi Kedua"
+                                        : undefined
+                                    }
+                                    description={
+                                      radioConfigHasDesc &&
+                                      radioConfigLabelPos !== "none"
+                                        ? "Keterangan pembantu untuk opsi 2"
+                                        : undefined
+                                    }
+                                  />
+                                  <Radio
+                                    value="opt3"
+                                    label={
+                                      radioConfigLabelPos === "none"
+                                        ? undefined
+                                        : "Opsi Ketiga"
+                                    }
+                                    aria-label={
+                                      radioConfigLabelPos === "none"
+                                        ? "Opsi Ketiga"
+                                        : undefined
+                                    }
+                                    description={
+                                      radioConfigHasDesc &&
+                                      radioConfigLabelPos !== "none"
+                                        ? "Keterangan pembantu untuk opsi 3"
+                                        : undefined
+                                    }
+                                  />
+                                </RadioGroup>
+                              ) : (
+                                <Radio
+                                  name="interactive_single_radio"
+                                  value="opt1"
+                                  checked={radioConfigSelected === "opt1"}
+                                  onChange={() =>
+                                    setRadioConfigSelected(
+                                      radioConfigSelected === "opt1"
+                                        ? ""
+                                        : "opt1",
+                                    )
+                                  }
+                                  size={radioConfigSize}
+                                  variant={radioConfigVariant}
+                                  labelPosition={
+                                    radioConfigLabelPos === "none"
+                                      ? "right"
+                                      : radioConfigLabelPos
+                                  }
+                                  label={
+                                    radioConfigLabelPos === "none"
+                                      ? undefined
+                                      : radioConfigCustomLabel ||
+                                        "Pilihan Utama"
+                                  }
+                                  aria-label={
+                                    radioConfigLabelPos === "none"
+                                      ? "Pilihan Utama"
+                                      : undefined
+                                  }
+                                  description={
+                                    radioConfigHasDesc &&
+                                    radioConfigLabelPos !== "none"
+                                      ? "Keterangan pembantu di bawah label"
+                                      : undefined
+                                  }
+                                  disabled={radioConfigDisabled}
+                                  isInvalid={radioConfigInvalid}
+                                />
+                              )}
+                            </FormField>
+                          ) : radioConfigMode === "group" ? (
+                            <RadioGroup
+                              name="interactive_builder_radio"
+                              value={radioConfigSelected}
+                              onChange={(val) => setRadioConfigSelected(val)}
+                              size={radioConfigSize}
+                              variant={radioConfigVariant}
+                              orientation={radioConfigOrientation}
+                              labelPosition={
+                                radioConfigLabelPos === "none"
+                                  ? "right"
+                                  : radioConfigLabelPos
+                              }
+                              disabled={radioConfigDisabled}
+                              isInvalid={radioConfigInvalid}
+                              className={
+                                radioConfigVariant === "card"
+                                  ? "grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg"
+                                  : undefined
+                              }
+                            >
+                              <Radio
+                                value="opt1"
+                                label={
+                                  radioConfigLabelPos === "none"
+                                    ? undefined
+                                    : radioConfigCustomLabel || "Opsi Pertama"
+                                }
+                                aria-label={
+                                  radioConfigLabelPos === "none"
+                                    ? "Opsi Pertama"
+                                    : undefined
+                                }
+                                description={
+                                  radioConfigHasDesc &&
+                                  radioConfigLabelPos !== "none"
+                                    ? "Keterangan pembantu untuk opsi 1"
+                                    : undefined
+                                }
+                              />
+                              <Radio
+                                value="opt2"
+                                label={
+                                  radioConfigLabelPos === "none"
+                                    ? undefined
+                                    : "Opsi Kedua"
+                                }
+                                aria-label={
+                                  radioConfigLabelPos === "none"
+                                    ? "Opsi Kedua"
+                                    : undefined
+                                }
+                                description={
+                                  radioConfigHasDesc &&
+                                  radioConfigLabelPos !== "none"
+                                    ? "Keterangan pembantu untuk opsi 2"
+                                    : undefined
+                                }
+                              />
+                              <Radio
+                                value="opt3"
+                                label={
+                                  radioConfigLabelPos === "none"
+                                    ? undefined
+                                    : "Opsi Ketiga"
+                                }
+                                aria-label={
+                                  radioConfigLabelPos === "none"
+                                    ? "Opsi Ketiga"
+                                    : undefined
+                                }
+                                description={
+                                  radioConfigHasDesc &&
+                                  radioConfigLabelPos !== "none"
+                                    ? "Keterangan pembantu untuk opsi 3"
+                                    : undefined
+                                }
+                              />
+                            </RadioGroup>
+                          ) : (
+                            <Radio
+                              name="interactive_single_radio"
+                              value="opt1"
+                              checked={radioConfigSelected === "opt1"}
+                              onChange={() =>
+                                setRadioConfigSelected(
+                                  radioConfigSelected === "opt1" ? "" : "opt1",
+                                )
+                              }
+                              size={radioConfigSize}
+                              variant={radioConfigVariant}
+                              labelPosition={
+                                radioConfigLabelPos === "none"
+                                  ? "right"
+                                  : radioConfigLabelPos
+                              }
+                              label={
+                                radioConfigLabelPos === "none"
+                                  ? undefined
+                                  : radioConfigCustomLabel || "Pilihan Utama"
+                              }
+                              aria-label={
+                                radioConfigLabelPos === "none"
+                                  ? "Pilihan Utama"
+                                  : undefined
+                              }
+                              description={
+                                radioConfigHasDesc &&
+                                radioConfigLabelPos !== "none"
+                                  ? "Keterangan pembantu di bawah label"
+                                  : undefined
+                              }
+                              disabled={radioConfigDisabled}
+                              isInvalid={radioConfigInvalid}
+                            />
+                          )}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                          Coba klik pilihan di atas untuk menguji respons
+                          visual, orientasi label, dan status error secara
+                          langsung!
+                        </div>
+                      </div>
+
+                      {/* Live Reactive TSX Code */}
+                      <div className="overflow-hidden border shadow-xs rounded-xl bg-slate-950 border-slate-800">
+                        <div className="flex items-center justify-between px-4 py-2 font-mono text-xs border-b border-slate-800 bg-slate-900/90 text-slate-300">
+                          <span className="flex items-center gap-1.5">
+                            <Icon
+                              icon={IconCode}
+                              size="sm"
+                              className="text-aposis-blue-40"
+                            />
+                            Kode TSX:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => copySnippet(dynamicRadioCode)}
+                            className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
+                          >
+                            {copiedCode ? (
+                              <Icon
+                                icon={IconCheck}
+                                size="sm"
+                                className="text-emerald-400"
+                              />
+                            ) : (
+                              <Icon icon={IconCopy} size="sm" />
+                            )}
+                            <span>
+                              {copiedCode ? "Tersalin!" : "Salin Kode"}
+                            </span>
+                          </button>
+                        </div>
+                        <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed whitespace-pre select-all text-sky-300">
+                          <code>{dynamicRadioCode}</code>
+                        </pre>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 2. Real-World Presets / Skenario Populer */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        Koleksi Contoh Skenario Populer (Siap Pakai)
+                      </CardTitle>
+                      <CardDescription>
+                        Preset siap pakai untuk varian card interaktif dan
+                        orientasi stacked vertikal sesuai board Figma.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        {/* Preset 1: Card Selector */}
+                        <div className="p-4 space-y-3 border rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                              Preset 1: Pilihan Peran Akun (Card Variant)
+                            </span>
+                            <Badge variant="primary" size="sm">
+                              Varian Card
+                            </Badge>
+                          </div>
+                          <RadioGroup
+                            defaultValue="teacher"
+                            orientation="vertical"
+                            className="gap-2.5"
+                          >
+                            <Radio
+                              variant="card"
+                              value="teacher"
+                              label="Tenaga Pendidik"
+                              description="Input nilai, absensi, dan jadwal mengajar harian"
+                            />
+                            <Radio
+                              variant="card"
+                              value="staff"
+                              label="Staf Tata Usaha"
+                              description="Pengelolaan arsip surat dan administrasi sekolah"
+                            />
+                          </RadioGroup>
+                        </div>
+
+                        {/* Preset 2: Stacked Vertical (Figma Board) */}
+                        <div className="p-4 space-y-3 border rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                              Preset 2: Posisi Label Bawah (Stacked Vertikal)
+                            </span>
+                            <Badge variant="neutral" size="sm">
+                              Figma 53-3380
+                            </Badge>
+                          </div>
+                          <div className="p-3 bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                            <RadioGroup
+                              defaultValue="sem1"
+                              orientation="horizontal"
+                              className="justify-around py-2"
+                            >
+                              <Radio
+                                value="sem1"
+                                labelPosition="bottom"
+                                label="Semester 1"
+                              />
+                              <Radio
+                                value="sem2"
+                                labelPosition="bottom"
+                                label="Semester 2"
+                              />
+                              <Radio
+                                value="pend"
+                                labelPosition="bottom"
+                                label="Remedial"
+                              />
+                            </RadioGroup>
+                          </div>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                            Sangat cocok untuk tata letak ringkas horizontal
+                            dengan teks yang berpusat di bawah lingkaran radio.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* TOOLTIP MOLECULE */}
+            {selectedId === "tooltip" && (
+              <DocCard
+                title="Tooltip"
+                badgeText="Molecule"
+                description="Komponen tooltip tingkat molekul aksesibel dengan dukungan panah penunjuk (beak arrow), penentuan posisi otomatis (auto) atau terarah, kustomisasi styling via className, varian definition (garis bawah titik-titik), serta navigasi keyboard."
+                snippets={tooltipSnippets}
+              >
+                <div className="space-y-6">
+                  {/* 1. Interactive Live Tester */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            <Icon
+                              icon={IconHelpCircle}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Tooltip Tester
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Pilih konfigurasi di bawah untuk menguji respons
+                            visual hover / keyboard focus serta menyalin kode
+                            TSX reaktif.
+                          </CardDescription>
+                        </div>
+                        <Badge variant="primary" appearance="solid" size="sm">
+                          Live Tester
+                        </Badge>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Controls Grid */}
+                      <div className="grid grid-cols-1 gap-5 text-xs md:grid-cols-2">
+                        {/* Left Column */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              1. Posisi Penempatan (pos):
+                            </label>
+                            <div className="flex flex-wrap gap-1.5">
+                              {(
+                                [
+                                  { id: "auto", label: "Auto (Pintar)" },
+                                  { id: "top", label: "Top" },
+                                  { id: "top-start", label: "Top Start" },
+                                  { id: "top-end", label: "Top End" },
+                                  { id: "bottom", label: "Bottom" },
+                                  { id: "bottom-start", label: "Bottom Start" },
+                                  { id: "bottom-end", label: "Bottom End" },
+                                  { id: "left", label: "Left" },
+                                  { id: "right", label: "Right" },
+                                ] as const
+                              ).map((p) => (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  onClick={() => setTooltipPos(p.id)}
+                                  className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                                    tooltipPos === p.id
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {p.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              2. Pilih Ukuran (Size):
+                            </label>
+                            <div className="flex gap-2">
+                              {(["sm", "md", "lg"] as const).map((s) => (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  onClick={() => setTooltipSize(s)}
+                                  className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer uppercase ${
+                                    tooltipSize === s
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {s}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              3. Varian Trigger (variant):
+                            </label>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setTooltipVariant("default")}
+                                className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                  tooltipVariant === "default"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                Default (Icon / Tombol)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setTooltipVariant("definition")}
+                                className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                  tooltipVariant === "definition"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                Definition (Dotted Underline)
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] uppercase tracking-wider">
+                              4. Opsi Tambahan:
+                            </span>
+                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={tooltipArrow}
+                                onChange={(e) =>
+                                  setTooltipArrow(e.target.checked)
+                                }
+                                className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-40"
+                              />
+                              <span className="font-medium text-slate-700 dark:text-slate-300">
+                                Tampilkan Panah Petunjuk (Arrow)
+                              </span>
+                            </label>
+                          </div>
+
+                          <div>
+                            <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                              5. Teks Konten Tooltip:
+                            </label>
+                            <input
+                              type="text"
+                              value={tooltipText}
+                              onChange={(e) => setTooltipText(e.target.value)}
+                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                              placeholder="Tuliskan pesan tooltip..."
+                            />
+                          </div>
+
+                          {tooltipVariant === "definition" && (
+                            <div>
+                              <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                                6. Teks Istilah (Trigger):
+                              </label>
+                              <input
+                                type="text"
+                                value={tooltipTriggerText}
+                                onChange={(e) =>
+                                  setTooltipTriggerText(e.target.value)
+                                }
+                                className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                                placeholder="Tuliskan kata atau istilah..."
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Preview Interactive Arena */}
+                      <div className="p-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-950/50 flex flex-col items-center justify-center min-h-[160px] gap-3">
+                        <div className="flex items-center justify-center py-6">
+                          <Tooltip
+                            text={tooltipText || "Tooltip text"}
+                            pos={tooltipPos}
+                            size={tooltipSize}
+                            variant={tooltipVariant}
+                            arrow={tooltipArrow}
+                          >
+                            {tooltipVariant === "definition" ? (
+                              tooltipTriggerText || "Definition tooltip"
+                            ) : (
+                              <button
+                                type="button"
+                                className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 shadow-xs hover:border-blue-400 transition-colors cursor-pointer"
+                                aria-label="Contoh Pemicu Tooltip"
+                              >
+                                <IconHelpCircle size={24} />
+                              </button>
+                            )}
+                          </Tooltip>
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                          Arahkan kursor atau gunakan tombol Tab pada keyboard
+                          untuk menguji respons visual kemunculan tooltip!
+                        </div>
+                      </div>
+
+                      {/* Live Reactive TSX Code */}
+                      <div className="overflow-hidden border shadow-xs rounded-xl bg-slate-950 border-slate-800">
+                        <div className="flex items-center justify-between px-4 py-2 font-mono text-xs border-b border-slate-800 bg-slate-900/90 text-slate-300">
+                          <span className="flex items-center gap-1.5">
+                            <Icon
+                              icon={IconCode}
+                              size="sm"
+                              className="text-aposis-blue-40"
+                            />
+                            Kode TSX:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => copySnippet(dynamicTooltipCode)}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                          >
+                            {copiedCode ? (
+                              <Icon
+                                icon={IconCheck}
+                                size="sm"
+                                className="text-emerald-400"
+                              />
+                            ) : (
+                              <Icon icon={IconCopy} size="sm" />
+                            )}
+                            {copiedCode ? "Tersalin" : "Salin Kode"}
+                          </button>
+                        </div>
+                        <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed text-slate-200">
+                          <code>{dynamicTooltipCode}</code>
+                        </pre>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 2. Full Figma Board Showcase (Node 67-1714) */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle className="text-base">
+                        Spesifikasi Lengkap Figma (Node 67-1714)
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Seluruh variasi orientasi panah dan bentuk trigger
+                        sesuai rancangan resmi Figma Aposis.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-8">
+                      {/* Section A: Icon Trigger Tooltips */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Variasi 1: Icon Trigger dengan Ragam Posisi & Arah
+                            Panah
+                          </span>
+                          <Badge variant="neutral" size="sm">
+                            Figma 67-1714
+                          </Badge>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-6 p-6 border md:grid-cols-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border-slate-200 dark:border-slate-800">
+                          {/* Column 1: Top (Panah Bawah) */}
+                          <div className="flex flex-col items-center space-y-10">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+                              Posisi Atas (Top)
+                            </span>
+                            <div className="py-4">
+                              <Tooltip text="Tooltip text" pos="top" isOpen>
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="top-start"
+                                isOpen
+                              >
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip text="Tooltip text" pos="top-end" isOpen>
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                          </div>
+
+                          {/* Column 2: Bottom (Panah Atas) */}
+                          <div className="flex flex-col items-center space-y-10">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+                              Posisi Bawah (Bottom)
+                            </span>
+                            <div className="py-4">
+                              <Tooltip text="Tooltip text" pos="bottom" isOpen>
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="bottom-start"
+                                isOpen
+                              >
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="bottom-end"
+                                isOpen
+                              >
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                          </div>
+
+                          {/* Column 3: Samping (Left & Right) */}
+                          <div className="flex flex-col items-center space-y-10">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+                              Posisi Samping (Left / Right)
+                            </span>
+                            <div className="py-4">
+                              <Tooltip text="Tooltip text" pos="left" isOpen>
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip text="Tooltip text" pos="right" isOpen>
+                                <div className="p-2 text-slate-600 dark:text-slate-300">
+                                  <IconHelpCircle size={22} />
+                                </div>
+                              </Tooltip>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section B: Definition Tooltips */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Variasi 2: Definition Tooltip (Teks Bergaris
+                            Titik-titik)
+                          </span>
+                          <Badge variant="neutral" size="sm">
+                            Figma 67-1714
+                          </Badge>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-8 p-6 border sm:grid-cols-2 md:grid-cols-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border-slate-200 dark:border-slate-800">
+                          {/* Definition Tooltip Top */}
+                          <div className="flex flex-col items-center gap-12">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+                              Definition (Top)
+                            </span>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="top"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="top-start"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="top-end"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                          </div>
+
+                          {/* Definition Tooltip Bottom */}
+                          <div className="flex flex-col items-center gap-12">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
+                              Definition (Bottom)
+                            </span>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="bottom"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="bottom-start"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                            <div className="py-4">
+                              <Tooltip
+                                text="Tooltip text"
+                                pos="bottom-end"
+                                variant="definition"
+                                isOpen
+                              >
+                                Definition tooltip
+                              </Tooltip>
+                            </div>
+                          </div>
+
+                          {/* Definition Tooltip Inline Prose Demo */}
+                          <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-1">
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                              Penerapan dalam Kalimat
+                            </span>
+                            <div className="p-4 text-xs leading-relaxed bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">
+                              Aplikasi raport terpadu Aposis telah sesuai dengan
+                              format kurikulum nasional{" "}
+                              <Tooltip
+                                text="Kurikulum Merdeka Belajar Kementerian Pendidikan RI"
+                                variant="definition"
+                              >
+                                Kumer
+                              </Tooltip>{" "}
+                              dan otomatis menghasilkan laporan capaian
+                              kompetensi{" "}
+                              <Tooltip
+                                text="Rencana Pelaksanaan Pembelajaran Harian Terstandar"
+                                variant="definition"
+                              >
+                                RPPH
+                              </Tooltip>{" "}
+                              bagi guru dan wali kelas.
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                              Arahkan kursor pada kata yang bergaris bawah
+                              titik-titik untuk membaca penjelasannya.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* 7. SPINNER ATOM */}
+            {selectedId === "spinner" && (
+              <DocCard
+                title="Spinner"
+                badgeText="Atom"
+                description="Animasi pemuatan SVG ringan dalam berbagai ukuran dan warna."
+                usageSnippet={`import { Spinner } from '@aposis/design-system';\n\n<Spinner size="md" variant="primary" />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <Spinner size="xs" />
+                      <Spinner size="sm" />
+                      <Spinner size="md" />
+                      <Spinner size="lg" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: FORM FIELD */}
+            {selectedId === "form-field" && (
+              <DocCard
+                title="FormField"
+                badgeText="Molecule"
+                description="Komponen pembungkus terpadu yang menyatukan label, tanda wajib (*), input kontrol, helper text, dan pesan error."
+                usageSnippet={`import { FormField, Input } from '@aposis/design-system';\n\n<FormField label="NISN" required helperText="10 digit nomor">\n  <Input placeholder="0051283921" />\n</FormField>`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="max-w-md pt-6 space-y-4">
+                    <FormField
+                      label="Nomor Induk Siswa Nasional (NISN)"
+                      required
+                      helperText="10 digit angka resmi dari Kemdikbud"
+                    >
+                      <Input
+                        placeholder="Contoh: 0051283921"
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                    </FormField>
+                    <FormField
+                      label="Kata Sandi Baru"
+                      required
+                      error="Kata sandi minimal 8 karakter"
+                    >
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                      />
+                    </FormField>
+                    <FormField
+                      label="Status Keaktifan Akademik"
+                      required
+                      helperText="Pilih salah satu status administratif siswa"
+                    >
+                      <RadioGroup
+                        name="student_status_demo"
+                        defaultValue="aktif"
+                        orientation="horizontal"
+                      >
+                        <Radio value="aktif" label="Aktif" />
+                        <Radio value="cuti" label="Cuti Akademik" />
+                        <Radio value="pindah" label="Pindah Sekolah" />
+                      </RadioGroup>
+                    </FormField>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: SEARCH BAR */}
+            {selectedId === "search-bar" && (
+              <DocCard
+                title="SearchBar"
+                badgeText="Molecule"
+                description="Input pencarian data dengan tombol pembersih (clear) instan dan indikator shortcut keyboard."
+                usageSnippet={`import { SearchBar } from '@aposis/design-system';\n\n<SearchBar placeholder="Cari data..." onSearch={(val) => console.log(val)} />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <SearchBar
+                      placeholder="Cari siswa, guru, kelas..."
+                      onSearch={(q) => alert(`Mencari: ${q}`)}
+                    />
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: ALERT */}
+            {selectedId === "alert" && (
+              <DocCard
+                title="Alert"
+                badgeText="Molecule"
+                description="Banner notifikasi kontekstual untuk memberikan umpan balik (info, success, warning, danger) kepada pengguna."
+                usageSnippet={`import { Alert } from '@aposis/design-system';\n\n<Alert variant="success" title="Berhasil">Data telah disimpan.</Alert>`}
+              >
+                <div className="space-y-3">
+                  {isAlertVisible && (
+                    <Alert
+                      variant="info"
+                      title="Pembaruan Sistem Tersedia"
+                      onClose={() => setIsAlertVisible(false)}
+                    >
+                      Versi 3.1 dari Aposis Design System telah dimuat.
+                    </Alert>
+                  )}
+                  <Alert variant="success" title="Sinkronisasi Berhasil">
+                    Data 500 siswa telah berhasil diperbarui.
+                  </Alert>
+                  <Alert variant="warning" title="Peringatan">
+                    Koneksi database kedua mengalami latensi tinggi.
+                  </Alert>
+                  <Alert variant="danger" title="Gagal Menyimpan">
+                    Token autentikasi sesi telah kedaluwarsa.
+                  </Alert>
+                </div>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: MODAL */}
+            {selectedId === "modal" && (
+              <DocCard
+                title="Modal"
+                badgeText="Molecule"
+                description="Jendela dialog mengambang aksesibel dengan backdrop blur, header, body yang dapat di-scroll, dan action footer."
+                usageSnippet={`import { Modal, Button } from '@aposis/design-system';\n\n<Modal isOpen={open} onClose={() => setOpen(false)} title="Hapus Data">\n  <p>Konfirmasi tindakan?</p>\n</Modal>`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <Button onClick={() => setIsModalOpen(true)}>
+                      Buka Contoh Modal Dialog
+                    </Button>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: TABS */}
+            {selectedId === "tabs" && (
+              <DocCard
+                title="Tabs"
+                badgeText="Molecule"
+                description="Navigasi tab dengan dua varian tampilan: garis bawah (underline) dan tombol kapsul (pills)."
+                usageSnippet={`import { Tabs } from '@aposis/design-system';\n\n<Tabs items={[{ id: 'tab1', label: 'Tab 1' }]} activeTab={active} onChange={setActive} />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-6">
+                    <div>
+                      <span className="block mb-2 text-xs font-semibold text-slate-500">
+                        Varian Underline
+                      </span>
+                      <Tabs
+                        items={[
+                          { id: "tab1", label: "Profil Siswa" },
+                          { id: "tab2", label: "Riwayat Nilai" },
+                          { id: "tab3", label: "Dokumen" },
+                        ]}
+                        activeTab={activeTabDemo}
+                        onChange={setActiveTabDemo}
+                        variant="underline"
+                      />
+                    </div>
+
+                    <div>
+                      <span className="block mb-2 text-xs font-semibold text-slate-500">
+                        Varian Pills
+                      </span>
+                      <Tabs
+                        items={[
+                          { id: "tab1", label: "Harian" },
+                          { id: "tab2", label: "Mingguan" },
+                          { id: "tab3", label: "Bulanan" },
+                        ]}
+                        activeTab={activeTabDemo}
+                        onChange={setActiveTabDemo}
+                        variant="pills"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: TOGGLE */}
+            {selectedId === 'toggle' && (
+              <DocCard
+                title="Toggle"
+                badgeText="Molecule"
+                description="Komponen sakelar (switch) interaktif untuk mengubah status aktif/non-aktif secara langsung."
+                usageSnippet={`import { Toggle } from '@aposis/design-system';\n\n<Toggle label="Aktifkan Notifikasi" checked={enabled} onChange={setEnabled} />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-6">
+                    {/* Varian Demo 1: Standar Interaktif */}
+                    <div className="space-y-2">
+                      <span className="block text-xs font-semibold tracking-wider uppercase text-slate-500">
+                        Toggle Interaktif
+                      </span>
+                      <Toggle
+                        label="Aktifkan Notifikasi"
+                        checked={isNotifActive}
+                        onChange={(checked) => setIsNotifActive(checked)}
+                      />
+                    </div>
+
+                    {/* Varian Demo 2: State Disabled / Default */}
+                    <div className="pt-4 space-y-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="block text-xs font-semibold tracking-wider uppercase text-slate-500">
+                        Variasi Status
+                      </span>
+                      <div className="flex flex-col gap-3">
+                        <Toggle label="Toggle Nonaktif (Disabled)" disabled />
+                        <Toggle label="Toggle Nonaktif Aktif (Disabled & Checked)" disabled checked />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: NOTIFICATION */}
+            {selectedId === "notification" && (
+              <DocCard
+                title="Notification"
+                badgeText="Molecule"
+                description="Komponen notifikasi tingkat molekul dengan 4 varian semantik resmi (info, success, warning, error). Mendukung pemanggilan toast melayang secara programatis via notification.show(), progress bar durasi otomatis di atas atau di bawah tergantung posisi, animasi masuk, tombol aksi (actionTrigger), serta 2 gaya multiple notifikasi: default (daftar berurutan) dan stacking (kartu bertumpuk)."
+                snippets={notificationSnippets}
+              >
+                <div className="space-y-6">
+                  {/* 1. Interactive Live Tester */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            <Icon
+                              icon={IconBell}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Notification Tester & Live Trigger
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Sesuaikan konfigurasi props di bawah, lalu klik
+                            tombol uji untuk memunculkan notifikasi melayang
+                            (toast) secara interaktif dengan animasi masuk.
+                          </CardDescription>
+                        </div>
+                        <Badge variant="primary" appearance="solid" size="sm">
+                          Live Tester
+                        </Badge>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Controls Grid */}
+                      <div className="grid grid-cols-1 gap-5 text-xs md:grid-cols-2">
+                        {/* Left Column */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              1. Varian Semantik (variant):
+                            </label>
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                              {(
+                                [
+                                  {
+                                    id: "info",
+                                    label: "Info (Biru)",
+                                    bg: "bg-blue-600",
+                                  },
+                                  {
+                                    id: "success",
+                                    label: "Success (Hijau)",
+                                    bg: "bg-emerald-600",
+                                  },
+                                  {
+                                    id: "warning",
+                                    label: "Warning (Kuning)",
+                                    bg: "bg-amber-500",
+                                  },
+                                  {
+                                    id: "error",
+                                    label: "Error (Merah)",
+                                    bg: "bg-rose-600",
+                                  },
+                                ] as const
+                              ).map((v) => (
+                                <button
+                                  key={v.id}
+                                  type="button"
+                                  onClick={() => setNotifVariant(v.id)}
+                                  className={`px-2.5 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                    notifVariant === v.id
+                                      ? `${v.bg} text-white shadow-xs font-semibold ring-2 ring-offset-1 ring-slate-400`
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {v.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              2. Posisi Layar (pos):
+                            </label>
+                            <div className="grid grid-cols-3 gap-1.5">
+                              {(
+                                [
+                                  { id: "top-left", label: "Top Left" },
+                                  { id: "top-center", label: "Top Center" },
+                                  { id: "top-right", label: "Top Right" },
+                                  { id: "bottom-left", label: "Bottom Left" },
+                                  {
+                                    id: "bottom-center",
+                                    label: "Bottom Center",
+                                  },
+                                  { id: "bottom-right", label: "Bottom Right" },
+                                ] as const
+                              ).map((p) => (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  onClick={() => setNotifPos(p.id)}
+                                  className={`px-2 py-1 rounded-lg font-medium text-center transition-all cursor-pointer text-[11px] ${
+                                    notifPos === p.id
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {p.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              3. Durasi Otomatis (duration):
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              {(
+                                [
+                                  { val: 2000, label: "2 Detik (2000ms)" },
+                                  { val: 4000, label: "4 Detik (Default)" },
+                                  { val: 8000, label: "8 Detik" },
+                                  { val: 0, label: "Manual (Permanen)" },
+                                ] as const
+                              ).map((d) => (
+                                <button
+                                  key={d.val}
+                                  type="button"
+                                  onClick={() => setNotifDuration(d.val)}
+                                  className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                    notifDuration === d.val
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {d.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              4. Gaya Multiple Notifikasi (multiStyle):
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNotifMultiStyle("default");
+                                  notification.setMultiStyle("default");
+                                }}
+                                className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                  notifMultiStyle === "default"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs font-semibold"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                Default (Daftar)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNotifMultiStyle("stacking");
+                                  notification.setMultiStyle("stacking");
+                                }}
+                                className={`px-3 py-1.5 rounded-lg font-medium text-center transition-all cursor-pointer ${
+                                  notifMultiStyle === "stacking"
+                                    ? "bg-aposis-blue-60 text-white shadow-xs font-semibold"
+                                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                }`}
+                              >
+                                Stacking (Bertumpuk)
+                              </button>
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                              {notifMultiStyle === "stacking"
+                                ? "Mode Stacking: Notifikasi bertumpuk rapi seperti deck kartu, dan memanjang saat kursor di-hover."
+                                : "Mode Default: Notifikasi tersusun berurutan dalam daftar vertikal."}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                              5. Teks Judul Notifikasi (teks):
+                            </label>
+                            <input
+                              type="text"
+                              value={notifTeks}
+                              onChange={(e) => setNotifTeks(e.target.value)}
+                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                              placeholder="Contoh: Notification"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                              6. Deskripsi / Keterangan (description):
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={notifDescription}
+                              onChange={(e) =>
+                                setNotifDescription(e.target.value)
+                              }
+                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50 resize-none"
+                              placeholder="Contoh: Information notification message"
+                            />
+                          </div>
+
+                          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={notifHasAction}
+                                onChange={(e) =>
+                                  setNotifHasAction(e.target.checked)
+                                }
+                                className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="font-medium text-slate-700 dark:text-slate-300">
+                                Aktifkan Tombol Aksi (actionTrigger)
+                              </span>
+                            </label>
+
+                            {notifHasAction && (
+                              <div className="pt-1 pl-6">
+                                <label className="block mb-1 font-semibold text-slate-600 dark:text-slate-400">
+                                  Label Aksi:
+                                </label>
+                                <input
+                                  type="text"
+                                  value={notifActionLabel}
+                                  onChange={(e) =>
+                                    setNotifActionLabel(e.target.value)
+                                  }
+                                  className="w-full px-3 py-1 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-aposis-blue-50"
+                                  placeholder="Contoh: Action"
+                                />
+                              </div>
+                            )}
+
+                            <label className="flex items-center gap-2 pt-1 border-t cursor-pointer border-slate-200 dark:border-slate-700/60">
+                              <input
+                                type="checkbox"
+                                checked={notifShowProgress}
+                                onChange={(e) =>
+                                  setNotifShowProgress(e.target.checked)
+                                }
+                                className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="font-medium text-slate-700 dark:text-slate-300">
+                                Progress Bar Durasi (
+                                {notifPos.startsWith("bottom")
+                                  ? "di atas notifikasi"
+                                  : "di bawah notifikasi"}
+                                )
+                              </span>
+                            </label>
+
+                            <label className="flex items-center gap-2 pt-1 border-t cursor-pointer border-slate-200 dark:border-slate-700/60">
+                              <input
+                                type="checkbox"
+                                checked={notifCustomIcon}
+                                onChange={(e) =>
+                                  setNotifCustomIcon(e.target.checked)
+                                }
+                                className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-50"
+                              />
+                              <span className="font-medium text-slate-700 dark:text-slate-300">
+                                Gunakan Ikon Kustom (IconBell)
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dedicated Trigger Button & Toast Tester Area */}
+                      <div className="flex flex-col items-start justify-between gap-4 p-5 border border-blue-200 rounded-xl dark:border-blue-900/50 bg-blue-50/40 dark:bg-blue-950/20 sm:flex-row sm:items-center">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-slate-900 dark:text-white">
+                              Tombol Pengujian Notifikasi
+                            </span>
+                            <Badge variant="primary" size="sm">
+                              Interaktif
+                            </Badge>
+                          </div>
+                          <p className="max-w-xl text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                            Klik tombol di sebelah kanan untuk memicu notifikasi
+                            mengambang dengan animasi masuk ke posisi{" "}
+                            <code className="font-mono bg-blue-100 dark:bg-blue-900/60 px-1 py-0.5 rounded text-blue-800 dark:text-blue-200">
+                              {notifPos}
+                            </code>
+                            . Progress bar durasi otomatis berada{" "}
+                            <strong className="text-slate-800 dark:text-slate-200">
+                              {notifPos.startsWith("bottom")
+                                ? "di atas"
+                                : "di bawah"}
+                            </strong>{" "}
+                            kartu dengan countdown yang tetap berjalan saat
+                            kursor di-hover.
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 shrink-0">
+                          {/* 1 Main Testing Button */}
+                          <Button
+                            variant="primary"
+                            size="md"
+                            leftIcon={<Icon icon={IconBell} size="sm" />}
+                            onClick={() => {
+                              notification.show({
+                                variant: notifVariant,
+                                teks: notifTeks || "Notification",
+                                description: notifDescription || undefined,
+                                pos: notifPos,
+                                duration:
+                                  notifDuration === 0 ? null : notifDuration,
+                                showProgress: notifShowProgress,
+                                actionTrigger: notifHasAction
+                                  ? {
+                                      label: notifActionLabel || "Action",
+                                      onClick: () =>
+                                        alert(
+                                          `Aksi "${notifActionLabel}" diklik!`,
+                                        ),
+                                    }
+                                  : undefined,
+                                icon: notifCustomIcon ? (
+                                  <Icon
+                                    icon={IconBell}
+                                    size="sm"
+                                    className="text-blue-500"
+                                  />
+                                ) : undefined,
+                              });
+                            }}
+                            className="font-semibold transition-all shadow-sm hover:shadow-md active:scale-95"
+                          >
+                            Munculkan Notifikasi
+                          </Button>
+
+                          {/* Multiple Toast Tester Button */}
+                          <Button
+                            variant="outline"
+                            size="md"
+                            onClick={() => {
+                              const activeDuration =
+                                notifDuration === 0 ? null : notifDuration;
+                              notification.info({
+                                teks: "Notifikasi Pertama",
+                                description: "Pesan urutan awal dalam antrian.",
+                                pos: notifPos,
+                                duration: activeDuration,
+                                showProgress: notifShowProgress,
+                              });
+                              setTimeout(() => {
+                                notification.success({
+                                  teks: "Notifikasi Kedua",
+                                  description:
+                                    "Pesan kedua dengan tombol aksi.",
+                                  pos: notifPos,
+                                  duration: activeDuration,
+                                  showProgress: notifShowProgress,
+                                  actionTrigger: {
+                                    label: "Lihat",
+                                    onClick: () => alert("Aksi 2 diklik"),
+                                  },
+                                });
+                              }, 200);
+                              setTimeout(() => {
+                                notification.warning({
+                                  teks: "Notifikasi Ketiga",
+                                  description: `Pesan ketiga menguji mode ${notifMultiStyle}.`,
+                                  pos: notifPos,
+                                  duration: activeDuration,
+                                  showProgress: notifShowProgress,
+                                });
+                              }, 400);
+                            }}
+                            className="font-medium"
+                          >
+                            Uji 3 Notifikasi ({notifMultiStyle})
+                          </Button>
+
+                          <button
+                            type="button"
+                            onClick={() => notification.dismissAll()}
+                            className="px-3 py-2 text-xs font-medium transition-colors rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
+                            title="Hapus semua toast yang sedang tampil"
+                          >
+                            Bersihkan Toast
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Live Static Preview Card */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Pratinjau Komponen Langsung (In-Place Preview):
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setNotifPreviewKey((k) => k + 1)}
+                            className="text-xs cursor-pointer text-aposis-blue-60 hover:underline"
+                          >
+                            Reset Pratinjau
+                          </button>
+                        </div>
+
+                        <div className="p-4 bg-white border rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950">
+                          <Notification
+                            key={notifPreviewKey}
+                            variant={notifVariant}
+                            teks={notifTeks || "Notification"}
+                            description={notifDescription || undefined}
+                            pos={notifPos}
+                            duration={
+                              notifDuration === 0 ? null : notifDuration
+                            }
+                            showProgress={notifShowProgress}
+                            actionTrigger={
+                              notifHasAction
+                                ? {
+                                    label: notifActionLabel || "Action",
+                                    onClick: () =>
+                                      alert(
+                                        `Aksi "${notifActionLabel}" diklik!`,
+                                      ),
+                                  }
+                                : undefined
+                            }
+                            icon={
+                              notifCustomIcon ? (
+                                <Icon
+                                  icon={IconBell}
+                                  size="sm"
+                                  className="text-blue-500"
+                                />
+                              ) : undefined
+                            }
+                            onClose={() => console.log("Notification ditutup")}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Reactive TSX Code */}
+                      <div className="overflow-hidden border shadow-xs rounded-xl bg-slate-950 border-slate-800">
+                        <div className="flex items-center justify-between px-4 py-2 font-mono text-xs border-b border-slate-800 bg-slate-900/90 text-slate-300">
+                          <span className="flex items-center gap-1.5">
+                            <Icon
+                              icon={IconCode}
+                              size="sm"
+                              className="text-aposis-blue-40"
+                            />
+                            Kode TSX:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => copySnippet(dynamicNotificationCode)}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                          >
+                            {copiedCode ? (
+                              <Icon
+                                icon={IconCheck}
+                                size="sm"
+                                className="text-emerald-400"
+                              />
+                            ) : (
+                              <Icon icon={IconCopy} size="sm" />
+                            )}
+                            {copiedCode ? "Tersalin" : "Salin Kode"}
+                          </button>
+                        </div>
+                        <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed text-slate-200">
+                          <code>{dynamicNotificationCode}</code>
+                        </pre>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 2. Galeri Varian Semantik */}
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-base">
+                          Galeri Varian Notifikasi Semantik
+                        </CardTitle>
+                        <Badge variant="neutral" size="sm">
+                          4 Varian
+                        </Badge>
+                      </div>
+                      <CardDescription className="text-xs">
+                        Matriks 4 varian semantik resmi (Information, Success,
+                        Warning, Error) dengan garis border kiri tebal, warna
+                        latar tint lembut, teks tebal, tombol aksi, dan tombol
+                        tutup.
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="space-y-8">
+                      {/* Section A: Varian Lengkap */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Varian Lengkap (Judul & Deskripsi)
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            Informasi detail dengan tombol aksi
+                          </span>
+                        </div>
+
+                        <div className="p-4 space-y-3 border bg-slate-50 dark:bg-slate-900/40 rounded-xl border-slate-200 dark:border-slate-800">
+                          {/* 1. Info */}
+                          <Notification
+                            variant="info"
+                            teks="Notification"
+                            description="Information notification message that provides additional context and instructions for the user to follow."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Info Action diklik"),
+                            }}
+                          />
+
+                          {/* 2. Success */}
+                          <Notification
+                            variant="success"
+                            teks="Notification"
+                            description="Success notification message confirming that the operation was completed safely."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Success Action diklik"),
+                            }}
+                          />
+
+                          {/* 3. Warning */}
+                          <Notification
+                            variant="warning"
+                            teks="Notification"
+                            description="Warning notification message alerting the user to take precaution before proceeding."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Warning Action diklik"),
+                            }}
+                          />
+
+                          {/* 4. Error */}
+                          <Notification
+                            variant="error"
+                            teks="Notification"
+                            description="Error notification message explaining the issue and offering actionable resolution steps."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Error Action diklik"),
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Section B: Varian Ringkas */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Varian Ringkas (Hanya Judul)
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            Pesan ringkas satu baris
+                          </span>
+                        </div>
+
+                        <div className="p-4 space-y-3 border bg-slate-50 dark:bg-slate-900/40 rounded-xl border-slate-200 dark:border-slate-800">
+                          {/* 1. Info Ringkas */}
+                          <Notification
+                            variant="info"
+                            teks="Notification: Pembaruan sistem telah selesai dimuat."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Info Action diklik"),
+                            }}
+                          />
+
+                          {/* 2. Success Ringkas */}
+                          <Notification
+                            variant="success"
+                            teks="Notification: Data nilai rapor berhasil disimpan."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Success Action diklik"),
+                            }}
+                          />
+
+                          {/* 3. Warning Ringkas */}
+                          <Notification
+                            variant="warning"
+                            teks="Notification: Sisa kuota penyimpanan server tinggal 10%."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Warning Action diklik"),
+                            }}
+                          />
+
+                          {/* 4. Error Ringkas */}
+                          <Notification
+                            variant="error"
+                            teks="Notification: Gagal menyinkronkan data ke server pusat."
+                            actionTrigger={{
+                              label: "Action",
+                              onClick: () => alert("Error Action diklik"),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: NAVBAR */}
+            {selectedId === "navbar" && (
+              <DocCard
+                title="Navbar"
+                badgeText="Organism"
+                description="Header aplikasi komprehensif dengan logo brand, menu navigasi, notifikasi, dan profil pengguna."
+                usageSnippet={`import { Navbar } from '@aposis/design-system';\n\n<Navbar brandName="Aposis Portal" user={{ name: 'Admin', email: 'admin@aposis.id' }} />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="p-0 overflow-hidden border-t border-slate-100 dark:border-slate-800 rounded-b-2xl">
+                    <Navbar
+                      brandName="Aposis Portal"
+                      navLinks={[
+                        { id: "1", label: "Dashboard", active: true },
+                        { id: "2", label: "Siswa" },
+                        { id: "3", label: "Laporan" },
+                      ]}
+                      user={{ name: "Admin User", email: "admin@aposis.id" }}
+                      notificationCount={2}
+                      actions={
+                        <Button size="sm" variant="outline">
+                          Bantuan
+                        </Button>
+                      }
+                    />
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: SIDEBAR */}
+            {selectedId === "sidebar" && (
+              <DocCard
+                title="Sidebar"
+                badgeText="Organism"
+                description="Menu samping vertikal aplikasi dengan dukungan grouping link, badge counter, dan mode collapse."
+                usageSnippet={`import { Sidebar } from '@aposis/design-system';\n\n<Sidebar groups={sidebarGroups} collapsed={isCollapsed} />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <div className="mb-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setSidebarDemoCollapsed(!sidebarDemoCollapsed)
+                        }
+                      >
+                        {sidebarDemoCollapsed
+                          ? "Expand Sidebar"
+                          : "Collapse Sidebar"}
+                      </Button>
+                    </div>
+                    <div className="flex overflow-hidden border h-80 rounded-2xl border-slate-700">
+                      <Sidebar
+                        groups={sidebarNavGroups.slice(1, 3).map((g) => ({
+                          title: g.title,
+                          items: g.items.map((i) => ({
+                            id: i.id,
+                            label: i.label,
+                            icon: <Icon icon={i.icon} size="sm" />,
+                          })),
+                        }))}
+                        collapsed={sidebarDemoCollapsed}
+                        header={
+                          <div className="text-xs font-bold text-white">
+                            Aposis Menu
+                          </div>
+                        }
+                      />
+                      <div className="flex items-center justify-center flex-1 p-4 text-xs bg-slate-100 dark:bg-slate-800 text-slate-400">
+                        Workspace Area
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: STAT CARD */}
+            {selectedId === "stat-card" && (
+              <DocCard
+                title="StatCard"
+                badgeText="Organism"
+                description="Kartu metrik statistik dashboard dengan indikator persentase kenaikan/penurunan (trend up/down)."
+                usageSnippet={`import { StatCard } from '@aposis/design-system';\n\n<StatCard title="Total Siswa" value="12,840" change={{ value: '+14%', trend: 'up' }} />`}
+              >
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <StatCard
+                    title="Total Siswa Aktif"
+                    value="12,840"
+                    change={{
+                      value: "+14.2%",
+                      trend: "up",
+                      label: "vs bulan lalu",
+                    }}
+                    icon={
+                      <Icon
+                        icon={IconUsers}
+                        size="md"
+                        className="text-aposis-blue-60"
+                      />
+                    }
+                  />
+                  <StatCard
+                    title="Tingkat Akurasi"
+                    value="99.4%"
+                    change={{ value: "Stabil", trend: "neutral" }}
+                    icon={
+                      <Icon
+                        icon={IconSparkles}
+                        size="md"
+                        className="text-purple-600"
+                      />
+                    }
+                    iconBg="bg-purple-50 dark:bg-purple-950/40"
+                  />
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: DATA TABLE */}
+            {selectedId === "data-table" && (
+              <DocCard
+                title="DataTable"
+                badgeText="Organism"
+                description="Tabel data reusable lengkap dengan kolom yang dapat dikonfigurasi, status kosong (empty state), dan paginasi."
+                usageSnippet={`import { DataTable } from '@aposis/design-system';\n\n<DataTable columns={cols} data={data} keyExtractor={(i) => i.id} />`}
+              >
+                <DataTable
+                  columns={studentColumns}
+                  data={mockStudents}
+                  keyExtractor={(item) => item.id}
+                  pagination={{
+                    currentPage: tablePage,
+                    totalPages: 5,
+                    totalItems: 48,
+                    onPageChange: setTablePage,
+                  }}
+                />
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: CARD */}
+            {selectedId === "card" && (
+              <DocCard
+                title="Card"
+                badgeText="Organism"
+                description="Kontainer kartu modular dengan CardHeader, CardTitle, CardDescription, CardContent, dan CardFooter."
+                usageSnippet={`import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@aposis/design-system';\n\n<Card>\n  <CardHeader><CardTitle>Judul</CardTitle></CardHeader>\n  <CardContent>Konten...</CardContent>\n</Card>`}
+              >
+                <Card
+                  hoverable
+                  className="max-w-md dark:bg-slate-900 dark:border-slate-800"
+                >
+                  <CardHeader>
+                    <CardTitle>Judul Kartu</CardTitle>
+                    <CardDescription>
+                      Deskripsi singkat kartu untuk menjelaskan isinya.
                     </CardDescription>
                   </CardHeader>
+                  <CardContent>
+                    <Text variant="body" className="dark:text-slate-300">
+                      Ini adalah contoh isi dari komponen{" "}
+                      <code>CardContent</code>. Sangat fleksibel dan dapat diisi
+                      elemen apapun.
+                    </Text>
+                  </CardContent>
+                  <CardFooter className="dark:bg-slate-850 dark:border-slate-800">
+                    <span className="text-xs text-slate-400">
+                      Status: Tersimpan
+                    </span>
+                    <Button size="sm">Aksi Kartu</Button>
+                  </CardFooter>
+                </Card>
+              </DocCard>
+            )}
 
-                  <CardContent className="space-y-8">
-                    {/* Section A: Varian Lengkap */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Varian Lengkap (Judul & Deskripsi)
+            {/* TOKENS: PRIMITIVE PALETTES */}
+            {selectedId === "palettes" && (
+              <DocCard
+                title="Primitive Token Palettes"
+                badgeText="Token"
+                description="7 palet warna primitif (Green, Cyan, Rose, Amber, Blue, Violet, Slate) dalam 10 tingkatan intensitas (10-100) dari Figma Aposis."
+                usageSnippet={`// Menggunakan Tailwind class:\n<div className="text-white bg-aposis-blue-60" />\n\n// Atau JavaScript tokens:\nimport { primitiveColors } from '@aposis/design-system/tokens';`}
+              >
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {paletteCards.map((pal) => (
+                    <div
+                      key={pal.key}
+                      className="p-4 space-y-2 bg-white border rounded-2xl dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <span className="text-sm font-bold">{pal.name}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          10 - 100
                         </span>
-                        <span className="text-[11px] text-slate-400">Informasi detail dengan tombol aksi</span>
                       </div>
-
-                      <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
-                        {/* 1. Info */}
-                        <Notification
-                          variant="info"
-                          teks="Notification"
-                          description="Information notification message that provides additional context and instructions for the user to follow."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Info Action diklik'),
-                          }}
-                        />
-
-                        {/* 2. Success */}
-                        <Notification
-                          variant="success"
-                          teks="Notification"
-                          description="Success notification message confirming that the operation was completed safely."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Success Action diklik'),
-                          }}
-                        />
-
-                        {/* 3. Warning */}
-                        <Notification
-                          variant="warning"
-                          teks="Notification"
-                          description="Warning notification message alerting the user to take precaution before proceeding."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Warning Action diklik'),
-                          }}
-                        />
-
-                        {/* 4. Error */}
-                        <Notification
-                          variant="error"
-                          teks="Notification"
-                          description="Error notification message explaining the issue and offering actionable resolution steps."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Error Action diklik'),
-                          }}
-                        />
+                      <div className="space-y-1 font-mono text-xs">
+                        {Object.entries(pal.color).map(([level, hex]) => (
+                          <div
+                            key={level}
+                            className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <span className="font-sans capitalize text-slate-600 dark:text-slate-400">
+                              {pal.key} {level}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-slate-400 text-[11px]">
+                                {hex}
+                              </span>
+                              <span
+                                className="inline-block w-4 h-4 border rounded-full border-black/10 shadow-2xs"
+                                style={{ backgroundColor: hex }}
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
+                  ))}
+                </div>
+              </DocCard>
+            )}
 
-                    {/* Section B: Varian Ringkas */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Varian Ringkas (Hanya Judul)
-                        </span>
-                        <span className="text-[11px] text-slate-400">Pesan ringkas satu baris</span>
+            {/* TOKENS: TEXT SEMANTICS */}
+            {selectedId === "text-semantics" && (
+              <DocCard
+                title="Text Semantic Colors"
+                badgeText="Token"
+                description="Token semantik teks dengan penyesuaian otomatis untuk Light Mode dan Dark Mode."
+                usageSnippet={`<span className="text-text-primary" />\n<span className="text-text-interactive hover:text-text-interactive-hover" />`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-4">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="font-semibold uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                            <th className="py-2.5 px-3">Name</th>
+                            <th className="py-2.5 px-3">Value</th>
+                            <th className="py-2.5 px-3 text-center">
+                              Light / Dark
+                            </th>
+                            <th className="py-2.5 px-3">Live Preview</th>
+                          </tr>
+                        </thead>
+                        <tbody className="font-mono divide-y divide-slate-100 dark:divide-slate-800">
+                          {semanticTextRows.map((r) => (
+                            <tr
+                              key={r.name}
+                              className="hover:bg-slate-50 dark:hover:bg-slate-850"
+                            >
+                              <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">
+                                {r.name}
+                              </td>
+                              <td className="py-2.5 px-3 text-slate-500 font-sans">
+                                {r.value}
+                              </td>
+                              <td className="py-2.5 px-3 text-center">
+                                <span
+                                  className="w-3.5 h-3.5 rounded-full inline-block mr-1 shadow-2xs"
+                                  style={{ backgroundColor: r.light }}
+                                />
+                                <span
+                                  className="w-3.5 h-3.5 rounded-full inline-block shadow-2xs"
+                                  style={{ backgroundColor: r.dark }}
+                                />
+                              </td>
+                              <td
+                                className="py-2.5 px-3 font-sans font-medium"
+                                style={{ color: isDarkMode ? r.dark : r.light }}
+                              >
+                                Teks Contoh
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* TOKENS: BG & SURFACE SEMANTICS */}
+            {selectedId === "bg-surface-semantics" && (
+              <DocCard
+                title="Background & Surface Semantic Colors"
+                badgeText="Token"
+                description="Warna latar belakang untuk kanvas, halaman, field input, serta kontainer permukaan (surface)."
+                usageSnippet={`<div className="bg-background-default text-text-primary" />\n<div className="border bg-surface-field border-border-card" />`}
+              >
+                <div className="space-y-6">
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Background Colors</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                              <th className="px-3 py-2">Name</th>
+                              <th className="px-3 py-2">Value</th>
+                              <th className="px-3 py-2">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {backgroundRows.map((r) => (
+                              <tr key={r.name}>
+                                <td className="px-3 py-2 font-mono font-semibold">
+                                  {r.name}
+                                </td>
+                                <td className="px-3 py-2 text-slate-400">
+                                  {r.val}
+                                </td>
+                                <td className="px-3 py-2">{r.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
+                    </CardContent>
+                  </Card>
 
-                      <div className="space-y-3 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800">
-                        {/* 1. Info Ringkas */}
-                        <Notification
-                          variant="info"
-                          teks="Notification: Pembaruan sistem telah selesai dimuat."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Info Action diklik'),
-                          }}
-                        />
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Surface Colors (Sampel)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                              <th className="px-3 py-2">Name</th>
+                              <th className="px-3 py-2">Value</th>
+                              <th className="px-3 py-2">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {surfaceRows.map((r) => (
+                              <tr key={r.name}>
+                                <td className="px-3 py-2 font-mono font-semibold">
+                                  {r.name}
+                                </td>
+                                <td className="px-3 py-2 text-slate-400">
+                                  {r.val}
+                                </td>
+                                <td className="px-3 py-2">{r.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
 
-                        {/* 2. Success Ringkas */}
-                        <Notification
-                          variant="success"
-                          teks="Notification: Data nilai rapor berhasil disimpan."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Success Action diklik'),
-                          }}
-                        />
+            {/* TOKENS: LAYER & ELEVATION */}
+            {selectedId === "layer-elevation" && (
+              <DocCard
+                title="Layer & Elevation Semantic Colors"
+                badgeText="Token"
+                description="Spesifikasi warna lapisan interaktif dan tingkatan elevasi bayangan (shadow) komponen."
+                usageSnippet={`<div className="bg-layer hover:bg-layer-hover" />\n<div className="shadow-elevation-high" />`}
+              >
+                <div className="space-y-6">
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Elevation Shadows</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        {elevationRows.map((r) => (
+                          <div
+                            key={r.name}
+                            className={`p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 ${
+                              r.name === "elevation-high"
+                                ? "shadow-elevation-high"
+                                : r.name === "elevation-medium"
+                                  ? "shadow-elevation-medium"
+                                  : "shadow-elevation-low"
+                            }`}
+                          >
+                            <div className="font-mono text-xs font-bold text-aposis-blue-60">
+                              {r.name}
+                            </div>
+                            <p className="mt-2 text-xs text-slate-500">
+                              {r.desc}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                        {/* 3. Warning Ringkas */}
-                        <Notification
-                          variant="warning"
-                          teks="Notification: Sisa kuota penyimpanan server tinggal 10%."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Warning Action diklik'),
-                          }}
-                        />
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Layer Colors</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                              <th className="px-3 py-2">Name</th>
+                              <th className="px-3 py-2">Value</th>
+                              <th className="px-3 py-2">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {layerRows.map((r) => (
+                              <tr key={r.name}>
+                                <td className="px-3 py-2 font-mono font-semibold">
+                                  {r.name}
+                                </td>
+                                <td className="px-3 py-2 text-slate-400">
+                                  {r.val}
+                                </td>
+                                <td className="px-3 py-2">{r.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
 
-                        {/* 4. Error Ringkas */}
-                        <Notification
-                          variant="error"
-                          teks="Notification: Gagal menyinkronkan data ke server pusat."
-                          actionTrigger={{
-                            label: 'Action',
-                            onClick: () => alert('Error Action diklik'),
-                          }}
-                        />
+            {/* TOKENS: ICON & BORDER SEMANTICS */}
+            {selectedId === "icon-border-semantics" && (
+              <DocCard
+                title="Icon & Border Semantic Colors"
+                badgeText="Token"
+                description="Warna semantik untuk ikon antarmuka dan garis tepi (border) pembatas komponen."
+                usageSnippet={`<Icon icon={IconSearch} className="text-icon-interactive" />\n<div className="border border-border-card hover:border-border-card-hover" />`}
+              >
+                <div className="space-y-6">
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Icon Semantic Colors</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                              <th className="px-3 py-2">Name</th>
+                              <th className="px-3 py-2">Value</th>
+                              <th className="px-3 py-2">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {iconSemanticRows.map((r) => (
+                              <tr key={r.name}>
+                                <td className="px-3 py-2 font-mono font-semibold">
+                                  {r.name}
+                                </td>
+                                <td className="px-3 py-2 text-slate-400">
+                                  {r.val}
+                                </td>
+                                <td className="px-3 py-2">{r.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>Border Semantic Colors</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead>
+                            <tr className="uppercase border-b border-slate-200 dark:border-slate-700 text-slate-400">
+                              <th className="px-3 py-2">Name</th>
+                              <th className="px-3 py-2">Value</th>
+                              <th className="px-3 py-2">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                            {borderSemanticRows.map((r) => (
+                              <tr key={r.name}>
+                                <td className="px-3 py-2 font-mono font-semibold">
+                                  {r.name}
+                                </td>
+                                <td className="px-3 py-2 text-slate-400">
+                                  {r.val}
+                                </td>
+                                <td className="px-3 py-2">{r.desc}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* TOKENS: TYPOGRAPHY SCALE */}
+            {selectedId === "typography-scale" && (
+              <DocCard
+                title="Typography v3.1 (Lexend)"
+                badgeText="Token"
+                description="Skala tipografi resmi berbasis font Lexend yang dirancang khusus untuk Desktop dan Mobile."
+                usageSnippet={`import { Heading, Text } from '@aposis/design-system';\n\n<Heading variant="h1">Section H1</Heading>\n<Text variant="body-lg">Body Text</Text>`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-6">
+                    <div className="space-y-1">
+                      <Heading variant="display">Display Title</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        Display • 60px / 3.75rem • weight 300 • line-height 1.1
+                        • tracking -0.02em
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="h1">Section H1</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        H1 • 48px / 3rem • weight 500 • line-height 1.15 •
+                        tracking -0.02em
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="h2">Section H2</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        H2 • 36px / 2.25rem • weight 500 • line-height 1.2 •
+                        tracking -0.01em
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="h3">Section H3</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        H3 • 30px / 1.875rem • weight 500 • line-height 1.25 •
+                        tracking -0.01em
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="h4">Section H4</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        H4 • 24px / 1.5rem • weight 500 • line-height 1.3 •
+                        tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="h5">Section H5</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        H5 • 20px / 1.25rem • weight 500 • line-height 1.4 •
+                        tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Heading variant="title">Title</Heading>
+                      <div className="text-[11px] text-slate-400">
+                        Title • 18px / 1.125rem • weight 500 • line-height 1.4 •
+                        tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Text variant="body-lg">Body Large</Text>
+                      <div className="text-[11px] text-slate-400">
+                        Body-lg • 16px / 1rem • weight 400 • line-height 1.3 •
+                        tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Text variant="subtitle">Subtitle</Text>
+                      <div className="text-[11px] text-slate-400">
+                        Subtitle • 14px / 0.875rem • weight 600 • line-height
+                        1.3 • tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Text variant="body">Body Regular</Text>
+                      <div className="text-[11px] text-slate-400">
+                        Body • 14px / 0.875rem • weight 400 • line-height 1.3 •
+                        tracking 0
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Text variant="caption">Helper Text, Caption</Text>
+                      <div className="text-[11px] text-slate-400">
+                        Caption • 12px / 0.75rem • weight 400 • line-height 1.5
+                        • tracking 0.01em
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Text variant="overline">Overline Text</Text>
+                      <div className="text-[11px] text-slate-400">
+                        Overline • 11px / 0.6875rem • weight 600 • line-height
+                        1.3 • tracking 0.06em
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </DocCard>
-          )}
+              </DocCard>
+            )}
 
-          {/* ORGANISMS: NAVBAR */}
-          {selectedId === 'navbar' && (
-            <DocCard
-              title="Navbar"
-              badgeText="Organism"
-              description="Header aplikasi komprehensif dengan logo brand, menu navigasi, notifikasi, dan profil pengguna."
-              usageSnippet={`import { Navbar } from '@aposis/design-system';\n\n<Navbar brandName="Aposis Portal" user={{ name: 'Admin', email: 'admin@aposis.id' }} />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="p-0 border-t border-slate-100 dark:border-slate-800 rounded-b-2xl overflow-hidden">
-                  <Navbar
-                    brandName="Aposis Portal"
-                    navLinks={[
-                      { id: '1', label: 'Dashboard', active: true },
-                      { id: '2', label: 'Siswa' },
-                      { id: '3', label: 'Laporan' },
-                    ]}
-                    user={{ name: 'Admin User', email: 'admin@aposis.id' }}
-                    notificationCount={2}
-                    actions={<Button size="sm" variant="outline">Bantuan</Button>}
-                  />
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* ORGANISMS: SIDEBAR */}
-          {selectedId === 'sidebar' && (
-            <DocCard
-              title="Sidebar"
-              badgeText="Organism"
-              description="Menu samping vertikal aplikasi dengan dukungan grouping link, badge counter, dan mode collapse."
-              usageSnippet={`import { Sidebar } from '@aposis/design-system';\n\n<Sidebar groups={sidebarGroups} collapsed={isCollapsed} />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <div className="mb-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSidebarDemoCollapsed(!sidebarDemoCollapsed)}
-                    >
-                      {sidebarDemoCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-                    </Button>
-                  </div>
-                  <div className="h-80 rounded-2xl overflow-hidden border border-slate-700 flex">
-                    <Sidebar
-                      groups={sidebarNavGroups.slice(1, 3).map((g) => ({
-                        title: g.title,
-                        items: g.items.map((i) => ({
-                          id: i.id,
-                          label: i.label,
-                          icon: <Icon icon={i.icon} size="sm" />,
-                        })),
-                      }))}
-                      collapsed={sidebarDemoCollapsed}
-                      header={<div className="font-bold text-white text-xs">Aposis Menu</div>}
-                    />
-                    <div className="flex-1 bg-slate-100 dark:bg-slate-800 p-4 text-xs text-slate-400 flex items-center justify-center">
-                      Workspace Area
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* ORGANISMS: STAT CARD */}
-          {selectedId === 'stat-card' && (
-            <DocCard
-              title="StatCard"
-              badgeText="Organism"
-              description="Kartu metrik statistik dashboard dengan indikator persentase kenaikan/penurunan (trend up/down)."
-              usageSnippet={`import { StatCard } from '@aposis/design-system';\n\n<StatCard title="Total Siswa" value="12,840" change={{ value: '+14%', trend: 'up' }} />`}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <StatCard
-                  title="Total Siswa Aktif"
-                  value="12,840"
-                  change={{ value: '+14.2%', trend: 'up', label: 'vs bulan lalu' }}
-                  icon={<Icon icon={IconUsers} size="md" className="text-aposis-blue-60" />}
-                />
-                <StatCard
-                  title="Tingkat Akurasi"
-                  value="99.4%"
-                  change={{ value: 'Stabil', trend: 'neutral' }}
-                  icon={<Icon icon={IconSparkles} size="md" className="text-purple-600" />}
-                  iconBg="bg-purple-50 dark:bg-purple-950/40"
-                />
-              </div>
-            </DocCard>
-          )}
-
-          {/* ORGANISMS: DATA TABLE */}
-          {selectedId === 'data-table' && (
-            <DocCard
-              title="DataTable"
-              badgeText="Organism"
-              description="Tabel data reusable lengkap dengan kolom yang dapat dikonfigurasi, status kosong (empty state), dan paginasi."
-              usageSnippet={`import { DataTable } from '@aposis/design-system';\n\n<DataTable columns={cols} data={data} keyExtractor={(i) => i.id} />`}
-            >
-              <DataTable
-                columns={studentColumns}
-                data={mockStudents}
-                keyExtractor={(item) => item.id}
-                pagination={{
-                  currentPage: tablePage,
-                  totalPages: 5,
-                  totalItems: 48,
-                  onPageChange: setTablePage,
-                }}
-              />
-            </DocCard>
-          )}
-
-          {/* ORGANISMS: CARD */}
-          {selectedId === 'card' && (
-            <DocCard
-              title="Card"
-              badgeText="Organism"
-              description="Kontainer kartu modular dengan CardHeader, CardTitle, CardDescription, CardContent, dan CardFooter."
-              usageSnippet={`import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@aposis/design-system';\n\n<Card>\n  <CardHeader><CardTitle>Judul</CardTitle></CardHeader>\n  <CardContent>Konten...</CardContent>\n</Card>`}
-            >
-              <Card hoverable className="max-w-md dark:bg-slate-900 dark:border-slate-800">
-                <CardHeader>
-                  <CardTitle>Judul Kartu</CardTitle>
-                  <CardDescription>Deskripsi singkat kartu untuk menjelaskan isinya.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Text variant="body" className="dark:text-slate-300">
-                    Ini adalah contoh isi dari komponen <code>CardContent</code>. Sangat fleksibel dan dapat diisi elemen apapun.
-                  </Text>
-                </CardContent>
-                <CardFooter className="dark:bg-slate-850 dark:border-slate-800">
-                  <span className="text-xs text-slate-400">Status: Tersimpan</span>
-                  <Button size="sm">Aksi Kartu</Button>
-                </CardFooter>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* TOKENS: PRIMITIVE PALETTES */}
-          {selectedId === 'palettes' && (
-            <DocCard
-              title="Primitive Token Palettes"
-              badgeText="Token"
-              description="7 palet warna primitif (Green, Cyan, Rose, Amber, Blue, Violet, Slate) dalam 10 tingkatan intensitas (10-100) dari Figma Aposis."
-              usageSnippet={`// Menggunakan Tailwind class:\n<div className="bg-aposis-blue-60 text-white" />\n\n// Atau JavaScript tokens:\nimport { primitiveColors } from '@aposis/design-system/tokens';`}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {paletteCards.map((pal) => (
-                  <div key={pal.key} className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                      <span className="font-bold text-sm">{pal.name}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">10 - 100</span>
-                    </div>
-                    <div className="space-y-1 font-mono text-xs">
-                      {Object.entries(pal.color).map(([level, hex]) => (
-                        <div key={level} className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-800">
-                          <span className="font-sans capitalize text-slate-600 dark:text-slate-400">{pal.key} {level}</span>
+            {/* TOKENS: UNIT SCALE */}
+            {selectedId === "unit-scale" && (
+              <DocCard
+                title="Unit Scale v3.1"
+                badgeText="Token"
+                description="Daftar konversi jarak resmi dari satuan pixel ke rem (1px s/d 144px) dari Figma."
+                usageSnippet={`import { units } from '@aposis/design-system/tokens';\n\n// Tailwind spacing utility: p-16px (1rem), m-24px (1.5rem), dsb.`}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-2">
+                      {Object.entries(units).map(([px, rem]) => (
+                        <div
+                          key={px}
+                          className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800 px-2"
+                        >
+                          <span className="text-xs font-semibold text-slate-500">
+                            {px}
+                          </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-slate-400 text-[11px]">{hex}</span>
-                            <span className="w-4 h-4 rounded-full border border-black/10 inline-block shadow-2xs" style={{ backgroundColor: hex }} />
+                            <div
+                              className="h-1.5 bg-aposis-blue-60/30 rounded"
+                              style={{
+                                width: `${Math.min(parseFloat(px) * 1.5, 60)}px`,
+                              }}
+                            />
+                            <span className="w-20 font-mono text-xs font-bold text-right">
+                              {rem}
+                            </span>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </DocCard>
-          )}
-
-          {/* TOKENS: TEXT SEMANTICS */}
-          {selectedId === 'text-semantics' && (
-            <DocCard
-              title="Text Semantic Colors"
-              badgeText="Token"
-              description="Token semantik teks dengan penyesuaian otomatis untuk Light Mode dan Dark Mode."
-              usageSnippet={`<span className="text-text-primary" />\n<span className="text-text-interactive hover:text-text-interactive-hover" />`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-4">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs text-left">
-                      <thead>
-                        <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase font-semibold">
-                          <th className="py-2.5 px-3">Name</th>
-                          <th className="py-2.5 px-3">Value</th>
-                          <th className="py-2.5 px-3 text-center">Light / Dark</th>
-                          <th className="py-2.5 px-3">Live Preview</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono">
-                        {semanticTextRows.map((r) => (
-                          <tr key={r.name} className="hover:bg-slate-50 dark:hover:bg-slate-850">
-                            <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">{r.name}</td>
-                            <td className="py-2.5 px-3 text-slate-500 font-sans">{r.value}</td>
-                            <td className="py-2.5 px-3 text-center">
-                              <span className="w-3.5 h-3.5 rounded-full inline-block mr-1 shadow-2xs" style={{ backgroundColor: r.light }} />
-                              <span className="w-3.5 h-3.5 rounded-full inline-block shadow-2xs" style={{ backgroundColor: r.dark }} />
-                            </td>
-                            <td className="py-2.5 px-3 font-sans font-medium" style={{ color: isDarkMode ? r.dark : r.light }}>
-                              Teks Contoh
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* TOKENS: BG & SURFACE SEMANTICS */}
-          {selectedId === 'bg-surface-semantics' && (
-            <DocCard
-              title="Background & Surface Semantic Colors"
-              badgeText="Token"
-              description="Warna latar belakang untuk kanvas, halaman, field input, serta kontainer permukaan (surface)."
-              usageSnippet={`<div className="bg-background-default text-text-primary" />\n<div className="bg-surface-field border border-border-card" />`}
-            >
-              <div className="space-y-6">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Background Colors</CardTitle></CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase">
-                            <th className="py-2 px-3">Name</th>
-                            <th className="py-2 px-3">Value</th>
-                            <th className="py-2 px-3">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {backgroundRows.map((r) => (
-                            <tr key={r.name}>
-                              <td className="py-2 px-3 font-mono font-semibold">{r.name}</td>
-                              <td className="py-2 px-3 text-slate-400">{r.val}</td>
-                              <td className="py-2 px-3">{r.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
                   </CardContent>
                 </Card>
+              </DocCard>
+            )}
 
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Surface Colors (Sampel)</CardTitle></CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase">
-                            <th className="py-2 px-3">Name</th>
-                            <th className="py-2 px-3">Value</th>
-                            <th className="py-2 px-3">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {surfaceRows.map((r) => (
-                            <tr key={r.name}>
-                              <td className="py-2 px-3 font-mono font-semibold">{r.name}</td>
-                              <td className="py-2 px-3 text-slate-400">{r.val}</td>
-                              <td className="py-2 px-3">{r.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
+            {/* PANDUAN: MICROSERVICES INTEGRATION */}
+            {selectedId === "microservices" && (
+              <DocCard
+                title="Integrasi di Repositori Microservices"
+                badgeText="Guide"
+                description="Langkah-langkah memasang dan mengimpor @aposis/design-system di proyek frontend lain (aposis-fe-v2, dashboard, cms, dll)."
+                usageSnippet={`npm install @aposis/design-system`}
+              >
+                <div className="space-y-6">
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>1. Instalasi Package</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <pre className="p-4 overflow-x-auto font-mono text-xs bg-slate-900 text-sky-300 rounded-xl">
+                        npm install @aposis/design-system
+                      </pre>
+                    </CardContent>
+                  </Card>
 
-          {/* TOKENS: LAYER & ELEVATION */}
-          {selectedId === 'layer-elevation' && (
-            <DocCard
-              title="Layer & Elevation Semantic Colors"
-              badgeText="Token"
-              description="Spesifikasi warna lapisan interaktif dan tingkatan elevasi bayangan (shadow) komponen."
-              usageSnippet={`<div className="bg-layer hover:bg-layer-hover" />\n<div className="shadow-elevation-high" />`}
-            >
-              <div className="space-y-6">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Elevation Shadows</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {elevationRows.map((r) => (
-                        <div
-                          key={r.name}
-                          className={`p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 ${
-                            r.name === 'elevation-high' ? 'shadow-elevation-high' : r.name === 'elevation-medium' ? 'shadow-elevation-medium' : 'shadow-elevation-low'
-                          }`}
-                        >
-                          <div className="font-mono text-xs font-bold text-aposis-blue-60">{r.name}</div>
-                          <p className="text-xs text-slate-500 mt-2">{r.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Layer Colors</CardTitle></CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase">
-                            <th className="py-2 px-3">Name</th>
-                            <th className="py-2 px-3">Value</th>
-                            <th className="py-2 px-3">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {layerRows.map((r) => (
-                            <tr key={r.name}>
-                              <td className="py-2 px-3 font-mono font-semibold">{r.name}</td>
-                              <td className="py-2 px-3 text-slate-400">{r.val}</td>
-                              <td className="py-2 px-3">{r.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* TOKENS: ICON & BORDER SEMANTICS */}
-          {selectedId === 'icon-border-semantics' && (
-            <DocCard
-              title="Icon & Border Semantic Colors"
-              badgeText="Token"
-              description="Warna semantik untuk ikon antarmuka dan garis tepi (border) pembatas komponen."
-              usageSnippet={`<Icon icon={IconSearch} className="text-icon-interactive" />\n<div className="border border-border-card hover:border-border-card-hover" />`}
-            >
-              <div className="space-y-6">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Icon Semantic Colors</CardTitle></CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase">
-                            <th className="py-2 px-3">Name</th>
-                            <th className="py-2 px-3">Value</th>
-                            <th className="py-2 px-3">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {iconSemanticRows.map((r) => (
-                            <tr key={r.name}>
-                              <td className="py-2 px-3 font-mono font-semibold">{r.name}</td>
-                              <td className="py-2 px-3 text-slate-400">{r.val}</td>
-                              <td className="py-2 px-3">{r.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>Border Semantic Colors</CardTitle></CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase">
-                            <th className="py-2 px-3">Name</th>
-                            <th className="py-2 px-3">Value</th>
-                            <th className="py-2 px-3">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {borderSemanticRows.map((r) => (
-                            <tr key={r.name}>
-                              <td className="py-2 px-3 font-mono font-semibold">{r.name}</td>
-                              <td className="py-2 px-3 text-slate-400">{r.val}</td>
-                              <td className="py-2 px-3">{r.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
-
-          {/* TOKENS: TYPOGRAPHY SCALE */}
-          {selectedId === 'typography-scale' && (
-            <DocCard
-              title="Typography v3.1 (Lexend)"
-              badgeText="Token"
-              description="Skala tipografi resmi berbasis font Lexend yang dirancang khusus untuk Desktop dan Mobile."
-              usageSnippet={`import { Heading, Text } from '@aposis/design-system';\n\n<Heading variant="h1">Section H1</Heading>\n<Text variant="body-lg">Body Text</Text>`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6 space-y-6">
-                  <div className="space-y-1">
-                    <Heading variant="display">Display Title</Heading>
-                    <div className="text-[11px] text-slate-400">Display • 60px / 3.75rem • weight 300 • line-height 1.1 • tracking -0.02em</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="h1">Section H1</Heading>
-                    <div className="text-[11px] text-slate-400">H1 • 48px / 3rem • weight 500 • line-height 1.15 • tracking -0.02em</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="h2">Section H2</Heading>
-                    <div className="text-[11px] text-slate-400">H2 • 36px / 2.25rem • weight 500 • line-height 1.2 • tracking -0.01em</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="h3">Section H3</Heading>
-                    <div className="text-[11px] text-slate-400">H3 • 30px / 1.875rem • weight 500 • line-height 1.25 • tracking -0.01em</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="h4">Section H4</Heading>
-                    <div className="text-[11px] text-slate-400">H4 • 24px / 1.5rem • weight 500 • line-height 1.3 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="h5">Section H5</Heading>
-                    <div className="text-[11px] text-slate-400">H5 • 20px / 1.25rem • weight 500 • line-height 1.4 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Heading variant="title">Title</Heading>
-                    <div className="text-[11px] text-slate-400">Title • 18px / 1.125rem • weight 500 • line-height 1.4 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Text variant="body-lg">Body Large</Text>
-                    <div className="text-[11px] text-slate-400">Body-lg • 16px / 1rem • weight 400 • line-height 1.3 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Text variant="subtitle">Subtitle</Text>
-                    <div className="text-[11px] text-slate-400">Subtitle • 14px / 0.875rem • weight 600 • line-height 1.3 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Text variant="body">Body Regular</Text>
-                    <div className="text-[11px] text-slate-400">Body • 14px / 0.875rem • weight 400 • line-height 1.3 • tracking 0</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Text variant="caption">Helper Text, Caption</Text>
-                    <div className="text-[11px] text-slate-400">Caption • 12px / 0.75rem • weight 400 • line-height 1.5 • tracking 0.01em</div>
-                  </div>
-                  <div className="space-y-1">
-                    <Text variant="overline">Overline Text</Text>
-                    <div className="text-[11px] text-slate-400">Overline • 11px / 0.6875rem • weight 600 • line-height 1.3 • tracking 0.06em</div>
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* TOKENS: UNIT SCALE */}
-          {selectedId === 'unit-scale' && (
-            <DocCard
-              title="Unit Scale v3.1"
-              badgeText="Token"
-              description="Daftar konversi jarak resmi dari satuan pixel ke rem (1px s/d 144px) dari Figma."
-              usageSnippet={`import { units } from '@aposis/design-system/tokens';\n\n// Tailwind spacing utility: p-16px (1rem), m-24px (1.5rem), dsb.`}
-            >
-              <Card className="dark:bg-slate-900 dark:border-slate-800">
-                <CardContent className="pt-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-2">
-                    {Object.entries(units).map(([px, rem]) => (
-                      <div key={px} className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800 px-2">
-                        <span className="text-xs font-semibold text-slate-500">{px}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="h-1.5 bg-aposis-blue-60/30 rounded" style={{ width: `${Math.min(parseFloat(px) * 1.5, 60)}px` }} />
-                          <span className="text-xs font-mono font-bold w-20 text-right">{rem}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </DocCard>
-          )}
-
-          {/* PANDUAN: MICROSERVICES INTEGRATION */}
-          {selectedId === 'microservices' && (
-            <DocCard
-              title="Integrasi di Repositori Microservices"
-              badgeText="Guide"
-              description="Langkah-langkah memasang dan mengimpor @aposis/design-system di proyek frontend lain (aposis-fe-v2, dashboard, cms, dll)."
-              usageSnippet={`npm install @aposis/design-system`}
-            >
-              <div className="space-y-6">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>1. Instalasi Package</CardTitle></CardHeader>
-                  <CardContent>
-                    <pre className="p-4 bg-slate-900 text-sky-300 rounded-xl text-xs font-mono overflow-x-auto">
-                      npm install @aposis/design-system
-                    </pre>
-                  </CardContent>
-                </Card>
-
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>2. Opsi A: Integrasi Tailwind Preset (Direkomendasikan)</CardTitle></CardHeader>
-                  <CardContent>
-                    <pre className="p-4 bg-slate-900 text-emerald-300 rounded-xl text-xs font-mono overflow-x-auto">
-{`// tailwind.config.js di repo Anda
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        2. Opsi A: Integrasi Tailwind Preset (Direkomendasikan)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <pre className="p-4 overflow-x-auto font-mono text-xs bg-slate-900 text-emerald-300 rounded-xl">
+                        {`// tailwind.config.js di repo Anda
 import aposisPreset from '@aposis/design-system/tailwind.preset';
 
 export default {
@@ -4044,25 +5602,31 @@ export default {
     './node_modules/@aposis/design-system/**/*.{js,mjs}'
   ],
 };`}
-                    </pre>
-                  </CardContent>
-                </Card>
+                      </pre>
+                    </CardContent>
+                  </Card>
 
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>3. Opsi B: Standalone Precompiled CSS</CardTitle></CardHeader>
-                  <CardContent>
-                    <pre className="p-4 bg-slate-900 text-purple-300 rounded-xl text-xs font-mono overflow-x-auto">
-{`// src/main.tsx atau App.tsx
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>
+                        3. Opsi B: Standalone Precompiled CSS
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <pre className="p-4 overflow-x-auto font-mono text-xs text-purple-300 bg-slate-900 rounded-xl">
+                        {`// src/main.tsx atau App.tsx
 import '@aposis/design-system/style.css';`}
-                    </pre>
-                  </CardContent>
-                </Card>
+                      </pre>
+                    </CardContent>
+                  </Card>
 
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
-                  <CardHeader><CardTitle>4. Contoh Impor Komponen</CardTitle></CardHeader>
-                  <CardContent>
-                    <pre className="p-4 bg-slate-900 text-amber-200 rounded-xl text-xs font-mono overflow-x-auto">
-{`import { Button, Input, Badge, Icon, StatCard } from '@aposis/design-system';
+                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader>
+                      <CardTitle>4. Contoh Impor Komponen</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <pre className="p-4 overflow-x-auto font-mono text-xs bg-slate-900 text-amber-200 rounded-xl">
+                        {`import { Button, Input, Badge, Icon, StatCard } from '@aposis/design-system';
 import { IconSearch } from '@tabler/icons-react';
 
 export function MyComponent() {
@@ -4075,12 +5639,12 @@ export function MyComponent() {
     </div>
   );
 }`}
-                    </pre>
-                  </CardContent>
-                </Card>
-              </div>
-            </DocCard>
-          )}
+                      </pre>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
           </div>
         </main>
       </div>
@@ -4100,7 +5664,7 @@ export function MyComponent() {
               variant="danger"
               leftIcon={<Icon icon={IconTrash} size="sm" />}
               onClick={() => {
-                alert('Data berhasil dihapus!');
+                alert("Data berhasil dihapus!");
                 setIsModalOpen(false);
               }}
             >
@@ -4109,7 +5673,10 @@ export function MyComponent() {
           </>
         }
       >
-        <p>Apakah Anda yakin ingin menghapus catatan data siswa ini dari sistem repositori Aposis?</p>
+        <p>
+          Apakah Anda yakin ingin menghapus catatan data siswa ini dari sistem
+          repositori Aposis?
+        </p>
       </Modal>
     </div>
   );

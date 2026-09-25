@@ -5,3 +5,4 @@ export * from './Modal';
 export * from './Tabs';
 export * from './Tooltip';
 export * from './Notification';
+export * from './Toggle';
