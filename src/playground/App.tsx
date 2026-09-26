@@ -38,6 +38,7 @@ import {
   Toggle,
   Breadcrumbs,
   Dropdown,
+  ProgressBar,
 } from "../molecules";
 import {
   Card,
@@ -99,6 +100,7 @@ import {
   IconToggleLeft,
   IconLayoutList,
   IconSelector,
+  IconActivity,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -1069,6 +1071,7 @@ export default function App() {
         { id: "toggle", label: "Toggle", icon: IconToggleLeft },
         { id: "breadcrumb", label: "Breadcrumb", icon: IconLayoutList },
         { id: "dropdown", label: "Dropdown", icon: IconSelector },
+        { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
@@ -4306,7 +4309,40 @@ export default function App() {
                 </Card>
               </DocCard>
             )}
+            
+            {/* MOLECULES: PROGRESS BAR */}
+            {selectedId === 'progress-bar' && (
+              <DocCard
+                badgeText="Molecule"
+                title="ProgressBar"
+                description="Komponen indikator progres dengan variasi thickness (sm & md)."
+                usageSnippet={`import { ProgressBar } from '../molecules';
 
+            // Small (4px track)
+            <ProgressBar value={50} label="Subtitle" size="sm" />
+
+            // Medium (8px track)
+            <ProgressBar value={50} label="Subtitle" size="md" />`}
+              >
+                <div className="max-w-xl p-4 space-y-6 bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-slate-500">Thickness: Small (4px)</p>
+                    <ProgressBar value={10} label="Subtitle" size="sm" />
+                    <ProgressBar value={50} label="Subtitle" size="sm" />
+                    <ProgressBar value={100} label="Subtitle" size="sm" />
+                  </div>
+
+                  <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-800">
+                    <p className="text-xs font-semibold text-slate-500">Thickness: Medium (8px)</p>
+                    <ProgressBar value={10} label="Subtitle" size="md" />
+                    <ProgressBar value={50} label="Subtitle" size="md" />
+                    <ProgressBar value={100} label="Subtitle" size="md" />
+                  </div>
+                </div>
+              </DocCard>
+            )}
+
+            
             {/* MOLECULES: BREADCRUMBS */}
             {selectedId === "breadcrumb" && (
               <DocCard
