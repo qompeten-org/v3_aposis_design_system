@@ -7,3 +7,4 @@ export * from './Tooltip';
 export * from './Notification';
 export * from './Toggle';
 export * from './Breadcrumbs';
+export * from './Dropdown';
