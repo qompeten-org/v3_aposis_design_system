@@ -41,6 +41,7 @@ import {
   ProgressBar,
   Tag,
   TagGroup,
+  OverflowMenu,
 } from "../molecules";
 import {
   Card,
@@ -104,6 +105,7 @@ import {
   IconSelector,
   IconActivity,
   IconTags,
+  IconDotsVertical,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -1074,6 +1076,7 @@ export default function App() {
         { id: "toggle", label: "Toggle", icon: IconToggleLeft },
         { id: "breadcrumb", label: "Breadcrumb", icon: IconLayoutList },
         { id: "dropdown", label: "Dropdown", icon: IconSelector },
+        { id: "overflow-menu", label: "OverflowMenu", icon: IconDotsVertical },
         { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "tag", label: "Tag", icon: IconTags },
         { id: "notification", label: "Notification", icon: IconBell },
@@ -4482,6 +4485,115 @@ export default function App() {
               </DocCard>
             )}
 
+          {/* OVERFLOW MENU MOLECULE */}
+            {selectedId === "overflow-menu" && (
+              <DocCard
+                title="Overflow Menu"
+                badgeText="Molecule v3.1"
+                description="Komponen Overflow Menu (titik tiga) menyajikan daftar aksi lanjutan secara ringkas. Mendukung 4 orientasi arah kemunculan menu: Kiri Bawah, Kanan Bawah, Kiri Atas (Dropup), dan Kanan Atas (Dropup)."
+                snippets={[
+                  {
+                    filename: "OverflowMenuExample.tsx",
+                    code: `import { OverflowMenu } from '@/components/molecules/OverflowMenu/OverflowMenu';
+
+            // Menu Ke Bawah (Default)
+            <OverflowMenu align="left" position="bottom" items={items} />
+            <OverflowMenu align="right" position="bottom" items={items} />
+
+            // Menu Ke Atas (Dropup)
+            <OverflowMenu align="left" position="top" items={items} />
+            <OverflowMenu align="right" position="top" items={items} />`,
+                  },
+                ]}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-xs dark:bg-slate-900 dark:border-slate-800 border-slate-200">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <CardTitle className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                        Figma Overflow Menu Position Showcase
+                      </CardTitle>
+                      <CardDescription className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Klik masing-masing titik tiga untuk menguji respons kemunculan menu di 4 sudut posisi yang berbeda.
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 space-y-8">
+                      {/* Section 1: Menu Ke Bawah (Dropdown) */}
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-semibold tracking-wider uppercase text-slate-500">
+                          1. Menu Ke Bawah (Position: Bottom)
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 min-h-[220px]">
+                          {/* Kiri Bawah */}
+                          <div className="flex items-center justify-between p-4 bg-white border dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                            <OverflowMenu
+                              align="left"
+                              position="bottom"
+                              items={[
+                                { id: '1', label: 'Option 1' },
+                                { id: '2', label: 'Option 2' },
+                                { id: '3', label: 'Option 3' },
+                              ]}
+                            />
+                            <span className="text-xs text-slate-400">Kiri Bawah</span>
+                          </div>
+
+                          {/* Kanan Bawah */}
+                          <div className="flex items-center justify-between p-4 bg-white border dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                            <span className="text-xs text-slate-400">Kanan Bawah</span>
+                            <OverflowMenu
+                              align="right"
+                              position="bottom"
+                              items={[
+                                { id: '1', label: 'Option 1' },
+                                { id: '2', label: 'Option 2' },
+                                { id: '3', label: 'Option 3' },
+                              ]}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 2: Menu Ke Atas (Dropup) */}
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-semibold tracking-wider uppercase text-slate-500">
+                          2. Menu Ke Atas (Position: Top / Dropup)
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 min-h-[220px] items-end">
+                          {/* Kiri Atas */}
+                          <div className="flex items-center justify-between p-4 bg-white border dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                            <OverflowMenu
+                              align="left"
+                              position="top"
+                              items={[
+                                { id: '1', label: 'Option 1' },
+                                { id: '2', label: 'Option 2' },
+                                { id: '3', label: 'Option 3' },
+                              ]}
+                            />
+                            <span className="text-xs text-slate-400">Kiri Atas (Dropup)</span>
+                          </div>
+
+                          {/* Kanan Atas */}
+                          <div className="flex items-center justify-between p-4 bg-white border dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                            <span className="text-xs text-slate-400">Kanan Atas (Dropup)</span>
+                            <OverflowMenu
+                              align="right"
+                              position="top"
+                              items={[
+                                { id: '1', label: 'Option 1' },
+                                { id: '2', label: 'Option 2' },
+                                { id: '3', label: 'Option 3' },
+                              ]}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
             {/* DROPDOWN MOLECULE */}
             {selectedId === "dropdown" && (
               <DocCard
