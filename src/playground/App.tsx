@@ -4267,6 +4267,7 @@ export default function App() {
                       </span>
                       <Toggle
                         label="Aktifkan Notifikasi"
+                        description="Kirim notifikasi otomatis saat nilai rapor siswa diperbarui"
                         checked={isNotifActive}
                         onChange={(checked) => setIsNotifActive(checked)}
                       />
