@@ -11,3 +11,4 @@ export * from './Dropdown';
 export * from './ProgressBar';
 export * from './Tag';
 export * from './OverflowMenu';
+export * from './PasswordInput';

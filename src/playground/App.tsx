@@ -42,6 +42,7 @@ import {
   Tag,
   TagGroup,
   OverflowMenu,
+  PasswordInput,
 } from "../molecules";
 import {
   Card,
@@ -106,6 +107,7 @@ import {
   IconActivity,
   IconTags,
   IconDotsVertical,
+  IconLock,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -933,6 +935,18 @@ export default function App() {
     },
   ];
 
+  const passwordInputSnippets = [
+    {
+      label: "Penggunaan PasswordInput",
+      code: `import { PasswordInput } from '../molecules';
+
+    <PasswordInput placeholder="Masukkan password" />
+    <FormField label="Password Anda" error="Password kurang kuat">
+      <PasswordInput inputSize="md" warning="Weak password" />
+    </FormField>`,
+    },
+  ];
+  
   const iconDocSnippets = [
     {
       label: "Dasar (Tabler)",
@@ -1079,6 +1093,7 @@ export default function App() {
         { id: "overflow-menu", label: "OverflowMenu", icon: IconDotsVertical },
         { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "tag", label: "Tag", icon: IconTags },
+        { id: "password-input", label: "PasswordInput", icon: IconLock },
         { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
@@ -1471,6 +1486,7 @@ export default function App() {
     label: string;
     code: string;
     desc?: string;
+    language?: string;
   }
 
   // Helper component to render component documentation card with multiple snippet tabs
@@ -4348,7 +4364,76 @@ export default function App() {
                 </div>
               </DocCard>
             )}
-            
+
+              {/* MOLECULES: PASSWORD INPUT */}
+              {selectedId === "password-input" && (
+              <DocCard
+                title="Password Input"
+                badgeText="Molecule"
+                description="Komponen input kata sandi khusus dilengkapi dengan tombol toggle penglihatan (show/hide password) dan dukungan 4 variasi ukuran."
+                snippets={passwordInputSnippets}
+                tips={
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
+                    <div className="font-semibold mb-1 flex items-center gap-1.5">
+                      <Icon icon={IconInfoCircle} size="sm" />
+                      Fitur Password Input:
+                    </div>
+                    Menggunakan prop <code className="font-semibold text-aposis-blue-60">inputSize</code> ("xs" | "sm" | "md" | "lg") untuk mengatur ukuran. Mengonsumsi prop <code className="font-semibold text-aposis-blue-60">error</code> atau <code className="font-semibold text-aposis-blue-60">warning</code> untuk memberikan indikasi status warna secara otomatis.
+                  </div>
+                }
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-6">
+                    {/* 1. Matriks Variasi Ukuran */}
+                    <div>
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        1. Variasi Ukuran (Extra Small, Small, Medium, Large)
+                      </label>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">Extra Small (xs)</span>
+                          <PasswordInput inputSize="xs" placeholder="Password text..." />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">Small (sm)</span>
+                          <PasswordInput inputSize="sm" placeholder="Password text..." />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">Medium (md)</span>
+                          <PasswordInput inputSize="md" placeholder="Password text..." />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">Large (lg)</span>
+                          <PasswordInput inputSize="lg" placeholder="Password text..." />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. Matriks Status State */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        2. Status State (Default, Warning, Error)
+                      </label>
+                      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                        <div>
+                          <span className="text-[11px] text-slate-500 mb-1.5 block">Default Masked</span>
+                          <PasswordInput inputSize="md" defaultValue="rahasia123" />
+                        </div>
+                        <div>
+                          <span className="text-[11px] text-amber-600 mb-1.5 block">Warning State</span>
+                          <PasswordInput inputSize="md" warning="Password terlalu pendek" defaultValue="12345" />
+                        </div>
+                        <div>
+                          <span className="text-[11px] text-rose-500 mb-1.5 block">Error State</span>
+                          <PasswordInput inputSize="md" error="Kombinasi password salah" defaultValue="salahpass" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
             {/* MOLECULES: BREADCRUMBS */}
             {selectedId === "breadcrumb" && (
               <DocCard
