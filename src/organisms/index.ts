@@ -5,3 +5,4 @@ export * from './Sidebar';
 export * from './DataTable';
 export * from './Accordion';
 export * from './ChartHeader';
+export * from './ProgressIndicator';

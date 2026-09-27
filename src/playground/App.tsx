@@ -59,6 +59,7 @@ import {
   type AccordionSize,
   type AccordionWidth,
   ChartHeader,
+  ProgressIndicator,
 } from "../organisms";
 import {
   IconComponents,
@@ -551,6 +552,28 @@ export default function App() {
   const [chartHeaderSubtitle, setChartHeaderSubtitle] = useState<string>("Chart title");
   const [activeChartType, setActiveChartType] = useState<string>("bar");
   const [activeTags, setActiveTags] = useState<string[]>(["Tag"]);
+  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
+  const sampleProgressSteps = [
+    { label: 'Step 1' },
+    { label: 'Step 2' },
+    { label: 'Step 3' },
+  ];
+
+  const progressIndicatorSnippets: SnippetItem[] = [
+    {
+      label: 'React',
+      code: `<ProgressIndicator
+    steps={[
+      { label: 'Step 1' },
+      { label: 'Step 2' },
+      { label: 'Step 3' }
+    ]}
+    currentStep={${activeStepIndex}}
+    onStepClick={(index) => setActiveStepIndex(index)}
+  />`,
+    },
+  ];
+
   // Interactive Radio Configurator state
   const [radioConfigVariant, setRadioConfigVariant] = useState<
     "default" | "card"
@@ -1406,6 +1429,7 @@ export default function App() {
         { id: "data-table", label: "DataTable", icon: IconCalendar },
         { id: "card", label: "Card", icon: IconComponents },
         { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
+        { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
       ],
     },
     {
@@ -6820,6 +6844,87 @@ export default function App() {
                     <Button size="sm">Aksi Kartu</Button>
                   </CardFooter>
                 </Card>
+              </DocCard>
+            )}
+            
+            {/* ORGANISMS: PROGRESS INDICATOR */}
+            {selectedId === "progress-indicator" && (
+              <DocCard
+                title="Progress Indicator"
+                badgeText="Organism"
+                description="Komponen indikator alur/langkah pengerjaan multi-step (stepper). Mendukung visualisasi kondisi Completed (centang), Current (nomor aktif), dan Upcoming, beserta garis penghubung otomatis."
+                snippets={progressIndicatorSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Progress Indicator Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Klik tombol Navigasi di bawah atau klik langsung lingkaran step untuk berpindah alur.
+                          </CardDescription>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={activeStepIndex === 0}
+                            onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
+                          >
+                            Sebelumnya
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            disabled={activeStepIndex === 2}
+                            onClick={() => setActiveStepIndex((prev) => Math.min(2, prev + 1))}
+                          >
+                            Selanjutnya
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-8 pb-10 space-y-8">
+                      {/* Live Preview 3 Steps */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Contoh 3 Langkah (Default)
+                        </span>
+                        <div className="p-6 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <ProgressIndicator
+                            steps={sampleProgressSteps}
+                            currentStep={activeStepIndex}
+                            onStepClick={(index) => setActiveStepIndex(index)}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview 5 Steps */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Contoh 5 Langkah
+                        </span>
+                        <div className="p-6 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <ProgressIndicator
+                            steps={[
+                              { label: 'Step 1' },
+                              { label: 'Step 2' },
+                              { label: 'Step 3' },
+                              { label: 'Step 4' },
+                              { label: 'Step 5' },
+                            ]}
+                            currentStep={activeStepIndex}
+                            onStepClick={(index) => setActiveStepIndex(index)}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </DocCard>
             )}
 
