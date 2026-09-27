@@ -8,18 +8,28 @@ export interface CheckboxProps
   description?: React.ReactNode;
   error?: string;
   containerClassName?: string;
+  indeterminate?: boolean;
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, containerClassName, label, description, error, disabled, id, checked, ...props }, ref) => {
+  ({ className, containerClassName, label, description, error, disabled, id, checked, indeterminate, ...props }, ref) => {
     const generatedId = React.useId();
     const checkboxId = id || generatedId;
+    const innerRef = React.useRef<HTMLInputElement | null>(null);
+
+    React.useImperativeHandle(ref, () => innerRef.current as HTMLInputElement);
+
+    React.useEffect(() => {
+      if (innerRef.current) {
+        innerRef.current.indeterminate = Boolean(indeterminate);
+      }
+    }, [indeterminate]);
 
     return (
       <div className={cn('flex items-start gap-2.5', containerClassName)}>
         <div className="relative flex items-center justify-center pt-0.5">
           <input
-            ref={ref}
+            ref={innerRef}
             type="checkbox"
             id={checkboxId}
             disabled={disabled}
@@ -29,12 +39,17 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               'cursor-pointer disabled:cursor-not-allowed disabled:opacity-50',
               'focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-aposis-400',
               'checked:bg-aposis-600 checked:border-aposis-600',
+              indeterminate && 'bg-aposis-600 border-aposis-600',
               error ? 'border-rose-400' : 'border-slate-300 hover:border-aposis-500',
               className
             )}
             {...props}
           />
-          <Check className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity duration-150 stroke-[3]" />
+          {indeterminate ? (
+            <div className="absolute w-2 h-0.5 bg-white pointer-events-none rounded-full" />
+          ) : (
+            <Check className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity duration-150 stroke-[3]" />
+          )}
         </div>
         {(label || description) && (
           <div className="flex flex-col select-none">
