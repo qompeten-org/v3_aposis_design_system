@@ -49,6 +49,9 @@ import {
   Sidebar,
   DataTable,
   type Column,
+  Accordion,
+  type AccordionSize,
+  type AccordionWidth,
 } from "../organisms";
 import {
   IconComponents,
@@ -94,7 +97,8 @@ import {
   IconInfoCircle,
   IconHelpCircle,
   IconBell,
-  IconToggleLeft
+  IconToggleLeft,
+  IconLayoutList,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -424,6 +428,60 @@ function ButtonV31SpecMatrix() {
   );
 }
 
+function AccordionDemoContent() {
+  const items = Array.from({ length: 6 });
+  return (
+    <div className="space-y-4">
+      <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+        Lorem ipsum dolor sit lorem a amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+      </p>
+
+      <div className="space-y-3">
+        {items.map((_, idx) => (
+          <div
+            key={idx}
+            className="flex flex-col justify-between gap-3 pt-3 border-t md:flex-row md:items-center border-slate-100 dark:border-slate-800 first:border-t-0 first:pt-0"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center text-sm font-bold text-blue-600 border-2 border-blue-500 w-12 h-12 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
+                0
+              </div>
+
+              <div className="min-w-0 space-y-1">
+                <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                  Subtitle
+                </div>
+                <div className="text-xs text-slate-400 dark:text-slate-500">
+                  + Subtitle
+                </div>
+                <div className="flex items-center gap-2 pt-0.5">
+                  <div className="relative flex items-center h-1.5 rounded-full w-36 sm:w-48 bg-slate-200 dark:bg-slate-700">
+                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full -ml-0.5" />
+                  </div>
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                    0%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 md:justify-end">
+              {Array.from({ length: 6 }).map((__, tagIdx) => (
+                <span
+                  key={tagIdx}
+                  className="px-3 py-1 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                >
+                  Tag
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [selectedId, setSelectedId] = useState("button");
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -509,6 +567,14 @@ export default function App() {
   const [demoButtonText, setDemoButtonText] = useState("Button");
   const [demoIsLoading, setDemoIsLoading] = useState(false);
   const [demoIsDisabled, setDemoIsDisabled] = useState(false);
+
+  // Interactive Accordion Configurator state
+  const [accordionSize, setAccordionSize] = useState<AccordionSize>("md");
+  const [accordionWidth, setAccordionWidth] = useState<AccordionWidth>("full");
+  const [accordionTitle, setAccordionTitle] = useState<string>("Title");
+  const [accordionSubtitle, setAccordionSubtitle] = useState<string>("");
+  const [accordionDisabled, setAccordionDisabled] = useState<boolean>(false);
+  const [accordionPreviewKey, setAccordionPreviewKey] = useState<number>(0);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -842,6 +908,66 @@ export default function App() {
     },
   ];
 
+  const dynamicAccordionCode = useMemo(() => {
+    let code = `import { Accordion } from '@aposis/design-system';\n\n`;
+    code += `<Accordion\n`;
+    code += `  title="${accordionTitle || "Title"}"\n`;
+    if (accordionSubtitle.trim()) {
+      code += `  subtitle="${accordionSubtitle}"\n`;
+    }
+    if (accordionSize !== "md") {
+      code += `  size="${accordionSize}"\n`;
+    }
+    if (accordionWidth !== "full") {
+      code += `  width="${accordionWidth}"\n`;
+    }
+    if (accordionDisabled) {
+      code += `  disabled\n`;
+    }
+    code += `  defaultOpen\n`;
+    code += `>\n`;
+    code += `  <div className="text-sm text-slate-600 dark:text-slate-300">\n`;
+    code += `    {/* Konten kustom di sini */}\n`;
+    code += `    <p>Konten accordion yang fleksibel.</p>\n`;
+    code += `  </div>\n`;
+    code += `</Accordion>`;
+    return code;
+  }, [
+    accordionTitle,
+    accordionSubtitle,
+    accordionSize,
+    accordionWidth,
+    accordionDisabled,
+  ]);
+
+  const accordionSnippets = [
+    {
+      label: "Dasar (Collapsible)",
+      desc: "Accordion dengan judul utama dan transisi collapse/expand yang mulus.",
+      code: `import { Accordion } from '@aposis/design-system';\n\n<Accordion title="Judul Utama">\n  <p>Isi konten yang dapat dilipat dan dibuka dengan mudah.</p>\n</Accordion>`,
+    },
+    {
+      label: "Dengan Subtitle & Size",
+      desc: "Mendukung prop subtitle di bawah judul dan variasi ukuran sm, md, atau lg.",
+      code: `import { Accordion } from '@aposis/design-system';\n\n<Accordion\n  title="Kurikulum 2026"\n  subtitle="Rincian mata pelajaran dan kompetensi dasar"\n  size="lg"\n>\n  <p>Konten daftar kurikulum lengkap.</p>\n</Accordion>`,
+    },
+    {
+      label: "Kontrol Lebar (Width Preset)",
+      desc: "Pengaturan lebar menggunakan preset 'full', 'sm', 'md', 'lg', 'xl', atau custom class.",
+      code: `import { Accordion } from '@aposis/design-system';\n\n<Accordion\n  title="Panel Pengaturan Akun"\n  width="md"\n  defaultOpen\n>\n  <p>Form pengaturan preferensi pengguna.</p>\n</Accordion>`,
+    },
+    {
+      label: "Controlled State (isOpen & onToggle)",
+      desc: "Status open dapat dikontrol secara eksternal melalui state React.",
+      code: `import { useState } from 'react';\nimport { Accordion } from '@aposis/design-system';\n\nconst [isOpen, setIsOpen] = useState(false);\n\n<Accordion\n  title="Controlled Accordion"\n  isOpen={isOpen}\n  onToggle={setIsOpen}\n>\n  <p>Status: {isOpen ? 'Terbuka' : 'Tertutup'}</p>\n</Accordion>`,
+    },
+    {
+      label: "Kustom Anak Elemen (Children)",
+      desc: "Dapat memuat konten arbitrary seperti list, form, tabel, atau kartu statistik.",
+      code: `import { Accordion } from '@aposis/design-system';\n\n<Accordion title="Daftar Siswa Terdaftar">\n  <div className="space-y-2">\n    <div className="p-2 rounded bg-slate-50">Siswa 1</div>\n    <div className="p-2 rounded bg-slate-50">Siswa 2</div>\n  </div>\n</Accordion>`,
+    },
+  ];
+
   const buttonSnippets = [
     {
       label: "Dasar",
@@ -1060,6 +1186,7 @@ export default function App() {
     {
       title: "Organisms",
       items: [
+        { id: "accordion", label: "Accordion", icon: IconLayoutList },
         { id: "navbar", label: "Navbar", icon: IconLayout },
         { id: "sidebar", label: "Sidebar", icon: IconLayout },
         { id: "stat-card", label: "StatCard", icon: IconTrendingUp },
@@ -4911,6 +5038,286 @@ export default function App() {
                           />
                         </div>
                       </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: ACCORDION */}
+            {selectedId === "accordion" && (
+              <DocCard
+                title="Accordion"
+                badgeText="Organism"
+                description="Komponen organism panel lipat (collapsible accordion) yang dapat diperluas atau disembunyikan. Dilengkapi animasi tinggi CSS grid rows yang mulus, rotasi ikon chevron 180 derajat, kontrol ukuran (sm, md, lg), batas lebar fleksibel (full, sm, md, lg, xl, atau custom), judul dan subjudul, serta penampung konten arbitrary (children)."
+                snippets={accordionSnippets}
+              >
+                <div className="space-y-6">
+                  {/* 1. Interactive Live Tester & Configurator */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            <Icon
+                              icon={IconLayoutList}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Accordion Tester & Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Sesuaikan opsi props di bawah untuk menguji perilaku buka-tutup, variasi ukuran, lebar, dan responsivitas Accordion.
+                          </CardDescription>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setAccordionSize("md");
+                            setAccordionWidth("full");
+                            setAccordionTitle("Title");
+                            setAccordionSubtitle("");
+                            setAccordionDisabled(false);
+                            setAccordionPreviewKey((k) => k + 1);
+                          }}
+                        >
+                          Reset Default
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Configuration Controls */}
+                      <div className="grid grid-cols-1 gap-5 p-4 text-xs border lg:grid-cols-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl border-slate-200 dark:border-slate-700/60">
+                        {/* Column 1: Size & Width */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300">
+                              1. Ukuran (size):
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              {(["sm", "md", "lg"] as const).map((s) => (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  onClick={() => setAccordionSize(s)}
+                                  className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                    accordionSize === s
+                                      ? "bg-aposis-blue-60 text-white shadow-xs"
+                                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                  }`}
+                                >
+                                  {s.toUpperCase()}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300">
+                              2. Batas Lebar (width):
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                              {(["full", "sm", "md", "lg", "xl"] as const).map(
+                                (w) => (
+                                  <button
+                                    key={w}
+                                    type="button"
+                                    onClick={() => setAccordionWidth(w)}
+                                    className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
+                                      accordionWidth === w
+                                        ? "bg-aposis-blue-60 text-white shadow-xs"
+                                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                    }`}
+                                  >
+                                    {w.toUpperCase()}
+                                  </button>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Column 2: Title, Subtitle, Disabled */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                              3. Judul (title):
+                            </label>
+                            <input
+                              type="text"
+                              value={accordionTitle}
+                              onChange={(e) => setAccordionTitle(e.target.value)}
+                              className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
+                              placeholder="Masukkan judul accordion..."
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                              4. Subjudul Opsional (subtitle):
+                            </label>
+                            <input
+                              type="text"
+                              value={accordionSubtitle}
+                              onChange={(e) =>
+                                setAccordionSubtitle(e.target.value)
+                              }
+                              className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
+                              placeholder="Kosongkan jika hanya judul utama..."
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            <input
+                              id="accordion-disabled-toggle"
+                              type="checkbox"
+                              checked={accordionDisabled}
+                              onChange={(e) =>
+                                setAccordionDisabled(e.target.checked)
+                              }
+                              className="rounded border-slate-300 text-aposis-blue-60 focus:ring-aposis-blue-60"
+                            />
+                            <label
+                              htmlFor="accordion-disabled-toggle"
+                              className="font-medium cursor-pointer select-none text-slate-700 dark:text-slate-300"
+                            >
+                              Nonaktifkan Interaksi (disabled)
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Area */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Pratinjau Langsung (Klik header untuk buka/tutup)
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            Ukuran: {accordionSize} | Lebar: {accordionWidth}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-50/60 dark:bg-slate-950/40 border-slate-200/80 dark:border-slate-800">
+                          <Accordion
+                            key={accordionPreviewKey}
+                            title={accordionTitle || "Title"}
+                            subtitle={accordionSubtitle || undefined}
+                            size={accordionSize}
+                            width={accordionWidth}
+                            disabled={accordionDisabled}
+                            defaultOpen
+                          >
+                            <AccordionDemoContent />
+                          </Accordion>
+                        </div>
+                      </div>
+
+                      {/* Dynamic Code Viewer */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            Kode yang Dihasilkan
+                          </span>
+                          <Button
+                            variant="subtle"
+                            size="xs"
+                            leftIcon={
+                              <Icon
+                                icon={copiedCode ? IconCheck : IconCopy}
+                                size="xs"
+                              />
+                            }
+                            onClick={() => copySnippet(dynamicAccordionCode)}
+                          >
+                            {copiedCode ? "Disalin!" : "Salin Kode"}
+                          </Button>
+                        </div>
+                        <pre className="p-4 overflow-x-auto font-mono text-xs text-slate-800 bg-slate-900 rounded-xl dark:bg-slate-950 text-slate-200">
+                          <code>{dynamicAccordionCode}</code>
+                        </pre>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 2. Standalone Showcase: Sesuai Referensi Spesifikasi */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
+                      <CardTitle className="text-base font-bold">
+                        Tampilan Referensi Desain Resmi
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Perbandingan langsung antara kondisi tertutup (Collapsed) dan kondisi terbuka (Expanded) dengan 6 item data, badge nomor, status progress, dan label tag.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-6">
+                      {/* State 1: Collapsed / Tertutup */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold tracking-wider uppercase text-slate-500">
+                          Kondisi 1: Tertutup (Collapsed)
+                        </span>
+                        <Accordion title="Title" defaultOpen={false}>
+                          <AccordionDemoContent />
+                        </Accordion>
+                      </div>
+
+                      {/* State 2: Expanded / Terbuka */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold tracking-wider uppercase text-slate-500">
+                          Kondisi 2: Terbuka (Expanded)
+                        </span>
+                        <Accordion title="Title" defaultOpen={true}>
+                          <AccordionDemoContent />
+                        </Accordion>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 3. Standalone Showcase: Variasi Ukuran (sm, md, lg) */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
+                      <CardTitle className="text-base font-bold">
+                        Variasi Ukuran (Size sm, md, lg)
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Pilihan skala ukuran untuk menyesuaikan hierarki konten pada layout dashboard atau modal.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-4">
+                      {/* Size Small */}
+                      <Accordion
+                        size="sm"
+                        title="Accordion Ukuran Small (sm)"
+                        subtitle="Padding ringkas dan font lebih kecil untuk panel padat"
+                      >
+                        <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                          Konten accordion small cocok untuk sidebar, panel filter, atau card ringkas dengan ruang terbatas.
+                        </p>
+                      </Accordion>
+
+                      {/* Size Medium (Default) */}
+                      <Accordion
+                        size="md"
+                        title="Accordion Ukuran Medium (md)"
+                        subtitle="Ukuran standar ideal untuk sebagian besar modul web"
+                        defaultOpen
+                      >
+                        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                          Konten accordion medium memberikan kenyamanan membaca dengan proporsi padding dan tipografi seimbang.
+                        </p>
+                      </Accordion>
+
+                      {/* Size Large */}
+                      <Accordion
+                        size="lg"
+                        title="Accordion Ukuran Large (lg)"
+                        subtitle="Pilihan utama untuk bagian penting, FAQ, atau halaman berfokus tinggi"
+                      >
+                        <p className="text-base leading-relaxed text-slate-600 dark:text-slate-400">
+                          Konten accordion large menampilkan judul yang tegas dengan ruang napas lebih lega di setiap sisinya.
+                        </p>
+                      </Accordion>
                     </CardContent>
                   </Card>
                 </div>
