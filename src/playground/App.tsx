@@ -58,6 +58,7 @@ import {
   Accordion,
   type AccordionSize,
   type AccordionWidth,
+  ChartHeader,
 } from "../organisms";
 import {
   IconComponents,
@@ -111,6 +112,7 @@ import {
   IconDotsVertical,
   IconLock,
   IconTable,
+  IconChartPie,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -484,7 +486,7 @@ function AccordionDemoContent() {
             className="flex flex-col justify-between gap-3 pt-3 border-t md:flex-row md:items-center border-slate-100 dark:border-slate-800 first:border-t-0 first:pt-0"
           >
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center text-sm font-bold text-blue-600 border-2 border-blue-500 w-12 h-12 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
+              <div className="flex items-center justify-center w-12 h-12 text-sm font-bold text-blue-600 border-2 border-blue-500 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
                 0
               </div>
 
@@ -545,6 +547,10 @@ export default function App() {
   const [inputValue, setInputValue] = useState("");
   const [checkboxChecked, setCheckboxChecked] = useState(true);
   const [activeTabDemo, setActiveTabDemo] = useState("tab1");
+  const [chartHeaderTitle, setChartHeaderTitle] = useState<string>("Chart title");
+  const [chartHeaderSubtitle, setChartHeaderSubtitle] = useState<string>("Chart title");
+  const [activeChartType, setActiveChartType] = useState<string>("bar");
+  const [activeTags, setActiveTags] = useState<string[]>(["Tag"]);
   // Interactive Radio Configurator state
   const [radioConfigVariant, setRadioConfigVariant] = useState<
     "default" | "card"
@@ -1035,6 +1041,21 @@ export default function App() {
     },
   ];
 
+  const chartHeaderSnippets: SnippetItem[] = [
+  {
+    label: 'React',
+    code: `<ChartHeader
+  title="${chartHeaderTitle}"
+  subtitle="${chartHeaderSubtitle}"
+  activeChartType="${activeChartType}"
+  onChartTypeChange={(id) => setActiveChartType(id)}
+  activeTags={${JSON.stringify(activeTags)}}
+  onRemoveTag={(tag) => setActiveTags(activeTags.filter(t => t !== tag))}
+  onFilterClick={() => console.log('Filter clicked')}
+/>`,
+  },
+];
+
   const figmaColumns: Column<FigmaMockRow>[] = useMemo(
     () => [
       { key: "col1", header: "Header", sortable: true },
@@ -1123,7 +1144,7 @@ export default function App() {
     {
       label: "Baris Dapat Diekspansi (Expandable Rows)",
       desc: "Mendukung tombol chevron pada setiap baris untuk menampilkan panel detail atau sub-tabel yang fleksibel.",
-      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  title="Laporan Transaksi"\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1">\n      <div className="font-semibold text-slate-800 dark:text-slate-200">\n        Rincian Transaksi #{row.id}\n      </div>\n      <div className="text-xs text-slate-500">\n        Status verifikasi berhasil dicatat ke sistem audit.\n      </div>\n    </div>\n  )}\n/>`,
+      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  title="Laporan Transaksi"\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-4 space-y-1 bg-slate-50 dark:bg-slate-800/40 rounded-xl">\n      <div className="font-semibold text-slate-800 dark:text-slate-200">\n        Rincian Transaksi #{row.id}\n      </div>\n      <div className="text-xs text-slate-500">\n        Status verifikasi berhasil dicatat ke sistem audit.\n      </div>\n    </div>\n  )}\n/>`,
     },
     {
       label: "Seleksi Baris (Selectable with Checkboxes)",
@@ -1384,6 +1405,7 @@ export default function App() {
         { id: "stat-card", label: "StatCard", icon: IconTrendingUp },
         { id: "data-table", label: "DataTable", icon: IconCalendar },
         { id: "card", label: "Card", icon: IconComponents },
+        { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
       ],
     },
     {
@@ -6381,14 +6403,14 @@ export default function App() {
                             <button
                               type="button"
                               onClick={() => setDtSelectedRows([])}
-                              className="text-xs font-medium text-aposis-blue-60 hover:underline cursor-pointer"
+                              className="text-xs font-medium cursor-pointer text-aposis-blue-60 hover:underline"
                             >
                               Reset Seleksi
                             </button>
                           )}
                         </div>
 
-                        <div className="p-1 sm:p-2 bg-slate-50/60 dark:bg-slate-950/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                        <div className="p-1 border sm:p-2 bg-slate-50/60 dark:bg-slate-950/40 rounded-2xl border-slate-200/80 dark:border-slate-800">
                           <DataTable
                             title={dtTitle || undefined}
                             description={dtDescription || undefined}
@@ -6408,9 +6430,9 @@ export default function App() {
                               );
                             }}
                             expandedRowRender={(row) => (
-                              <div className="p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
-                                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-2">
-                                  <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                              <div className="p-4 border rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border-slate-200/70 dark:border-slate-700/60">
+                                <div className="flex flex-col gap-1 mb-2 sm:flex-row sm:items-center sm:justify-between">
+                                  <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                                     Informasi Detail Baris #{row.id}
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -6420,7 +6442,7 @@ export default function App() {
                                     <span className="text-xs text-slate-400">Kode: TRX-{row.id}092</span>
                                   </div>
                                 </div>
-                                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
                                   Sub-baris ini mendukung elemen arbitrary apapun: ringkasan statistik, form inline cepat, sub-tabel child data, maupun jejak audit komprehensif.
                                 </p>
                               </div>
@@ -6475,7 +6497,7 @@ export default function App() {
                             {copiedCode ? "Tersalin!" : "Salin Kode"}
                           </Button>
                         </div>
-                        <pre className="p-4 overflow-x-auto text-xs font-mono text-slate-100 bg-slate-900 dark:bg-slate-950 rounded-xl border border-slate-800 max-h-56 leading-relaxed">
+                        <pre className="p-4 overflow-x-auto font-mono text-xs leading-relaxed border text-slate-100 bg-slate-900 dark:bg-slate-950 rounded-xl border-slate-800 max-h-56">
                           {dynamicDataTableCode}
                         </pre>
                       </div>
@@ -6484,11 +6506,11 @@ export default function App() {
 
                   {/* 2. Standalone Variations Showcases */}
                   <div className="space-y-6">
-                    <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
                       <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                         Variasi Mode Tabel (Standar Desain Referensi)
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="mt-1 text-xs text-slate-500">
                         Representasi 4 variasi mode tampilan tabel sesuai spesifikasi desain sistem: standar, expandable, selectable, dan kombinasi keduanya.
                       </p>
                     </div>
@@ -6573,8 +6595,8 @@ export default function App() {
                             );
                           }}
                           expandedRowRender={(row) => (
-                            <div className="p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
-                              <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm mb-1">
+                            <div className="p-4 border rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border-slate-200/70 dark:border-slate-700/60">
+                              <div className="mb-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
                                 Detail Baris #{row.id}
                               </div>
                               <p className="text-xs text-slate-600 dark:text-slate-300">
@@ -6688,8 +6710,8 @@ export default function App() {
                             );
                           }}
                           expandedRowRender={(row) => (
-                            <div className="p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
-                              <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm mb-1">
+                            <div className="p-4 border rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border-slate-200/70 dark:border-slate-700/60">
+                              <div className="mb-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
                                 Data Rinci Baris #{row.id}
                               </div>
                               <p className="text-xs text-slate-600 dark:text-slate-300">
@@ -6844,6 +6866,102 @@ export default function App() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </DocCard>
+            )}
+            
+            {/* ORGANISMS/MOLECULES: CHART HEADER */}
+            {selectedId === "chart-header" && (
+              <DocCard
+                title="Chart Header"
+                badgeText="Organism"
+                description="Komponen header grafik interaktif yang mendukung switcher tipe chart (Bar, Treemap, Pie, Sankey), tag filter aktif, serta tombol aksi cepat seperti Filter, Table View, Fullscreen, dan More Options."
+                snippets={chartHeaderSnippets}
+              >
+                <div className="space-y-6">
+                  {/* 1. Interactive Live Tester & Configurator */}
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            <Icon
+                              icon={IconLayoutList}
+                              size="sm"
+                              className="text-aposis-blue-60"
+                            />
+                            Interactive Chart Header Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji pergantian jenis chart, teks judul, dan tombol aksi.
+                          </CardDescription>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setChartHeaderTitle("Chart title");
+                            setChartHeaderSubtitle("Chart title");
+                            setActiveChartType("bar");
+                            setActiveTags(["Tag"]);
+                          }}
+                        >
+                          Reset Default
+                        </Button>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 space-y-6">
+                      {/* Controls Input */}
+                      <div className="grid grid-cols-1 gap-4 p-4 text-xs border bg-slate-50 dark:bg-slate-800/40 rounded-xl border-slate-200 dark:border-slate-700/60 sm:grid-cols-2">
+                        <div>
+                          <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                            Judul Chart:
+                          </label>
+                          <input
+                            type="text"
+                            value={chartHeaderTitle}
+                            onChange={(e) => setChartHeaderTitle(e.target.value)}
+                            className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-300">
+                            Subjudul Chart:
+                          </label>
+                          <input
+                            type="text"
+                            value={chartHeaderSubtitle}
+                            onChange={(e) => setChartHeaderSubtitle(e.target.value)}
+                            className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview Area */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Pratinjau Langsung
+                        </span>
+                        <div className="p-4 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <ChartHeader
+                            title={chartHeaderTitle}
+                            subtitle={chartHeaderSubtitle}
+                            activeChartType={activeChartType}
+                            onChartTypeChange={(id) => setActiveChartType(id)}
+                            activeTags={activeTags}
+                            onRemoveTag={(tagToRemove) =>
+                              setActiveTags(activeTags.filter((t) => t !== tagToRemove))
+                            }
+                            onFilterClick={() => alert("Filter Clicked")}
+                            onTableClick={() => alert("Table View Clicked")}
+                            onExpandClick={() => alert("Expand Clicked")}
+                            onMoreClick={() => alert("More Option Clicked")}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </DocCard>
             )}
