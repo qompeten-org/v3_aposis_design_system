@@ -33,7 +33,6 @@ import {
   notification,
   type NotificationVariant,
   type NotificationPosition,
-  type NotificationLayout,
   type NotificationMultiStyle,
   Toggle,
   Breadcrumbs,
@@ -1609,10 +1608,11 @@ export default function App() {
   ];
 
   interface SnippetItem {
-    label: string;
+    label?: string;
     code: string;
     desc?: string;
     language?: string;
+    filename?: string;
   }
 
   // Helper component to render component documentation card with multiple snippet tabs
@@ -1684,7 +1684,7 @@ export default function App() {
                           : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
                       }`}
                     >
-                      {s.label}
+                      {s.label || s.filename || `Snippet ${idx + 1}`}
                     </button>
                   ))}
                 </div>
