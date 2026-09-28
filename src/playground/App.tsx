@@ -42,6 +42,7 @@ import {
   TagGroup,
   OverflowMenu,
   PasswordInput,
+  TextInput,
 } from "../molecules";
 import {
   Card,
@@ -114,6 +115,7 @@ import {
   IconLock,
   IconTable,
   IconChartPie,
+  IconPencil,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -929,6 +931,14 @@ export default function App() {
     },
   ];
 
+  const [textInputConfigSize, setTextInputConfigSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
+  const [textInputConfigValue, setTextInputConfigValue] = useState('');
+  const [textInputConfigDisabled, setTextInputConfigDisabled] = useState(false);
+  const [textInputConfigError, setTextInputConfigError] = useState('');
+  const [textInputConfigWarning, setTextInputConfigWarning] = useState('');
+  const [textInputConfigHighlighted, setTextInputConfigHighlighted] = useState(false);
+  const [textInputConfigMultiline, setTextInputConfigMultiline] = useState(false);
+    
   const dynamicNotificationCode = useMemo(() => {
     const isError = notifVariant === "error" || notifVariant === "danger";
     const method = isError ? "error" : notifVariant;
@@ -1268,6 +1278,53 @@ export default function App() {
     </FormField>`,
     },
   ];
+
+  const textInputSnippets: SnippetItem[] = [
+    {
+      label: 'Basic Usage',
+      code: `<TextInput
+      label="Label"
+      placeholder="Input Text..."
+      helperText="Helper text goes here"
+    />`,
+    },
+    {
+      label: 'Sizes',
+      code: `<TextInput inputSize="xs" label="Extra Small" placeholder="Input Text..." />
+      <TextInput inputSize="sm" label="Small" placeholder="Input Text..." />
+      <TextInput inputSize="md" label="Medium" placeholder="Input Text..." />
+      <TextInput inputSize="lg" label="Large" placeholder="Input Text..." />`,
+    },
+    {
+      label: 'Validation States',
+      code: `<TextInput
+      label="Warning Input"
+      warning="Warning message goes here"
+      defaultValue="Input Text"
+  />
+    <TextInput
+      label="Error Input"
+      error="Error message goes here"
+      defaultValue="Input Text"
+    />`,
+    },
+    {
+      label: 'Highlighted & Text Area',
+      code: `<TextInput
+      highlighted
+      badgeText="ABC"
+      label="Label"
+      placeholder="Input Text"
+      helperText="Helper text"
+  />
+    <TextInput
+      multiline
+      label="Deskripsi / Catatan"
+      placeholder="Ketik deskripsi lengkap di sini..."
+      helperText="Mendukung multi-baris teks."
+    />`,
+    },
+  ];
   
   const iconDocSnippets = [
     {
@@ -1416,6 +1473,7 @@ export default function App() {
         { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "tag", label: "Tag", icon: IconTags },
         { id: "password-input", label: "PasswordInput", icon: IconLock },
+        { id: "text-input", label: "Text-Input", icon: IconPencil },
         { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
@@ -4754,6 +4812,189 @@ export default function App() {
                           <PasswordInput inputSize="md" error="Kombinasi password salah" defaultValue="salahpass" />
                         </div>
                       </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
+            {/* MOLECULES: TEXT INPUT & TEXT AREA */}
+            {(selectedId === "all" || selectedId === "text-input") && (
+              <DocCard
+                title="Text Input & Text Area"
+                badgeText="Molecule"
+                description="Komponen input teks serbaguna dengan dukungan 4 ukuran, state validation (warning/error), opsi highlighted card, serta mode Text Area dengan toolbar."
+                snippets={textInputSnippets}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-8">
+                    
+                    {/* Interactive Configurator */}
+                    <div className="p-4 space-y-4 border rounded-xl bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60">
+                      <span className="text-xs font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400">
+                        Interactive Playground Configurator
+                      </span>
+                      
+                     {/* Output Preview */}
+                      <div className="max-w-lg p-4 mx-auto bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                        <TextInput
+                          key={textInputConfigMultiline ? 'multiline' : 'singleline'}
+                          inputSize={textInputConfigSize}
+                          label="Interactive Label"
+                          placeholder="Ketik sesuatu di sini..."
+                          defaultValue=""
+                          disabled={textInputConfigDisabled}
+                          error={textInputConfigError || undefined}
+                          warning={textInputConfigWarning || undefined}
+                          highlighted={textInputConfigHighlighted}
+                          badgeText={textInputConfigHighlighted ? "ABC" : undefined}
+                          multiline={textInputConfigMultiline}
+                        />
+                      </div>
+
+                      {/* Controls */}
+                      <div className="grid grid-cols-1 gap-4 pt-3 text-xs border-t sm:grid-cols-2 lg:grid-cols-4 border-slate-200 dark:border-slate-700/60">
+                        {/* Size Selector */}
+                        <div>
+                          <label className="block mb-1 font-medium text-slate-700 dark:text-slate-300">Size</label>
+                          <select
+                            value={textInputConfigSize}
+                            onChange={(e) => setTextInputConfigSize(e.target.value as any)}
+                            className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                          >
+                            <option value="xs">xs (Extra Small)</option>
+                            <option value="sm">sm (Small)</option>
+                            <option value="md">md (Medium)</option>
+                            <option value="lg">lg (Large)</option>
+                          </select>
+                        </div>
+
+                        {/* Validation States */}
+                        <div>
+                          <label className="block mb-1 font-medium text-slate-700 dark:text-slate-300">
+                            Validation State
+                          </label>
+                          <select
+                            value={
+                              textInputConfigError
+                                ? 'error'
+                                : textInputConfigWarning
+                                ? 'warning'
+                                : 'normal'
+                            }
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === 'error') {
+                                setTextInputConfigError('Format input tidak valid');
+                                setTextInputConfigWarning('');
+                              } else if (val === 'warning') {
+                                setTextInputConfigWarning('Karakter hampir melebihi batas');
+                                setTextInputConfigError('');
+                              } else {
+                                setTextInputConfigError('');
+                                setTextInputConfigWarning('');
+                              }
+                            }}
+                            className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                          >
+                            <option value="normal">Normal</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Error</option>
+                          </select>
+                        </div>
+
+                        {/* Toggles */}
+                        <div className="flex flex-col justify-center pt-2 space-y-2">
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigDisabled}
+                              onChange={(e) => setTextInputConfigDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Disabled</span>
+                          </label>
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigHighlighted}
+                              onChange={(e) => setTextInputConfigHighlighted(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Highlighted Card</span>
+                          </label>
+                        </div>
+
+                        <div className="flex flex-col justify-center pt-2 space-y-2">
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigMultiline}
+                              onChange={(e) => setTextInputConfigMultiline(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Multiline (Text Area)</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 1. Matriks Variasi Ukuran */}
+                    <div>
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        1. Variasi Ukuran Text Input (xs, sm, md, lg)
+                      </label>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <TextInput inputSize="xs" label="Extra Small" placeholder="Input Text..." />
+                        <TextInput inputSize="sm" label="Small" placeholder="Input Text..." />
+                        <TextInput inputSize="md" label="Medium" placeholder="Input Text..." />
+                        <TextInput inputSize="lg" label="Large" placeholder="Input Text..." />
+                      </div>
+                    </div>
+
+                    {/* 2. Validation States */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        2. Validation States (Warning & Error)
+                      </label>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <TextInput
+                          label="Warning Input"
+                          warning="Warning message goes here"
+                          defaultValue="Input Text"
+                        />
+                        <TextInput
+                          label="Error Input"
+                          error="Error message goes here"
+                          defaultValue="Input Text"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Highlighted Variant */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        3. Highlighted Text Input
+                      </label>
+                      <TextInput
+                        highlighted
+                        badgeText="ABC"
+                        label="Label"
+                        placeholder="Input Text"
+                        helperText="Helper text"
+                      />
+                    </div>
+
+                    {/* 4. Text Area / Rich Text Input */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        4. Text Area Input
+                      </label>
+                      <TextInput
+                        multiline
+                        label="Deskripsi / Catatan"
+                        placeholder="Ketik deskripsi lengkap di sini..."
+                      />
                     </div>
                   </CardContent>
                 </Card>

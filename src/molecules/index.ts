@@ -12,3 +12,4 @@ export * from './ProgressBar';
 export * from './Tag';
 export * from './OverflowMenu';
 export * from './PasswordInput';
+export * from './TextInput';
