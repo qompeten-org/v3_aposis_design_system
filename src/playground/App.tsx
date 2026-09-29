@@ -61,6 +61,7 @@ import {
   type AccordionWidth,
   ChartHeader,
   ProgressIndicator,
+  Pagination,
 } from "../organisms";
 import {
   IconComponents,
@@ -116,6 +117,7 @@ import {
   IconTable,
   IconChartPie,
   IconPencil,
+  IconListNumbers,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -674,6 +676,12 @@ export default function App() {
   const [showcase4Expanded, setShowcase4Expanded] = useState<(string | number)[]>(["2"]);
   const [showcase4Page, setShowcase4Page] = useState<number>(1);
 
+  // Interactive Pagination Configurator state
+  const [paginationPage, setPaginationPage] = useState(1);
+  const [paginationTotalPages, setPaginationTotalPages] = useState(30);
+  const [paginationSize, setPaginationSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
+  const [paginationShowFirstLast, setPaginationShowFirstLast] = useState(false);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
@@ -1074,6 +1082,29 @@ export default function App() {
     },
   ];
 
+  const paginationSnippets: SnippetItem[] = [
+    {
+      label: "React",
+      code: `import { useState } from 'react';
+  import { Pagination } from '@aposis/design-system';
+
+  export function Example() {
+    const [page, setPage] = useState(1);
+
+    return (
+      <Pagination
+        currentPage={page}
+        totalPages={30}
+        onPageChange={(newPage) => setPage(newPage)}
+        size="md"
+        variant="underline"
+        enableQuickJump={true}
+      />
+    );
+  }`,
+    },
+  ];
+    
   const chartHeaderSnippets: SnippetItem[] = [
   {
     label: 'React',
@@ -1488,6 +1519,7 @@ export default function App() {
         { id: "card", label: "Card", icon: IconComponents },
         { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
         { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
+        { id: "pagination", label: "Pagination", icon: IconListNumbers}
       ],
     },
     {
@@ -7049,6 +7081,132 @@ export default function App() {
                       </CardContent>
                     </Card>
                   </div>
+                </div>
+              </DocCard>
+            )}
+
+            {/* MOLECULES / ORGANISMS: PAGINATION */}
+            {selectedId === "pagination" && (
+              <DocCard
+                title="Pagination"
+                badgeText="Molecule"
+                description="Komponen navigasi penomoran halaman interaktif dengan penanda aktif underline, ellipsis otomatis, variasi ukuran, serta fitur quick-jump dropdown."
+                snippets={paginationSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Pagination Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji perubahan ukuran, total halaman, dan navigasi secara live.
+                          </CardDescription>
+                        </div>
+                        
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={paginationPage === 1}
+                            onClick={() => setPaginationPage(1)}
+                          >
+                            Reset ke Hal 1
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Ukuran (Size)
+                          </label>
+                          <select
+                            value={paginationSize}
+                            onChange={(e) => setPaginationSize(e.target.value as any)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="xs">XS (Extra Small)</option>
+                            <option value="sm">SM (Small)</option>
+                            <option value="md">MD (Medium)</option>
+                            <option value="lg">LG (Large)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Total Halaman
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={100}
+                            defaultValue={paginationTotalPages}
+                            key={paginationTotalPages} 
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.blur();
+                              }
+                              e.stopPropagation();
+                            }}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (isNaN(val) || val < 1) {
+                                e.target.value = "1";
+                                setPaginationTotalPages(1);
+                                if (paginationPage > 1) setPaginationPage(1);
+                              } else {
+                                setPaginationTotalPages(val);
+                                if (paginationPage > val) {
+                                  setPaginationPage(val);
+                                }
+                              }
+                            }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div className="flex items-end pb-2">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={paginationShowFirstLast}
+                              onChange={(e) => setPaginationShowFirstLast(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan First / Last Page
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <Pagination
+                            currentPage={paginationPage}
+                            totalPages={paginationTotalPages}
+                            onPageChange={(page) => setPaginationPage(page)}
+                            size={paginationSize}
+                            showFirstLast={paginationShowFirstLast}
+                            enableQuickJump={true}
+                          />
+                          <div className="pt-2 font-mono text-xs text-slate-500">
+                            Halaman Aktif: <span className="font-semibold text-slate-800 dark:text-slate-200">{paginationPage}</span> dari {paginationTotalPages}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </DocCard>
             )}

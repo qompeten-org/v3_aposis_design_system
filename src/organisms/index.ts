@@ -6,3 +6,4 @@ export * from './DataTable';
 export * from './Accordion';
 export * from './ChartHeader';
 export * from './ProgressIndicator';
+export * from './Pagination'
