@@ -62,6 +62,8 @@ import {
   ChartHeader,
   ProgressIndicator,
   Pagination,
+  StatusPlaceholder,
+  FilePreviewPlaceholder,
 } from "../organisms";
 import {
   IconComponents,
@@ -118,6 +120,7 @@ import {
   IconChartPie,
   IconPencil,
   IconListNumbers,
+  IconLayoutBoard,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -1198,6 +1201,57 @@ export default function App() {
     dtIsEmpty,
     dtPage,
   ]);
+  
+  const statusPlaceholderSnippets: SnippetItem[] = [
+    {
+      label: "React",
+      code: `<StatusPlaceholder
+    variant="empty"
+    title="Empty State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="primary">Button</Button>}
+  />`,
+    },
+    {
+      label: "Variants",
+      code: `{/* Empty State */}
+  <StatusPlaceholder
+    variant="empty"
+    title="Empty State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="primary">Button</Button>}
+  />
+
+  {/* Warning State */}
+  <StatusPlaceholder
+    variant="warning"
+    title="Warning State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="secondary">Button</Button>}
+  />
+
+  {/* Danger State */}
+  <StatusPlaceholder
+    variant="danger"
+    title="Danger State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="danger">Button</Button>}
+  />`,
+    },
+    {
+      label: "File Preview",
+      code: `<FilePreviewPlaceholder
+    fileType="PDF"
+    pageNumber={1}
+    isSelected={true}
+    onRemove={() => console.log('Hapus berkas')}
+  />`,
+    },
+  ];
 
   const dataTableSnippets = [
     {
@@ -1519,7 +1573,8 @@ export default function App() {
         { id: "card", label: "Card", icon: IconComponents },
         { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
         { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
-        { id: "pagination", label: "Pagination", icon: IconListNumbers}
+        { id: "pagination", label: "Pagination", icon: IconListNumbers},
+        { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
       ],
     },
     {
@@ -7321,6 +7376,79 @@ export default function App() {
                           />
                         </div>
                       </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISM: STATUS PLACEHOLDER */}
+            {selectedId === "status-placeholder" && (
+              <DocCard
+                title="Status Placeholder"
+                badgeText="Molecule"
+                description="Komponen status placeholder untuk kondisi Empty, Success, Warning, Danger, serta pratinjau berkas/dokumen terunggah."
+                snippets={statusPlaceholderSnippets}
+              >
+                <div className="space-y-8">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-base">Status Placeholder Variants</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                      {/* Empty */}
+                      <StatusPlaceholder
+                        variant="empty"
+                        title="Empty State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="primary">Button</Button>}
+                      />
+
+                      {/* Success */}
+                      <StatusPlaceholder
+                        variant="success"
+                        title="Success State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="primary">Button</Button>}
+                      />
+
+                      {/* Warning */}
+                      <StatusPlaceholder
+                        variant="warning"
+                        title="Warning State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="secondary">Button</Button>}
+                      />
+
+                      {/* Danger */}
+                      <StatusPlaceholder
+                        variant="danger"
+                        title="Danger State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="danger">Button</Button>}
+                      />
+                    </CardContent>
+                  </Card>
+
+                  {/* File Preview Showcase */}
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-base">Uploaded File Preview</CardTitle>
+                      <CardDescription className="text-xs">
+                        Pratinjau berkas dengan indikator terpilih (outline biru) dan tombol hapus.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-wrap gap-6 pt-2">
+                      <FilePreviewPlaceholder pageNumber={1} isSelected={false} />
+                      <FilePreviewPlaceholder
+                        pageNumber={1}
+                        isSelected={true}
+                        onRemove={() => alert('Remove file')}
+                      />
                     </CardContent>
                   </Card>
                 </div>

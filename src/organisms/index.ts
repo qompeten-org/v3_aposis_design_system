@@ -7,3 +7,4 @@ export * from './Accordion';
 export * from './ChartHeader';
 export * from './ProgressIndicator';
 export * from './Pagination'
+export * from './StatusPlaceholder'
