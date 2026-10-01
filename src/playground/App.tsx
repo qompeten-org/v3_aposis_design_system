@@ -64,6 +64,7 @@ import {
   Pagination,
   StatusPlaceholder,
   FilePreviewPlaceholder,
+  AnswerOption,
 } from "../organisms";
 import {
   IconComponents,
@@ -121,6 +122,7 @@ import {
   IconPencil,
   IconListNumbers,
   IconLayoutBoard,
+  IconAB,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -679,6 +681,14 @@ export default function App() {
   const [showcase4Expanded, setShowcase4Expanded] = useState<(string | number)[]>(["2"]);
   const [showcase4Page, setShowcase4Page] = useState<number>(1);
 
+  //Interactive AnswerOption Configurator 
+  const [answerType, setAnswerType] = useState<'radio' | 'checkbox'>('radio');
+  const [answerSelected, setAnswerSelected] = useState<boolean>(false);
+  const [answerDisabled, setAnswerDisabled] = useState<boolean>(false);
+  const [answerLabel, setAnswerLabel] = useState<string>('Label');
+  const [answerValue, setAnswerValue] = useState<string>('Input Text');
+  const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
+
   // Interactive Pagination Configurator state
   const [paginationPage, setPaginationPage] = useState(1);
   const [paginationTotalPages, setPaginationTotalPages] = useState(30);
@@ -941,6 +951,36 @@ export default function App() {
       code: `import { Tooltip } from '@aposis/design-system';\n\n{/* Tooltip bertema Brand Biru */}\n<Tooltip text="Fitur Unggulan" className="bg-blue-600">\n  <span>Arahkan ke Sini</span>\n</Tooltip>\n\n{/* Tooltip bertema Terang (Light) */}\n<Tooltip text="Keterangan Ringan" className="bg-white border shadow-lg text-slate-900 border-slate-200">\n  <span>Arahkan ke Sini</span>\n</Tooltip>`,
     },
   ];
+
+  const answerOptionSnippets = [
+  {
+    label: 'Single Select (Radio)',
+    code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
+    <AnswerOption
+      type="radio"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Selected')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+      {
+        label: 'Multi Select (Checkbox)',
+        code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
+
+    <AnswerOption
+      type="checkbox"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Toggled')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+    ];
 
   const [textInputConfigSize, setTextInputConfigSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
   const [textInputConfigValue, setTextInputConfigValue] = useState('');
@@ -1575,6 +1615,7 @@ export default function App() {
         { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
         { id: "pagination", label: "Pagination", icon: IconListNumbers},
         { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
+        { id: "answer-option", label: "AnswerOption", icon: IconAB},
       ],
     },
     {
@@ -7140,7 +7181,140 @@ export default function App() {
               </DocCard>
             )}
 
-            {/* MOLECULES / ORGANISMS: PAGINATION */}
+            {/* ORGANISMS: ANSWER OPTION */}
+            {selectedId === "answer-option" && (
+              <DocCard
+                title="Answer Option"
+                badgeText="Organism"
+                description="Komponen opsi jawaban interaktif berbasis pilihan tunggal (Radio) atau pilihan ganda (Checkbox) lengkap dengan label urutan, input teks jawaban, dan helper text."
+                snippets={answerOptionSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Answer Option Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji perubahan tipe (Radio/Checkbox), teks label, status terpilih, dan kondisi disabled secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setAnswerType('radio');
+                              setAnswerSelected(false);
+                              setAnswerDisabled(false);
+                              setAnswerLabel('Label');
+                              setAnswerValue('Input Text');
+                              setAnswerHelper('Helper text');
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Tipe Selection (Type)
+                          </label>
+                          <select
+                            value={answerType}
+                            onChange={(e) => setAnswerType(e.target.value as 'radio' | 'checkbox')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="radio">Radio (Single Select)</option>
+                            <option value="checkbox">Checkbox (Multi Select)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Teks Label
+                          </label>
+                          <input
+                            type="text"
+                            value={answerLabel}
+                            onChange={(e) => setAnswerLabel(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Helper Text
+                          </label>
+                          <input
+                            type="text"
+                            value={answerHelper}
+                            onChange={(e) => setAnswerHelper(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Checkbox Toggles for States */}
+                        <div className="flex items-center gap-4 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={answerSelected}
+                              onChange={(e) => setAnswerSelected(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Selected State
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={answerDisabled}
+                              onChange={(e) => setAnswerDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Disabled State
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <AnswerOption
+                            type={answerType}
+                            label={answerLabel}
+                            value={answerValue}
+                            helperText={answerHelper}
+                            selected={answerSelected}
+                            disabled={answerDisabled}
+                            onSelect={() => setAnswerSelected(!answerSelected)}
+                            onTextChange={(val) => setAnswerValue(val)}
+                          />
+                          <div className="pt-2 font-mono text-xs text-slate-500">
+                            Status Terpilih: <span className="font-semibold text-slate-800 dark:text-slate-200">{answerSelected ? 'True' : 'False'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: PAGINATION */}
             {selectedId === "pagination" && (
               <DocCard
                 title="Pagination"
@@ -7395,7 +7569,7 @@ export default function App() {
                     <CardHeader>
                       <CardTitle className="text-base">Status Placeholder Variants</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <CardContent className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2 lg:grid-cols-4">
                       {/* Empty */}
                       <StatusPlaceholder
                         variant="empty"
