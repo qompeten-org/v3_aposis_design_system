@@ -9,3 +9,4 @@ export * from './ProgressIndicator';
 export * from './Pagination';
 export * from './StatusPlaceholder';
 export * from './AnswerOption';
+export * from './ScoreList';

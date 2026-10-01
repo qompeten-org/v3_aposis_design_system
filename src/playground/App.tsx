@@ -65,6 +65,7 @@ import {
   StatusPlaceholder,
   FilePreviewPlaceholder,
   AnswerOption,
+  ScoreListItem,
 } from "../organisms";
 import {
   IconComponents,
@@ -123,6 +124,7 @@ import {
   IconListNumbers,
   IconLayoutBoard,
   IconAB,
+  IconListCheck, 
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -689,6 +691,32 @@ export default function App() {
   const [answerValue, setAnswerValue] = useState<string>('Input Text');
   const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
 
+  // State Configurator ScoreList
+  const [scoreVal, setScoreVal] = useState<number>(85);
+  const [scoreTitle, setScoreTitle] = useState<string>('Kategori Penalaran Umum');
+  const [scoreSub, setScoreSub] = useState<string>('Sub-topik Kemampuan Analitis');
+  const [scoreProgress, setScoreProgress] = useState<number>(75);
+  const [scoreShowTags, setScoreShowTags] = useState<boolean>(true);
+  const [scoreDisabled, setScoreDisabled] = useState<boolean>(false);
+
+  const dummyTags = ['Analisis Data', 'Logika', 'Pola Angka', 'Verbal', 'Deduktif'];
+
+  const scoreListSnippets = [
+    {
+      label: 'Basic Usage',
+      code: `import { ScoreListItem } from '../components/organisms/ScoreList/ScoreList';
+
+  <ScoreListItem
+    score={85}
+    title="Kategori Penalaran Umum"
+    subtitle="Sub-topik Kemampuan Analitis"
+    progress={75}
+    tags={['Analisis Data', 'Logika', 'Pola Angka']}
+    showTags={true}
+  />`,
+    },
+  ];
+  
   // Interactive Pagination Configurator state
   const [paginationPage, setPaginationPage] = useState(1);
   const [paginationTotalPages, setPaginationTotalPages] = useState(30);
@@ -1616,6 +1644,7 @@ export default function App() {
         { id: "pagination", label: "Pagination", icon: IconListNumbers},
         { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
+        { id: "score-list", label: "ScoreList", icon: IconListCheck},
       ],
     },
     {
@@ -7306,6 +7335,166 @@ export default function App() {
                           <div className="pt-2 font-mono text-xs text-slate-500">
                             Status Terpilih: <span className="font-semibold text-slate-800 dark:text-slate-200">{answerSelected ? 'True' : 'False'}</span>
                           </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: SCORE LIST */}
+            {selectedId === "score-list" && (
+              <DocCard
+                title="Score List"
+                badgeText="Organism"
+                description="Komponen daftar indikator skor dan progres kategori penilaian yang dilengkapi dengan persentase bar serta pemetaan tag indikator."
+                snippets={scoreListSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Score List Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji penyesuaian nilai skor, judul, persentase progress, dan daftar tag secara live.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setScoreVal(85);
+                              setScoreTitle('Kategori Penalaran Umum');
+                              setScoreSub('Sub-topik Kemampuan Analitis');
+                              setScoreProgress(75);
+                              setScoreShowTags(true);
+                              setScoreDisabled(false);
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nilai Skor (Score)
+                          </label>
+                          <input
+                            type="number"
+                            key={scoreVal}
+                            defaultValue={scoreVal}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.blur();
+                              }
+                              e.stopPropagation();
+                            }}
+                            onBlur={(e) => {
+                              const val = e.target.value;
+                              setScoreVal(val === '' ? 0 : Number(val));
+                            }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Progress (%)
+                          </label>
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                           key={scoreProgress} 
+                          defaultValue={scoreProgress}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              e.currentTarget.blur();
+                            }
+                            e.stopPropagation();
+                          }}
+                          onBlur={(e) => {
+                            const val = e.target.value;
+                            setScoreProgress(val === '' ? 0 : Number(val));
+                          }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Judul Item (Title)
+                          </label>
+                          <input
+                            type="text"
+                            key={scoreTitle}
+                                  defaultValue={scoreTitle}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      e.currentTarget.blur();
+                                    }
+                                    e.stopPropagation();
+                                  }}
+                                  onBlur={(e) => {
+                                    setScoreTitle(e.target.value);
+                                  }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Checkbox Toggles */}
+                        <div className="flex items-center gap-4 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={scoreShowTags}
+                              onChange={(e) => setScoreShowTags(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan Tags
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={scoreDisabled}
+                              onChange={(e) => setScoreDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Disabled State
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Preview Showcase
+                        </span>
+                        <div className="p-6 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <ScoreListItem
+                            score={scoreVal}
+                            title={scoreTitle}
+                            subtitle={scoreSub}
+                            progress={scoreProgress}
+                            tags={dummyTags}
+                            showTags={scoreShowTags}
+                            disabled={scoreDisabled}
+                          />
                         </div>
                       </div>
                     </CardContent>
