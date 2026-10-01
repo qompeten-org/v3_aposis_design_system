@@ -1,0 +1,44 @@
+name: Vercel Preview Deployment
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout without history
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 1
+
+      - name: Create new commit with correct author
+        run: |
+          git config user.name "qompeten-org"
+          git config user.email "developer@qompeten.com"
+          # Buat commit kosong dengan author yang benar
+          git commit --allow-empty -m "Deploy to production [skip ci]" --author="qompeten-org <developer@qompeten.com>"
+
+      - uses: amondnet/vercel-action@v20
+        id: vercel-deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: "--yes"
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Set alias domain
+        run: vercel alias set stg-aposis-ds.vercel.app --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: preview-url
+        run: |
+          echo ${{ steps.vercel-deploy.outputs.preview-url }}
