@@ -66,6 +66,10 @@ import {
   FilePreviewPlaceholder,
   AnswerOption,
   ScoreListItem,
+  ContainedList,
+  ContainedListSize,
+  ContainedListOrientation,
+  ContainedListItemData,
 } from "../organisms";
 import {
   IconComponents,
@@ -125,6 +129,9 @@ import {
   IconLayoutBoard,
   IconAB,
   IconListCheck, 
+  IconFileText, 
+  IconShieldCheck,
+  IconLayersOff,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -1017,7 +1024,7 @@ export default function App() {
   const [textInputConfigWarning, setTextInputConfigWarning] = useState('');
   const [textInputConfigHighlighted, setTextInputConfigHighlighted] = useState(false);
   const [textInputConfigMultiline, setTextInputConfigMultiline] = useState(false);
-    
+
   const dynamicNotificationCode = useMemo(() => {
     const isError = notifVariant === "error" || notifVariant === "danger";
     const method = isError ? "error" : notifVariant;
@@ -1064,6 +1071,48 @@ export default function App() {
     notifActionLabel,
     notifCustomIcon,
   ]);
+
+  //ContainedList State
+  const [containedListSize, setContainedListSize] = useState<ContainedListSize>('large');
+  const [containedListOrientation, setContainedListOrientation] = useState<ContainedListOrientation>('horizontal');
+  const [containedListHeaderAction, setContainedListHeaderAction] = useState<'overflow' | 'button' | 'link' | 'tag' | 'none'>('overflow');
+  const [containedListSearchable, setContainedListSearchable] = useState(false);
+  const [containedListShowDividers, setContainedListShowDividers] = useState(true);
+
+// Sample items data for ContainedList preview
+  const containedListItems: ContainedListItemData[] = [
+    { 
+      id: '1', 
+      subtitle: 'List subtitle', 
+      itemText: 'First item description', 
+      icon: IconPlus, 
+      badge: 4, 
+      actionType: 'overflow' 
+    },
+    { 
+      id: '2', 
+      subtitle: 'List subtitle', 
+      itemText: 'Second item with warning status', 
+      icon: IconShieldCheck, 
+      status: 'warning', 
+      actionType: 'chevron' 
+    },
+    { 
+      id: '3', 
+      subtitle: 'List subtitle', 
+      itemText: 'Third item with link action', 
+      icon: IconFileText, 
+      actionType: 'link', 
+      actionLabel: 'View' 
+    },
+    { 
+      id: '4', 
+      subtitle: 'List subtitle', 
+      itemText: 'Disabled item example', 
+      icon: IconLayersOff, 
+      state: 'disabled' 
+    },
+  ];
 
   const notificationSnippets = [
     {
@@ -1321,6 +1370,27 @@ export default function App() {
     },
   ];
 
+    const containedListSnippets = [
+    {
+      language: 'tsx',
+      filename: 'ContainedList.tsx',
+      code: `<ContainedList
+    title="List Title"
+    size="${containedListSize}"
+    itemOrientation="${containedListOrientation}"
+    headerActionType="${containedListHeaderAction}"
+    headerActionLabel="Action"
+    searchable={${containedListSearchable}}
+    showDividers={${containedListShowDividers}}
+    items={[
+      { id: '1', subtitle: 'List subtitle', itemText: 'First item', badge: 4, actionType: 'overflow' },
+      { id: '2', subtitle: 'List subtitle', itemText: 'Second item', status: 'warning', actionType: 'chevron' },
+      { id: '3', subtitle: 'List subtitle', itemText: 'Third item', actionType: 'link', actionLabel: 'View' }
+    ]}
+  />`
+    }
+  ];
+  
   const dataTableSnippets = [
     {
       label: "Dasar (Standard Table)",
@@ -1645,6 +1715,7 @@ export default function App() {
         { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
+        { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
       ],
     },
     {
@@ -7495,6 +7566,148 @@ export default function App() {
                             showTags={scoreShowTags}
                             disabled={scoreDisabled}
                           />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: CONTAINED LIST */}
+            {selectedId === "contained-list" && (
+              <DocCard
+                title="Contained List"
+                badgeText="Organism"
+                description="Komponen daftar terstruktur yang setiap itemnya dibungkus dengan pembatas visual yang jelas, mendukung header interaktif, fitur pencarian, orientasi vertikal/horizontal, serta beragam aksi trailing."
+                snippets={containedListSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Contained List Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji variasi ukuran, orientasi item, action header, dan fitur pencarian secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setContainedListSize('large');
+                              setContainedListOrientation('horizontal');
+                              setContainedListHeaderAction('overflow');
+                              setContainedListSearchable(false);
+                              setContainedListShowDividers(true);
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        {/* Size Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Ukuran (Size)
+                          </label>
+                          <select
+                            value={containedListSize}
+                            onChange={(e) => setContainedListSize(e.target.value as ContainedListSize)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="large">Large (48px / 15px padding)</option>
+                            <option value="medium">Medium (40px / 11px padding)</option>
+                            <option value="small">Small (32px / 7px padding)</option>
+                          </select>
+                        </div>
+
+                        {/* Orientation Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Orientasi Item
+                          </label>
+                          <select
+                            value={containedListOrientation}
+                            onChange={(e) => setContainedListOrientation(e.target.value as ContainedListOrientation)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="horizontal">Horizontal (Berdampingan)</option>
+                            <option value="vertical">Vertical (Bertumpuk)</option>
+                          </select>
+                        </div>
+
+                        {/* Header Action Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Aksi Header
+                          </label>
+                          <select
+                            value={containedListHeaderAction}
+                            onChange={(e) => setContainedListHeaderAction(e.target.value as any)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="overflow">Overflow Menu (...)</option>
+                            <option value="button">Button (+ Add)</option>
+                            <option value="link">Link</option>
+                            <option value="tag">Tag Status</option>
+                            <option value="none">Tanpa Aksi</option>
+                          </select>
+                        </div>
+
+                        {/* Toggles */}
+                        <div className="flex items-center gap-6 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={containedListSearchable}
+                              onChange={(e) => setContainedListSearchable(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Aktifkan Search Bar di Header
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={containedListShowDividers}
+                              onChange={(e) => setContainedListShowDividers(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan Garis Pembatas (Dividers)
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <div className="w-full max-w-xl">
+                            <ContainedList
+                              title="List Title"
+                              size={containedListSize}
+                              itemOrientation={containedListOrientation}
+                              headerActionType={containedListHeaderAction}
+                              headerActionLabel="Action"
+                              searchable={containedListSearchable}
+                              showDividers={containedListShowDividers}
+                              items={containedListItems}
+                            />
+                          </div>
                         </div>
                       </div>
                     </CardContent>
