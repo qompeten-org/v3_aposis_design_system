@@ -13,3 +13,4 @@ export * from './ScoreList';
 export  * from './ContainedList';
 export * from './HeaderPanel';
 export * from './LeftPanel';
+export * from './RightPanel';   

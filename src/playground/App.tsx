@@ -72,6 +72,7 @@ import {
   ContainedListItemData,
   HeaderPanel,
   LeftPanel,
+  RightPanel,
 } from "../organisms";
 import {
   IconComponents,
@@ -137,7 +138,8 @@ import {
   IconUser, 
   IconFileText, 
   IconChartBar,
-  IconLayoutSidebar, 
+  IconLayoutSidebar,
+  IconLayoutSidebarRight,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -715,6 +717,35 @@ export default function App() {
   const [leftPanelSelected, setLeftPanelSelected] = useState<string>('link-1');
   const [leftPanelLog, setLeftPanelLog] = useState<string>('Item "link-1" terpilih');
 
+  // State Right Panel
+  const [rightPanelOpen, setRightPanelOpen] = useState<boolean>(true);
+  const [rightPanelTab, setRightPanelTab] = useState<string>('tab-1');
+  const [rightPanelLog, setRightPanelLog] = useState<string>('Right panel siap');
+
+  const sampleActivities = [
+    {
+      id: '1',
+      userName: 'Tharissa Salsadila',
+      timestamp: '16 Aug 2026 - 07.01',
+      description: 'Mengekspor data Laporan Hasil Asesmen Mahasiswa ke format Excel (.xlsx).',
+      badgeText: 'ID',
+    },
+    {
+      id: '2',
+      userName: 'Agus Pratama',
+      timestamp: '16 Aug 2026 - 07.09',
+      description: 'Merujuk mahasiswa Sari Dewi ke Layanan Konseling/Psikolog Kampus.',
+      badgeText: 'ID',
+    },
+    {
+      id: '3',
+      userName: 'Agus Pratama',
+      timestamp: '16 Aug 2026 - 06.05',
+      description: 'Menambahkan flag Butuh Penanganan Khusus pada data mahasiswa Sari Dewi.',
+      badgeText: 'ID',
+    },
+  ];
+
   // Sample Navigation Group Data
   const sampleNavGroups = [
     {
@@ -1123,6 +1154,29 @@ export default function App() {
             onCtaClick={() => console.log('CTA Banner Clicked')}
           />
         </div>
+      );
+    };`,
+      },
+    ];
+    
+    const rightPanelSnippets = [
+      {
+        language: 'tsx',
+        filename: 'RightPanelExample.tsx',
+        code: `import { RightPanel } from '@/components/Organism/UIShell-RightPanel';
+
+    export const RightPanelDemo = () => {
+      return (
+        <RightPanel
+          isOpen={true}
+          title="Inspection Panel"
+          activeTabId="tab-1"
+          onTabChange={(tabId) => console.log('Tab selected:', tabId)}
+          activities={sampleActivities}
+          onCancel={() => console.log('Batal clicked')}
+          onPrimaryAction={() => console.log('Primary Action clicked')}
+          onClose={() => console.log('Closed')}
+        />
       );
     };`,
       },
@@ -1813,6 +1867,7 @@ export default function App() {
         { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
         { id:"header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
         { id:"left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
+        { id:"right-panel", label: "RightPanel", icon: IconLayoutSidebarRight},
       ],
     },
     {
@@ -7944,6 +7999,127 @@ export default function App() {
                           {/* Interaction Activity Logger */}
                           <div className="pt-3 mt-4 font-mono text-xs text-center border-t border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                             Log Aktivitas: <span className="font-semibold text-slate-800 dark:text-slate-200">{headerLog}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL RIGHT PANEL */}
+            {selectedId === "right-panel" && (
+              <DocCard
+                title="UI Shell - Right Panel v3.1"
+                badgeText="Organism"
+                description="Komponen bilah inspeksi/detail kanan (side panel/sheet) interaktif yang dilengkapi header icon, tab bar, placeholder slot component, feed kartu aktivitas, dan sticky bottom footer action bar."
+                snippets={rightPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Right Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji respon interaksi tab, kustomisasi slot, dan tombol penutup.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRightPanelOpen(!rightPanelOpen)}
+                          >
+                            {rightPanelOpen ? "Sembunyikan Panel" : "Tampilkan Panel"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Status Visibilitas Panel
+                          </label>
+                          <select
+                            value={rightPanelOpen ? "open" : "closed"}
+                            onChange={(e) => setRightPanelOpen(e.target.value === "open")}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="open">Tampil (Open)</option>
+                            <option value="closed">Tutup (Closed)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Tab Aktif Saat Ini
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            value={rightPanelTab}
+                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview Container */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Inspection Panel Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          {/* Box pembungkus simulasi viewport layout */}
+                          <div className="w-full h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex justify-end">
+                            {/* Area Konten Utama Simulasi */}
+                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
+                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                Main Content Workspace
+                              </div>
+                              <div className="max-w-xs mt-1 text-xs text-slate-500">
+                                Detail informasi atau riwayat aktivitas ditampilkan pada Right Panel di sebelah kanan.
+                              </div>
+                              {!rightPanelOpen && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="mt-4"
+                                  onClick={() => setRightPanelOpen(true)}
+                                >
+                                  Buka Right Panel
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Right Panel Component */}
+                            <RightPanel
+                              isOpen={rightPanelOpen}
+                              activeTabId={rightPanelTab}
+                              onTabChange={(tabId) => {
+                                setRightPanelTab(tabId);
+                                setRightPanelLog(`Tab diubah ke: ${tabId}`);
+                              }}
+                              activities={sampleActivities}
+                              onClose={() => {
+                                setRightPanelOpen(false);
+                                setRightPanelLog('Tombol Close diklik');
+                              }}
+                              onCancel={() => setRightPanelLog('Tombol Batal diklik')}
+                              onPrimaryAction={() => setRightPanelLog('Tombol Primary Action diklik')}
+                            />
+                          </div>
+
+                          {/* Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
+                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{rightPanelLog}</span>
                           </div>
                         </div>
                       </div>
