@@ -71,6 +71,7 @@ import {
   ContainedListOrientation,
   ContainedListItemData,
   HeaderPanel,
+  LeftPanel,
 } from "../organisms";
 import {
   IconComponents,
@@ -99,7 +100,6 @@ import {
   IconClick,
   IconForms,
   IconIdBadge,
-  IconUser,
   IconLoader,
   IconCheckbox,
   IconCircleDot,
@@ -130,10 +130,14 @@ import {
   IconLayoutBoard,
   IconAB,
   IconListCheck, 
-  IconFileText, 
   IconShieldCheck,
   IconLayersOff,
   IconLayoutDashboard,
+  IconHome, 
+  IconUser, 
+  IconFileText, 
+  IconChartBar,
+  IconLayoutSidebar, 
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -706,6 +710,40 @@ export default function App() {
   const [headerLog, setHeaderLog] = useState<string>('Belum ada aksi diklik');
   const [breadcrumbCount, setBreadcrumbCount] = useState<number>(5);
 
+  // State Left Panel Showcase
+  const [leftPanelCompact, setLeftPanelCompact] = useState<boolean>(false);
+  const [leftPanelSelected, setLeftPanelSelected] = useState<string>('link-1');
+  const [leftPanelLog, setLeftPanelLog] = useState<string>('Item "link-1" terpilih');
+
+  // Sample Navigation Group Data
+  const sampleNavGroups = [
+    {
+      subtitle: 'Subtitle 1',
+      items: [
+        { id: 'link-1', label: 'Dashboard Link', icon: IconHome },
+        {
+          id: 'link-2',
+          label: 'Management',
+          icon: IconUser,
+          children: [
+            { id: 'sub-1', label: 'User List' },
+            { id: 'sub-2', label: 'Roles & Permission' },
+          ],
+        },
+        { id: 'link-3', label: 'Reports', icon: IconFileText, badge: 'New' },
+        { id: 'link-4', label: 'Analytics', icon: IconChartBar },
+        { id: 'link-5', label: 'Disabled Item', icon: IconSettings, disabled: true },
+      ],
+    },
+    {
+      subtitle: 'Subtitle 2',
+      items: [
+        { id: 'link-6', label: 'Projects Link', icon: IconPlus },
+        { id: 'link-7', label: 'Settings', icon: IconSettings },
+      ],
+    },
+  ];
+  
   // State Configurator ScoreList
   const [scoreVal, setScoreVal] = useState<number>(85);
   const [scoreTitle, setScoreTitle] = useState<string>('Kategori Penalaran Umum');
@@ -1065,6 +1103,28 @@ export default function App() {
       onSelect={() => console.log('Toggled')}
       onTextChange={(val) => console.log(val)}
     />`,
+      },
+    ];
+
+    const leftPanelSnippets = [
+      {
+        language: 'tsx',
+        filename: 'LeftPanelExample.tsx',
+        code: `import { LeftPanel } from '@/components/Organism/UIShell-LeftPanel';
+
+    export const LeftPanelDemo = () => {
+      return (
+        <div className="h-[700px] flex">
+          <LeftPanel
+            isCompact={false}
+            selectedId="link-1"
+            navGroups={sampleNavGroups}
+            onSelectNav={(id) => console.log('Selected:', id)}
+            onCtaClick={() => console.log('CTA Banner Clicked')}
+          />
+        </div>
+      );
+    };`,
       },
     ];
 
@@ -1752,6 +1812,7 @@ export default function App() {
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
         { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
         { id:"header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
+        { id:"left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
       ],
     },
     {
@@ -7883,6 +7944,112 @@ export default function App() {
                           {/* Interaction Activity Logger */}
                           <div className="pt-3 mt-4 font-mono text-xs text-center border-t border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                             Log Aktivitas: <span className="font-semibold text-slate-800 dark:text-slate-200">{headerLog}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL LEFT PANEL */}
+            {selectedId === "left-panel" && (
+              <DocCard
+                title="UI Shell - Left Panel v3.1"
+                badgeText="Organism"
+                description="Komponen bilah navigasi samping utama (sidebar) yang fleksibel dengan dukungan mode Expanded & Compact, accordion sub-menu, CTA Card Banner dengan slot kustom, serta footer profile."
+                snippets={leftPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Left Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah konfigurasi di bawah untuk menguji transisi smooth antara mode Expanded dan Compact.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLeftPanelCompact(!leftPanelCompact)}
+                          >
+                            Toggle Mode: {leftPanelCompact ? "Expanded" : "Compact"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Configurator Controls */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Mode Tampilan Sidebar
+                          </label>
+                          <select
+                            value={leftPanelCompact ? 'compact' : 'expanded'}
+                            onChange={(e) => setLeftPanelCompact(e.target.value === 'compact')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="expanded">Expanded (Full Width - 256px)</option>
+                            <option value="compact">Compact (Icons Only - 80px)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Item Navigasi Aktif Saat Ini
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            value={leftPanelSelected}
+                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview Container */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Sidebar Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          {/* Box pembungkus dengan tinggi tetap untuk mensimulasikan Layout App */}
+                          <div className="h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex">
+                            <LeftPanel
+                              isCompact={leftPanelCompact}
+                              selectedId={leftPanelSelected}
+                              navGroups={sampleNavGroups}
+                              onSelectNav={(id) => {
+                                setLeftPanelSelected(id);
+                                setLeftPanelLog(`Item diklik: ${id}`);
+                              }}
+                              onCtaClick={() => setLeftPanelLog('CTA Banner Button diklik!')}
+                              onProfileClick={() => setLeftPanelLog('Footer Profile diklik!')}
+                            />
+                            
+                            {/* Visual Area Konten Utama dummy */}
+                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
+                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                Main Workspace Area
+                              </div>
+                              <div className="mt-1 text-xs text-slate-500">
+                                Sidebar di samping bertindak sebagai navigasi utama.
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
+                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{leftPanelLog}</span>
                           </div>
                         </div>
                       </div>
