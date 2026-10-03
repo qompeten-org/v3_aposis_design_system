@@ -11,3 +11,4 @@ export * from './StatusPlaceholder';
 export * from './AnswerOption';
 export * from './ScoreList';
 export  * from './ContainedList';
+export * from './HeaderPanel';

@@ -70,6 +70,7 @@ import {
   ContainedListSize,
   ContainedListOrientation,
   ContainedListItemData,
+  HeaderPanel,
 } from "../organisms";
 import {
   IconComponents,
@@ -132,6 +133,7 @@ import {
   IconFileText, 
   IconShieldCheck,
   IconLayersOff,
+  IconLayoutDashboard,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -698,6 +700,12 @@ export default function App() {
   const [answerValue, setAnswerValue] = useState<string>('Input Text');
   const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
 
+  // State Header Panel
+  const [headerLang, setHeaderLang] = useState<'EN' | 'ID'>('EN');
+  const [headerTheme, setHeaderTheme] = useState<'light' | 'dark'>('light');
+  const [headerLog, setHeaderLog] = useState<string>('Belum ada aksi diklik');
+  const [breadcrumbCount, setBreadcrumbCount] = useState<number>(5);
+
   // State Configurator ScoreList
   const [scoreVal, setScoreVal] = useState<number>(85);
   const [scoreTitle, setScoreTitle] = useState<string>('Kategori Penalaran Umum');
@@ -723,6 +731,49 @@ export default function App() {
   />`,
     },
   ];
+   
+  //ContainedList State
+  const [containedListSize, setContainedListSize] = useState<ContainedListSize>('large');
+  const [containedListOrientation, setContainedListOrientation] = useState<ContainedListOrientation>('horizontal');
+  const [containedListHeaderAction, setContainedListHeaderAction] = useState<'overflow' | 'button' | 'link' | 'tag' | 'none'>('overflow');
+  const [containedListSearchable, setContainedListSearchable] = useState(false);
+  const [containedListShowDividers, setContainedListShowDividers] = useState(true);
+
+// Sample items data for ContainedList preview
+  const containedListItems: ContainedListItemData[] = [
+    { 
+      id: '1', 
+      subtitle: 'List subtitle', 
+      itemText: 'First item description', 
+      icon: IconPlus, 
+      badge: 4, 
+      actionType: 'overflow' 
+    },
+    { 
+      id: '2', 
+      subtitle: 'List subtitle', 
+      itemText: 'Second item with warning status', 
+      icon: IconShieldCheck, 
+      status: 'warning', 
+      actionType: 'chevron' 
+    },
+    { 
+      id: '3', 
+      subtitle: 'List subtitle', 
+      itemText: 'Third item with link action', 
+      icon: IconFileText, 
+      actionType: 'link', 
+      actionLabel: 'View' 
+    },
+    { 
+      id: '4', 
+      subtitle: 'List subtitle', 
+      itemText: 'Disabled item example', 
+      icon: IconLayersOff, 
+      state: 'disabled' 
+    },
+  ];
+
   
   // Interactive Pagination Configurator state
   const [paginationPage, setPaginationPage] = useState(1);
@@ -1072,48 +1123,6 @@ export default function App() {
     notifCustomIcon,
   ]);
 
-  //ContainedList State
-  const [containedListSize, setContainedListSize] = useState<ContainedListSize>('large');
-  const [containedListOrientation, setContainedListOrientation] = useState<ContainedListOrientation>('horizontal');
-  const [containedListHeaderAction, setContainedListHeaderAction] = useState<'overflow' | 'button' | 'link' | 'tag' | 'none'>('overflow');
-  const [containedListSearchable, setContainedListSearchable] = useState(false);
-  const [containedListShowDividers, setContainedListShowDividers] = useState(true);
-
-// Sample items data for ContainedList preview
-  const containedListItems: ContainedListItemData[] = [
-    { 
-      id: '1', 
-      subtitle: 'List subtitle', 
-      itemText: 'First item description', 
-      icon: IconPlus, 
-      badge: 4, 
-      actionType: 'overflow' 
-    },
-    { 
-      id: '2', 
-      subtitle: 'List subtitle', 
-      itemText: 'Second item with warning status', 
-      icon: IconShieldCheck, 
-      status: 'warning', 
-      actionType: 'chevron' 
-    },
-    { 
-      id: '3', 
-      subtitle: 'List subtitle', 
-      itemText: 'Third item with link action', 
-      icon: IconFileText, 
-      actionType: 'link', 
-      actionLabel: 'View' 
-    },
-    { 
-      id: '4', 
-      subtitle: 'List subtitle', 
-      itemText: 'Disabled item example', 
-      icon: IconLayersOff, 
-      state: 'disabled' 
-    },
-  ];
-
   const notificationSnippets = [
     {
       label: "Dasar (Toast Mandiri)",
@@ -1139,6 +1148,32 @@ export default function App() {
       label: "Komponen Statis / Inline",
       desc: "Bisa langsung dipasang di dalam halaman atau panel card sebagai banner notifikasi.",
       code: `import { Notification } from '@aposis/design-system';\n\n<Notification\n  variant="warning"\n  teks="Perhatian"\n  description="Masa pengisian rapor semester ganjil berakhir 3 hari lagi."\n  actionTrigger={{ label: 'Isi Sekarang', onClick: () => alert('Isi') }}\n/>`,
+    },
+  ];
+
+  const headerPanelSnippets = [
+    {
+      language: 'tsx',
+      filename: 'UIShell-HeaderPanel.tsx',
+      code: `import { HeaderPanel } from '@/components/Organism/UIShell-HeaderPanel';
+
+  export const Example = () => {
+    return (
+      <HeaderPanel
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Settings' }
+        ]}
+        language="EN"
+        theme="light"
+        onToggleLeftSidebar={() => console.log('Toggle Left Sidebar')}
+        onToggleRightSidebar={() => console.log('Toggle Right Sidebar')}
+        onPrimaryAction={() => console.log('Primary Action')}
+        onSecondaryAction={() => console.log('Secondary Action')}
+      />
+    );
+  };`,
     },
   ];
 
@@ -1716,6 +1751,7 @@ export default function App() {
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
         { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
+        { id:"header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
       ],
     },
     {
@@ -7707,6 +7743,146 @@ export default function App() {
                               showDividers={containedListShowDividers}
                               items={containedListItems}
                             />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL HEADER PANEL */}
+            {selectedId === "header-panel" && (
+              <DocCard
+                title="UI Shell - Header Panel"
+                badgeText="Organism"
+                description="Komponen bilah navigasi atas (top header bar) yang dilengkapi kontrol sidebar, quick actions (+), navigasi breadcrumb hirarkis, serta utility badges untuk switch bahasa dan tema."
+                snippets={headerPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Header Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Sesuaikan parameter di bawah untuk menguji responsivitas interaksi, penambahan breadcrumb, dan switch tema secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Actions / Reset Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setHeaderLang('EN');
+                              setHeaderTheme('light');
+                              setBreadcrumbCount(5);
+                              setHeaderLog('Reset ke konfigurasi awal');
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator Grid */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Jumlah Breadcrumb Items
+                          </label>
+                          <select
+                            value={breadcrumbCount}
+                            onChange={(e) => setBreadcrumbCount(Number(e.target.value))}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value={2}>2 Items (Short)</option>
+                            <option value={3}>3 Items</option>
+                            <option value={5}>5 Items (Figma Spec)</option>
+                            <option value={7}>7 Items (Long Trail)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Bahasa (Language Badge)
+                          </label>
+                          <select
+                            value={headerLang}
+                            onChange={(e) => setHeaderLang(e.target.value as 'EN' | 'ID')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="EN">EN (English)</option>
+                            <option value="ID">ID (Indonesia)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Preview Theme Mode
+                          </label>
+                          <select
+                            value={headerTheme}
+                            onChange={(e) => setHeaderTheme(e.target.value as 'light' | 'dark')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div
+                          className={`p-6 border rounded-2xl transition-colors overflow-x-auto ${
+                            headerTheme === 'dark'
+                              ? 'bg-slate-950 border-slate-800'
+                              : 'bg-slate-100/70 border-slate-200'
+                          }`}
+                        >
+                          <div className="w-full min-w-[700px]">
+                            <HeaderPanel
+                              breadcrumbs={Array.from({ length: breadcrumbCount }).map(
+                                (_, i) => ({
+                                  label:
+                                    i === breadcrumbCount - 1 ? 'Current Page' : `Link ${i + 1}`,
+                                  href: '#',
+                                  onClick: () => setHeaderLog(`Navigasi diklik: Link ${i + 1}`),
+                                })
+                              )}
+                              language={headerLang}
+                              theme={headerTheme}
+                              onToggleLeftSidebar={() => setHeaderLog('Left Sidebar Toggle diklik')}
+                              onToggleRightSidebar={() => setHeaderLog('Right Sidebar Toggle diklik')}
+                              onPrimaryAction={() => setHeaderLog('Primary Action (+) diklik')}
+                              onSecondaryAction={() => setHeaderLog('Secondary Action (+) diklik')}
+                              onLanguageChange={() => {
+                                const nextLang = headerLang === 'EN' ? 'ID' : 'EN';
+                                setHeaderLang(nextLang);
+                                setHeaderLog(`Bahasa diubah ke: ${nextLang}`);
+                              }}
+                              onThemeToggle={() => {
+                                const nextTheme = headerTheme === 'light' ? 'dark' : 'light';
+                                setHeaderTheme(nextTheme);
+                                setHeaderLog(`Tema diubah ke: ${nextTheme}`);
+                              }}
+                            />
+                          </div>
+
+                          {/* Interaction Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center border-t border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                            Log Aktivitas: <span className="font-semibold text-slate-800 dark:text-slate-200">{headerLog}</span>
                           </div>
                         </div>
                       </div>
