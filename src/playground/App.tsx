@@ -42,6 +42,7 @@ import {
   TagGroup,
   OverflowMenu,
   PasswordInput,
+  TextInput,
 } from "../molecules";
 import {
   Card,
@@ -60,6 +61,18 @@ import {
   type AccordionWidth,
   ChartHeader,
   ProgressIndicator,
+  Pagination,
+  StatusPlaceholder,
+  FilePreviewPlaceholder,
+  AnswerOption,
+  ScoreListItem,
+  ContainedList,
+  ContainedListSize,
+  ContainedListOrientation,
+  ContainedListItemData,
+  HeaderPanel,
+  LeftPanel,
+  RightPanel,
 } from "../organisms";
 import {
   IconComponents,
@@ -88,7 +101,6 @@ import {
   IconClick,
   IconForms,
   IconIdBadge,
-  IconUser,
   IconLoader,
   IconCheckbox,
   IconCircleDot,
@@ -114,6 +126,20 @@ import {
   IconLock,
   IconTable,
   IconChartPie,
+  IconPencil,
+  IconListNumbers,
+  IconLayoutBoard,
+  IconAB,
+  IconListCheck, 
+  IconShieldCheck,
+  IconLayersOff,
+  IconLayoutDashboard,
+  IconHome, 
+  IconUser, 
+  IconFileText, 
+  IconChartBar,
+  IconLayoutSidebar,
+  IconLayoutSidebarRight,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -672,6 +698,158 @@ export default function App() {
   const [showcase4Expanded, setShowcase4Expanded] = useState<(string | number)[]>(["2"]);
   const [showcase4Page, setShowcase4Page] = useState<number>(1);
 
+  //Interactive AnswerOption Configurator 
+  const [answerType, setAnswerType] = useState<'radio' | 'checkbox'>('radio');
+  const [answerSelected, setAnswerSelected] = useState<boolean>(false);
+  const [answerDisabled, setAnswerDisabled] = useState<boolean>(false);
+  const [answerLabel, setAnswerLabel] = useState<string>('Label');
+  const [answerValue, setAnswerValue] = useState<string>('Input Text');
+  const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
+
+  // State Header Panel
+  const [headerLang, setHeaderLang] = useState<'EN' | 'ID'>('EN');
+  const [headerTheme, setHeaderTheme] = useState<'light' | 'dark'>('light');
+  const [headerLog, setHeaderLog] = useState<string>('Belum ada aksi diklik');
+  const [breadcrumbCount, setBreadcrumbCount] = useState<number>(5);
+
+  // State Left Panel Showcase
+  const [leftPanelCompact, setLeftPanelCompact] = useState<boolean>(false);
+  const [leftPanelSelected, setLeftPanelSelected] = useState<string>('link-1');
+  const [leftPanelLog, setLeftPanelLog] = useState<string>('Item "link-1" terpilih');
+
+  // State Right Panel
+  const [rightPanelOpen, setRightPanelOpen] = useState<boolean>(true);
+  const [rightPanelTab, setRightPanelTab] = useState<string>('tab-1');
+  const [rightPanelLog, setRightPanelLog] = useState<string>('Right panel siap');
+
+  const sampleActivities = [
+    {
+      id: '1',
+      userName: 'Tharissa Salsadila',
+      timestamp: '16 Aug 2026 - 07.01',
+      description: 'Mengekspor data Laporan Hasil Asesmen Mahasiswa ke format Excel (.xlsx).',
+      badgeText: 'ID',
+    },
+    {
+      id: '2',
+      userName: 'Agus Pratama',
+      timestamp: '16 Aug 2026 - 07.09',
+      description: 'Merujuk mahasiswa Sari Dewi ke Layanan Konseling/Psikolog Kampus.',
+      badgeText: 'ID',
+    },
+    {
+      id: '3',
+      userName: 'Agus Pratama',
+      timestamp: '16 Aug 2026 - 06.05',
+      description: 'Menambahkan flag Butuh Penanganan Khusus pada data mahasiswa Sari Dewi.',
+      badgeText: 'ID',
+    },
+  ];
+
+  // Sample Navigation Group Data
+  const sampleNavGroups = [
+    {
+      subtitle: 'Subtitle 1',
+      items: [
+        { id: 'link-1', label: 'Dashboard Link', icon: IconHome },
+        {
+          id: 'link-2',
+          label: 'Management',
+          icon: IconUser,
+          children: [
+            { id: 'sub-1', label: 'User List' },
+            { id: 'sub-2', label: 'Roles & Permission' },
+          ],
+        },
+        { id: 'link-3', label: 'Reports', icon: IconFileText, badge: 'New' },
+        { id: 'link-4', label: 'Analytics', icon: IconChartBar },
+        { id: 'link-5', label: 'Disabled Item', icon: IconSettings, disabled: true },
+      ],
+    },
+    {
+      subtitle: 'Subtitle 2',
+      items: [
+        { id: 'link-6', label: 'Projects Link', icon: IconPlus },
+        { id: 'link-7', label: 'Settings', icon: IconSettings },
+      ],
+    },
+  ];
+  
+  // State Configurator ScoreList
+  const [scoreVal, setScoreVal] = useState<number>(85);
+  const [scoreTitle, setScoreTitle] = useState<string>('Kategori Penalaran Umum');
+  const [scoreSub, setScoreSub] = useState<string>('Sub-topik Kemampuan Analitis');
+  const [scoreProgress, setScoreProgress] = useState<number>(75);
+  const [scoreShowTags, setScoreShowTags] = useState<boolean>(true);
+  const [scoreDisabled, setScoreDisabled] = useState<boolean>(false);
+
+  const dummyTags = ['Analisis Data', 'Logika', 'Pola Angka', 'Verbal', 'Deduktif'];
+
+  const scoreListSnippets = [
+    {
+      label: 'Basic Usage',
+      code: `import { ScoreListItem } from '../components/organisms/ScoreList/ScoreList';
+
+  <ScoreListItem
+    score={85}
+    title="Kategori Penalaran Umum"
+    subtitle="Sub-topik Kemampuan Analitis"
+    progress={75}
+    tags={['Analisis Data', 'Logika', 'Pola Angka']}
+    showTags={true}
+  />`,
+    },
+  ];
+   
+  //ContainedList State
+  const [containedListSize, setContainedListSize] = useState<ContainedListSize>('large');
+  const [containedListOrientation, setContainedListOrientation] = useState<ContainedListOrientation>('horizontal');
+  const [containedListHeaderAction, setContainedListHeaderAction] = useState<'overflow' | 'button' | 'link' | 'tag' | 'none'>('overflow');
+  const [containedListSearchable, setContainedListSearchable] = useState(false);
+  const [containedListShowDividers, setContainedListShowDividers] = useState(true);
+
+// Sample items data for ContainedList preview
+  const containedListItems: ContainedListItemData[] = [
+    { 
+      id: '1', 
+      subtitle: 'List subtitle', 
+      itemText: 'First item description', 
+      icon: IconPlus, 
+      badge: 4, 
+      actionType: 'overflow' 
+    },
+    { 
+      id: '2', 
+      subtitle: 'List subtitle', 
+      itemText: 'Second item with warning status', 
+      icon: IconShieldCheck, 
+      status: 'warning', 
+      actionType: 'chevron' 
+    },
+    { 
+      id: '3', 
+      subtitle: 'List subtitle', 
+      itemText: 'Third item with link action', 
+      icon: IconFileText, 
+      actionType: 'link', 
+      actionLabel: 'View' 
+    },
+    { 
+      id: '4', 
+      subtitle: 'List subtitle', 
+      itemText: 'Disabled item example', 
+      icon: IconLayersOff, 
+      state: 'disabled' 
+    },
+  ];
+
+  
+  // Interactive Pagination Configurator state
+  const [paginationPage, setPaginationPage] = useState(1);
+  const [paginationTotalPages, setPaginationTotalPages] = useState(30);
+  const [paginationSize, setPaginationSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
+  const [paginationShowFirstLast, setPaginationShowFirstLast] = useState(false);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     if (!isDarkMode) {
@@ -929,6 +1107,89 @@ export default function App() {
     },
   ];
 
+  const answerOptionSnippets = [
+  {
+    label: 'Single Select (Radio)',
+    code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
+    <AnswerOption
+      type="radio"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Selected')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+      {
+        label: 'Multi Select (Checkbox)',
+        code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
+
+    <AnswerOption
+      type="checkbox"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Toggled')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+    ];
+
+    const leftPanelSnippets = [
+      {
+        language: 'tsx',
+        filename: 'LeftPanelExample.tsx',
+        code: `import { LeftPanel } from '@/components/Organism/UIShell-LeftPanel';
+
+    export const LeftPanelDemo = () => {
+      return (
+        <div className="h-[700px] flex">
+          <LeftPanel
+            isCompact={false}
+            selectedId="link-1"
+            navGroups={sampleNavGroups}
+            onSelectNav={(id) => console.log('Selected:', id)}
+            onCtaClick={() => console.log('CTA Banner Clicked')}
+          />
+        </div>
+      );
+    };`,
+      },
+    ];
+    
+    const rightPanelSnippets = [
+      {
+        language: 'tsx',
+        filename: 'RightPanelExample.tsx',
+        code: `import { RightPanel } from '@/components/Organism/UIShell-RightPanel';
+
+    export const RightPanelDemo = () => {
+      return (
+        <RightPanel
+          isOpen={true}
+          title="Inspection Panel"
+          activeTabId="tab-1"
+          onTabChange={(tabId) => console.log('Tab selected:', tabId)}
+          activities={sampleActivities}
+          onCancel={() => console.log('Batal clicked')}
+          onPrimaryAction={() => console.log('Primary Action clicked')}
+          onClose={() => console.log('Closed')}
+        />
+      );
+    };`,
+      },
+    ];
+
+  const [textInputConfigSize, setTextInputConfigSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
+  const [textInputConfigValue, setTextInputConfigValue] = useState('');
+  const [textInputConfigDisabled, setTextInputConfigDisabled] = useState(false);
+  const [textInputConfigError, setTextInputConfigError] = useState('');
+  const [textInputConfigWarning, setTextInputConfigWarning] = useState('');
+  const [textInputConfigHighlighted, setTextInputConfigHighlighted] = useState(false);
+  const [textInputConfigMultiline, setTextInputConfigMultiline] = useState(false);
+
   const dynamicNotificationCode = useMemo(() => {
     const isError = notifVariant === "error" || notifVariant === "danger";
     const method = isError ? "error" : notifVariant;
@@ -1004,6 +1265,32 @@ export default function App() {
     },
   ];
 
+  const headerPanelSnippets = [
+    {
+      language: 'tsx',
+      filename: 'UIShell-HeaderPanel.tsx',
+      code: `import { HeaderPanel } from '@/components/Organism/UIShell-HeaderPanel';
+
+  export const Example = () => {
+    return (
+      <HeaderPanel
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Settings' }
+        ]}
+        language="EN"
+        theme="light"
+        onToggleLeftSidebar={() => console.log('Toggle Left Sidebar')}
+        onToggleRightSidebar={() => console.log('Toggle Right Sidebar')}
+        onPrimaryAction={() => console.log('Primary Action')}
+        onSecondaryAction={() => console.log('Secondary Action')}
+      />
+    );
+  };`,
+    },
+  ];
+
   const dynamicAccordionCode = useMemo(() => {
     let code = `import { Accordion } from '@aposis/design-system';\n\n`;
     code += `<Accordion\n`;
@@ -1064,6 +1351,29 @@ export default function App() {
     },
   ];
 
+  const paginationSnippets: SnippetItem[] = [
+    {
+      label: "React",
+      code: `import { useState } from 'react';
+  import { Pagination } from '@aposis/design-system';
+
+  export function Example() {
+    const [page, setPage] = useState(1);
+
+    return (
+      <Pagination
+        currentPage={page}
+        totalPages={30}
+        onPageChange={(newPage) => setPage(newPage)}
+        size="md"
+        variant="underline"
+        enableQuickJump={true}
+      />
+    );
+  }`,
+    },
+  ];
+    
   const chartHeaderSnippets: SnippetItem[] = [
   {
     label: 'React',
@@ -1157,7 +1467,79 @@ export default function App() {
     dtIsEmpty,
     dtPage,
   ]);
+  
+  const statusPlaceholderSnippets: SnippetItem[] = [
+    {
+      label: "React",
+      code: `<StatusPlaceholder
+    variant="empty"
+    title="Empty State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="primary">Button</Button>}
+  />`,
+    },
+    {
+      label: "Variants",
+      code: `{/* Empty State */}
+  <StatusPlaceholder
+    variant="empty"
+    title="Empty State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="primary">Button</Button>}
+  />
 
+  {/* Warning State */}
+  <StatusPlaceholder
+    variant="warning"
+    title="Warning State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="secondary">Button</Button>}
+  />
+
+  {/* Danger State */}
+  <StatusPlaceholder
+    variant="danger"
+    title="Danger State Title"
+    description="Description / helper text goes here"
+    slotComponent="Slot component"
+    actionButton={<Button variant="danger">Button</Button>}
+  />`,
+    },
+    {
+      label: "File Preview",
+      code: `<FilePreviewPlaceholder
+    fileType="PDF"
+    pageNumber={1}
+    isSelected={true}
+    onRemove={() => console.log('Hapus berkas')}
+  />`,
+    },
+  ];
+
+    const containedListSnippets = [
+    {
+      language: 'tsx',
+      filename: 'ContainedList.tsx',
+      code: `<ContainedList
+    title="List Title"
+    size="${containedListSize}"
+    itemOrientation="${containedListOrientation}"
+    headerActionType="${containedListHeaderAction}"
+    headerActionLabel="Action"
+    searchable={${containedListSearchable}}
+    showDividers={${containedListShowDividers}}
+    items={[
+      { id: '1', subtitle: 'List subtitle', itemText: 'First item', badge: 4, actionType: 'overflow' },
+      { id: '2', subtitle: 'List subtitle', itemText: 'Second item', status: 'warning', actionType: 'chevron' },
+      { id: '3', subtitle: 'List subtitle', itemText: 'Third item', actionType: 'link', actionLabel: 'View' }
+    ]}
+  />`
+    }
+  ];
+  
   const dataTableSnippets = [
     {
       label: "Dasar (Standard Table)",
@@ -1266,6 +1648,53 @@ export default function App() {
     <FormField label="Password Anda" error="Password kurang kuat">
       <PasswordInput inputSize="md" warning="Weak password" />
     </FormField>`,
+    },
+  ];
+
+  const textInputSnippets: SnippetItem[] = [
+    {
+      label: 'Basic Usage',
+      code: `<TextInput
+      label="Label"
+      placeholder="Input Text..."
+      helperText="Helper text goes here"
+    />`,
+    },
+    {
+      label: 'Sizes',
+      code: `<TextInput inputSize="xs" label="Extra Small" placeholder="Input Text..." />
+      <TextInput inputSize="sm" label="Small" placeholder="Input Text..." />
+      <TextInput inputSize="md" label="Medium" placeholder="Input Text..." />
+      <TextInput inputSize="lg" label="Large" placeholder="Input Text..." />`,
+    },
+    {
+      label: 'Validation States',
+      code: `<TextInput
+      label="Warning Input"
+      warning="Warning message goes here"
+      defaultValue="Input Text"
+  />
+    <TextInput
+      label="Error Input"
+      error="Error message goes here"
+      defaultValue="Input Text"
+    />`,
+    },
+    {
+      label: 'Highlighted & Text Area',
+      code: `<TextInput
+      highlighted
+      badgeText="ABC"
+      label="Label"
+      placeholder="Input Text"
+      helperText="Helper text"
+  />
+    <TextInput
+      multiline
+      label="Deskripsi / Catatan"
+      placeholder="Ketik deskripsi lengkap di sini..."
+      helperText="Mendukung multi-baris teks."
+    />`,
     },
   ];
   
@@ -1416,6 +1845,7 @@ export default function App() {
         { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "tag", label: "Tag", icon: IconTags },
         { id: "password-input", label: "PasswordInput", icon: IconLock },
+        { id: "text-input", label: "Text-Input", icon: IconPencil },
         { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
@@ -1430,6 +1860,14 @@ export default function App() {
         { id: "card", label: "Card", icon: IconComponents },
         { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
         { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
+        { id: "pagination", label: "Pagination", icon: IconListNumbers},
+        { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
+        { id: "answer-option", label: "AnswerOption", icon: IconAB},
+        { id: "score-list", label: "ScoreList", icon: IconListCheck},
+        { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
+        { id:"header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
+        { id:"left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
+        { id:"right-panel", label: "RightPanel", icon: IconLayoutSidebarRight},
       ],
     },
     {
@@ -4760,6 +5198,189 @@ export default function App() {
               </DocCard>
             )}
 
+            {/* MOLECULES: TEXT INPUT & TEXT AREA */}
+            {(selectedId === "all" || selectedId === "text-input") && (
+              <DocCard
+                title="Text Input & Text Area"
+                badgeText="Molecule"
+                description="Komponen input teks serbaguna dengan dukungan 4 ukuran, state validation (warning/error), opsi highlighted card, serta mode Text Area dengan toolbar."
+                snippets={textInputSnippets}
+              >
+                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <CardContent className="pt-6 space-y-8">
+                    
+                    {/* Interactive Configurator */}
+                    <div className="p-4 space-y-4 border rounded-xl bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/60">
+                      <span className="text-xs font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400">
+                        Interactive Playground Configurator
+                      </span>
+                      
+                     {/* Output Preview */}
+                      <div className="max-w-lg p-4 mx-auto bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                        <TextInput
+                          key={textInputConfigMultiline ? 'multiline' : 'singleline'}
+                          inputSize={textInputConfigSize}
+                          label="Interactive Label"
+                          placeholder="Ketik sesuatu di sini..."
+                          defaultValue=""
+                          disabled={textInputConfigDisabled}
+                          error={textInputConfigError || undefined}
+                          warning={textInputConfigWarning || undefined}
+                          highlighted={textInputConfigHighlighted}
+                          badgeText={textInputConfigHighlighted ? "ABC" : undefined}
+                          multiline={textInputConfigMultiline}
+                        />
+                      </div>
+
+                      {/* Controls */}
+                      <div className="grid grid-cols-1 gap-4 pt-3 text-xs border-t sm:grid-cols-2 lg:grid-cols-4 border-slate-200 dark:border-slate-700/60">
+                        {/* Size Selector */}
+                        <div>
+                          <label className="block mb-1 font-medium text-slate-700 dark:text-slate-300">Size</label>
+                          <select
+                            value={textInputConfigSize}
+                            onChange={(e) => setTextInputConfigSize(e.target.value as any)}
+                            className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                          >
+                            <option value="xs">xs (Extra Small)</option>
+                            <option value="sm">sm (Small)</option>
+                            <option value="md">md (Medium)</option>
+                            <option value="lg">lg (Large)</option>
+                          </select>
+                        </div>
+
+                        {/* Validation States */}
+                        <div>
+                          <label className="block mb-1 font-medium text-slate-700 dark:text-slate-300">
+                            Validation State
+                          </label>
+                          <select
+                            value={
+                              textInputConfigError
+                                ? 'error'
+                                : textInputConfigWarning
+                                ? 'warning'
+                                : 'normal'
+                            }
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === 'error') {
+                                setTextInputConfigError('Format input tidak valid');
+                                setTextInputConfigWarning('');
+                              } else if (val === 'warning') {
+                                setTextInputConfigWarning('Karakter hampir melebihi batas');
+                                setTextInputConfigError('');
+                              } else {
+                                setTextInputConfigError('');
+                                setTextInputConfigWarning('');
+                              }
+                            }}
+                            className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                          >
+                            <option value="normal">Normal</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Error</option>
+                          </select>
+                        </div>
+
+                        {/* Toggles */}
+                        <div className="flex flex-col justify-center pt-2 space-y-2">
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigDisabled}
+                              onChange={(e) => setTextInputConfigDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Disabled</span>
+                          </label>
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigHighlighted}
+                              onChange={(e) => setTextInputConfigHighlighted(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Highlighted Card</span>
+                          </label>
+                        </div>
+
+                        <div className="flex flex-col justify-center pt-2 space-y-2">
+                          <label className="inline-flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={textInputConfigMultiline}
+                              onChange={(e) => setTextInputConfigMultiline(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>Multiline (Text Area)</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 1. Matriks Variasi Ukuran */}
+                    <div>
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        1. Variasi Ukuran Text Input (xs, sm, md, lg)
+                      </label>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <TextInput inputSize="xs" label="Extra Small" placeholder="Input Text..." />
+                        <TextInput inputSize="sm" label="Small" placeholder="Input Text..." />
+                        <TextInput inputSize="md" label="Medium" placeholder="Input Text..." />
+                        <TextInput inputSize="lg" label="Large" placeholder="Input Text..." />
+                      </div>
+                    </div>
+
+                    {/* 2. Validation States */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        2. Validation States (Warning & Error)
+                      </label>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <TextInput
+                          label="Warning Input"
+                          warning="Warning message goes here"
+                          defaultValue="Input Text"
+                        />
+                        <TextInput
+                          label="Error Input"
+                          error="Error message goes here"
+                          defaultValue="Input Text"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Highlighted Variant */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        3. Highlighted Text Input
+                      </label>
+                      <TextInput
+                        highlighted
+                        badgeText="ABC"
+                        label="Label"
+                        placeholder="Input Text"
+                        helperText="Helper text"
+                      />
+                    </div>
+
+                    {/* 4. Text Area / Rich Text Input */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                      <label className="block mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        4. Text Area Input
+                      </label>
+                      <TextInput
+                        multiline
+                        label="Deskripsi / Catatan"
+                        placeholder="Ketik deskripsi lengkap di sini..."
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DocCard>
+            )}
+
             {/* MOLECULES: BREADCRUMBS */}
             {selectedId === "breadcrumb" && (
               <DocCard
@@ -6812,6 +7433,934 @@ export default function App() {
               </DocCard>
             )}
 
+            {/* ORGANISMS: ANSWER OPTION */}
+            {selectedId === "answer-option" && (
+              <DocCard
+                title="Answer Option"
+                badgeText="Organism"
+                description="Komponen opsi jawaban interaktif berbasis pilihan tunggal (Radio) atau pilihan ganda (Checkbox) lengkap dengan label urutan, input teks jawaban, dan helper text."
+                snippets={answerOptionSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Answer Option Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji perubahan tipe (Radio/Checkbox), teks label, status terpilih, dan kondisi disabled secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setAnswerType('radio');
+                              setAnswerSelected(false);
+                              setAnswerDisabled(false);
+                              setAnswerLabel('Label');
+                              setAnswerValue('Input Text');
+                              setAnswerHelper('Helper text');
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Tipe Selection (Type)
+                          </label>
+                          <select
+                            value={answerType}
+                            onChange={(e) => setAnswerType(e.target.value as 'radio' | 'checkbox')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="radio">Radio (Single Select)</option>
+                            <option value="checkbox">Checkbox (Multi Select)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Teks Label
+                          </label>
+                          <input
+                            type="text"
+                            value={answerLabel}
+                            onChange={(e) => setAnswerLabel(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Helper Text
+                          </label>
+                          <input
+                            type="text"
+                            value={answerHelper}
+                            onChange={(e) => setAnswerHelper(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Checkbox Toggles for States */}
+                        <div className="flex items-center gap-4 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={answerSelected}
+                              onChange={(e) => setAnswerSelected(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Selected State
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={answerDisabled}
+                              onChange={(e) => setAnswerDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Disabled State
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <AnswerOption
+                            type={answerType}
+                            label={answerLabel}
+                            value={answerValue}
+                            helperText={answerHelper}
+                            selected={answerSelected}
+                            disabled={answerDisabled}
+                            onSelect={() => setAnswerSelected(!answerSelected)}
+                            onTextChange={(val) => setAnswerValue(val)}
+                          />
+                          <div className="pt-2 font-mono text-xs text-slate-500">
+                            Status Terpilih: <span className="font-semibold text-slate-800 dark:text-slate-200">{answerSelected ? 'True' : 'False'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: SCORE LIST */}
+            {selectedId === "score-list" && (
+              <DocCard
+                title="Score List"
+                badgeText="Organism"
+                description="Komponen daftar indikator skor dan progres kategori penilaian yang dilengkapi dengan persentase bar serta pemetaan tag indikator."
+                snippets={scoreListSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Score List Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji penyesuaian nilai skor, judul, persentase progress, dan daftar tag secara live.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setScoreVal(85);
+                              setScoreTitle('Kategori Penalaran Umum');
+                              setScoreSub('Sub-topik Kemampuan Analitis');
+                              setScoreProgress(75);
+                              setScoreShowTags(true);
+                              setScoreDisabled(false);
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nilai Skor (Score)
+                          </label>
+                          <input
+                            type="number"
+                            key={scoreVal}
+                            defaultValue={scoreVal}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.blur();
+                              }
+                              e.stopPropagation();
+                            }}
+                            onBlur={(e) => {
+                              const val = e.target.value;
+                              setScoreVal(val === '' ? 0 : Number(val));
+                            }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Progress (%)
+                          </label>
+                          <input
+                            type="number"
+                            min={0}
+                            max={100}
+                           key={scoreProgress} 
+                          defaultValue={scoreProgress}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              e.currentTarget.blur();
+                            }
+                            e.stopPropagation();
+                          }}
+                          onBlur={(e) => {
+                            const val = e.target.value;
+                            setScoreProgress(val === '' ? 0 : Number(val));
+                          }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Judul Item (Title)
+                          </label>
+                          <input
+                            type="text"
+                            key={scoreTitle}
+                                  defaultValue={scoreTitle}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      e.currentTarget.blur();
+                                    }
+                                    e.stopPropagation();
+                                  }}
+                                  onBlur={(e) => {
+                                    setScoreTitle(e.target.value);
+                                  }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Checkbox Toggles */}
+                        <div className="flex items-center gap-4 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={scoreShowTags}
+                              onChange={(e) => setScoreShowTags(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan Tags
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={scoreDisabled}
+                              onChange={(e) => setScoreDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Disabled State
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Preview Showcase
+                        </span>
+                        <div className="p-6 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <ScoreListItem
+                            score={scoreVal}
+                            title={scoreTitle}
+                            subtitle={scoreSub}
+                            progress={scoreProgress}
+                            tags={dummyTags}
+                            showTags={scoreShowTags}
+                            disabled={scoreDisabled}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: CONTAINED LIST */}
+            {selectedId === "contained-list" && (
+              <DocCard
+                title="Contained List"
+                badgeText="Organism"
+                description="Komponen daftar terstruktur yang setiap itemnya dibungkus dengan pembatas visual yang jelas, mendukung header interaktif, fitur pencarian, orientasi vertikal/horizontal, serta beragam aksi trailing."
+                snippets={containedListSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Contained List Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji variasi ukuran, orientasi item, action header, dan fitur pencarian secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setContainedListSize('large');
+                              setContainedListOrientation('horizontal');
+                              setContainedListHeaderAction('overflow');
+                              setContainedListSearchable(false);
+                              setContainedListShowDividers(true);
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        {/* Size Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Ukuran (Size)
+                          </label>
+                          <select
+                            value={containedListSize}
+                            onChange={(e) => setContainedListSize(e.target.value as ContainedListSize)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="large">Large (48px / 15px padding)</option>
+                            <option value="medium">Medium (40px / 11px padding)</option>
+                            <option value="small">Small (32px / 7px padding)</option>
+                          </select>
+                        </div>
+
+                        {/* Orientation Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Orientasi Item
+                          </label>
+                          <select
+                            value={containedListOrientation}
+                            onChange={(e) => setContainedListOrientation(e.target.value as ContainedListOrientation)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="horizontal">Horizontal (Berdampingan)</option>
+                            <option value="vertical">Vertical (Bertumpuk)</option>
+                          </select>
+                        </div>
+
+                        {/* Header Action Control */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Aksi Header
+                          </label>
+                          <select
+                            value={containedListHeaderAction}
+                            onChange={(e) => setContainedListHeaderAction(e.target.value as any)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="overflow">Overflow Menu (...)</option>
+                            <option value="button">Button (+ Add)</option>
+                            <option value="link">Link</option>
+                            <option value="tag">Tag Status</option>
+                            <option value="none">Tanpa Aksi</option>
+                          </select>
+                        </div>
+
+                        {/* Toggles */}
+                        <div className="flex items-center gap-6 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={containedListSearchable}
+                              onChange={(e) => setContainedListSearchable(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Aktifkan Search Bar di Header
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={containedListShowDividers}
+                              onChange={(e) => setContainedListShowDividers(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan Garis Pembatas (Dividers)
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <div className="w-full max-w-xl">
+                            <ContainedList
+                              title="List Title"
+                              size={containedListSize}
+                              itemOrientation={containedListOrientation}
+                              headerActionType={containedListHeaderAction}
+                              headerActionLabel="Action"
+                              searchable={containedListSearchable}
+                              showDividers={containedListShowDividers}
+                              items={containedListItems}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL HEADER PANEL */}
+            {selectedId === "header-panel" && (
+              <DocCard
+                title="UI Shell - Header Panel"
+                badgeText="Organism"
+                description="Komponen bilah navigasi atas (top header bar) yang dilengkapi kontrol sidebar, quick actions (+), navigasi breadcrumb hirarkis, serta utility badges untuk switch bahasa dan tema."
+                snippets={headerPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Header Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Sesuaikan parameter di bawah untuk menguji responsivitas interaksi, penambahan breadcrumb, dan switch tema secara live.
+                          </CardDescription>
+                        </div>
+
+                        {/* Quick Actions / Reset Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setHeaderLang('EN');
+                              setHeaderTheme('light');
+                              setBreadcrumbCount(5);
+                              setHeaderLog('Reset ke konfigurasi awal');
+                            }}
+                          >
+                            Reset Config
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator Grid */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Jumlah Breadcrumb Items
+                          </label>
+                          <select
+                            value={breadcrumbCount}
+                            onChange={(e) => setBreadcrumbCount(Number(e.target.value))}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value={2}>2 Items (Short)</option>
+                            <option value={3}>3 Items</option>
+                            <option value={5}>5 Items (Figma Spec)</option>
+                            <option value={7}>7 Items (Long Trail)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Bahasa (Language Badge)
+                          </label>
+                          <select
+                            value={headerLang}
+                            onChange={(e) => setHeaderLang(e.target.value as 'EN' | 'ID')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="EN">EN (English)</option>
+                            <option value="ID">ID (Indonesia)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Preview Theme Mode
+                          </label>
+                          <select
+                            value={headerTheme}
+                            onChange={(e) => setHeaderTheme(e.target.value as 'light' | 'dark')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div
+                          className={`p-6 border rounded-2xl transition-colors overflow-x-auto ${
+                            headerTheme === 'dark'
+                              ? 'bg-slate-950 border-slate-800'
+                              : 'bg-slate-100/70 border-slate-200'
+                          }`}
+                        >
+                          <div className="w-full min-w-[700px]">
+                            <HeaderPanel
+                              breadcrumbs={Array.from({ length: breadcrumbCount }).map(
+                                (_, i) => ({
+                                  label:
+                                    i === breadcrumbCount - 1 ? 'Current Page' : `Link ${i + 1}`,
+                                  href: '#',
+                                  onClick: () => setHeaderLog(`Navigasi diklik: Link ${i + 1}`),
+                                })
+                              )}
+                              language={headerLang}
+                              theme={headerTheme}
+                              onToggleLeftSidebar={() => setHeaderLog('Left Sidebar Toggle diklik')}
+                              onToggleRightSidebar={() => setHeaderLog('Right Sidebar Toggle diklik')}
+                              onPrimaryAction={() => setHeaderLog('Primary Action (+) diklik')}
+                              onSecondaryAction={() => setHeaderLog('Secondary Action (+) diklik')}
+                              onLanguageChange={() => {
+                                const nextLang = headerLang === 'EN' ? 'ID' : 'EN';
+                                setHeaderLang(nextLang);
+                                setHeaderLog(`Bahasa diubah ke: ${nextLang}`);
+                              }}
+                              onThemeToggle={() => {
+                                const nextTheme = headerTheme === 'light' ? 'dark' : 'light';
+                                setHeaderTheme(nextTheme);
+                                setHeaderLog(`Tema diubah ke: ${nextTheme}`);
+                              }}
+                            />
+                          </div>
+
+                          {/* Interaction Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center border-t border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                            Log Aktivitas: <span className="font-semibold text-slate-800 dark:text-slate-200">{headerLog}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL RIGHT PANEL */}
+            {selectedId === "right-panel" && (
+              <DocCard
+                title="UI Shell - Right Panel v3.1"
+                badgeText="Organism"
+                description="Komponen bilah inspeksi/detail kanan (side panel/sheet) interaktif yang dilengkapi header icon, tab bar, placeholder slot component, feed kartu aktivitas, dan sticky bottom footer action bar."
+                snippets={rightPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Right Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji respon interaksi tab, kustomisasi slot, dan tombol penutup.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRightPanelOpen(!rightPanelOpen)}
+                          >
+                            {rightPanelOpen ? "Sembunyikan Panel" : "Tampilkan Panel"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Status Visibilitas Panel
+                          </label>
+                          <select
+                            value={rightPanelOpen ? "open" : "closed"}
+                            onChange={(e) => setRightPanelOpen(e.target.value === "open")}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="open">Tampil (Open)</option>
+                            <option value="closed">Tutup (Closed)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Tab Aktif Saat Ini
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            value={rightPanelTab}
+                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview Container */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Inspection Panel Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          {/* Box pembungkus simulasi viewport layout */}
+                          <div className="w-full h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex justify-end">
+                            {/* Area Konten Utama Simulasi */}
+                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
+                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                Main Content Workspace
+                              </div>
+                              <div className="max-w-xs mt-1 text-xs text-slate-500">
+                                Detail informasi atau riwayat aktivitas ditampilkan pada Right Panel di sebelah kanan.
+                              </div>
+                              {!rightPanelOpen && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="mt-4"
+                                  onClick={() => setRightPanelOpen(true)}
+                                >
+                                  Buka Right Panel
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Right Panel Component */}
+                            <RightPanel
+                              isOpen={rightPanelOpen}
+                              activeTabId={rightPanelTab}
+                              onTabChange={(tabId) => {
+                                setRightPanelTab(tabId);
+                                setRightPanelLog(`Tab diubah ke: ${tabId}`);
+                              }}
+                              activities={sampleActivities}
+                              onClose={() => {
+                                setRightPanelOpen(false);
+                                setRightPanelLog('Tombol Close diklik');
+                              }}
+                              onCancel={() => setRightPanelLog('Tombol Batal diklik')}
+                              onPrimaryAction={() => setRightPanelLog('Tombol Primary Action diklik')}
+                            />
+                          </div>
+
+                          {/* Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
+                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{rightPanelLog}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: UI SHELL LEFT PANEL */}
+            {selectedId === "left-panel" && (
+              <DocCard
+                title="UI Shell - Left Panel v3.1"
+                badgeText="Organism"
+                description="Komponen bilah navigasi samping utama (sidebar) yang fleksibel dengan dukungan mode Expanded & Compact, accordion sub-menu, CTA Card Banner dengan slot kustom, serta footer profile."
+                snippets={leftPanelSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Left Panel Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah konfigurasi di bawah untuk menguji transisi smooth antara mode Expanded dan Compact.
+                          </CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLeftPanelCompact(!leftPanelCompact)}
+                          >
+                            Toggle Mode: {leftPanelCompact ? "Expanded" : "Compact"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Configurator Controls */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Mode Tampilan Sidebar
+                          </label>
+                          <select
+                            value={leftPanelCompact ? 'compact' : 'expanded'}
+                            onChange={(e) => setLeftPanelCompact(e.target.value === 'compact')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="expanded">Expanded (Full Width - 256px)</option>
+                            <option value="compact">Compact (Icons Only - 80px)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Item Navigasi Aktif Saat Ini
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            value={leftPanelSelected}
+                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Preview Container */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Sidebar Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          {/* Box pembungkus dengan tinggi tetap untuk mensimulasikan Layout App */}
+                          <div className="h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex">
+                            <LeftPanel
+                              isCompact={leftPanelCompact}
+                              selectedId={leftPanelSelected}
+                              navGroups={sampleNavGroups}
+                              onSelectNav={(id) => {
+                                setLeftPanelSelected(id);
+                                setLeftPanelLog(`Item diklik: ${id}`);
+                              }}
+                              onCtaClick={() => setLeftPanelLog('CTA Banner Button diklik!')}
+                              onProfileClick={() => setLeftPanelLog('Footer Profile diklik!')}
+                            />
+                            
+                            {/* Visual Area Konten Utama dummy */}
+                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
+                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                Main Workspace Area
+                              </div>
+                              <div className="mt-1 text-xs text-slate-500">
+                                Sidebar di samping bertindak sebagai navigasi utama.
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Activity Logger */}
+                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
+                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{leftPanelLog}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISMS: PAGINATION */}
+            {selectedId === "pagination" && (
+              <DocCard
+                title="Pagination"
+                badgeText="Molecule"
+                description="Komponen navigasi penomoran halaman interaktif dengan penanda aktif underline, ellipsis otomatis, variasi ukuran, serta fitur quick-jump dropdown."
+                snippets={paginationSnippets}
+              >
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive Pagination Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji perubahan ukuran, total halaman, dan navigasi secara live.
+                          </CardDescription>
+                        </div>
+                        
+                        {/* Quick Controls */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={paginationPage === 1}
+                            onClick={() => setPaginationPage(1)}
+                          >
+                            Reset ke Hal 1
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Ukuran (Size)
+                          </label>
+                          <select
+                            value={paginationSize}
+                            onChange={(e) => setPaginationSize(e.target.value as any)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="xs">XS (Extra Small)</option>
+                            <option value="sm">SM (Small)</option>
+                            <option value="md">MD (Medium)</option>
+                            <option value="lg">LG (Large)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Total Halaman
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={100}
+                            defaultValue={paginationTotalPages}
+                            key={paginationTotalPages} 
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.blur();
+                              }
+                              e.stopPropagation();
+                            }}
+                            onBlur={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              if (isNaN(val) || val < 1) {
+                                e.target.value = "1";
+                                setPaginationTotalPages(1);
+                                if (paginationPage > 1) setPaginationPage(1);
+                              } else {
+                                setPaginationTotalPages(val);
+                                if (paginationPage > val) {
+                                  setPaginationPage(val);
+                                }
+                              }
+                            }}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div className="flex items-end pb-2">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={paginationShowFirstLast}
+                              onChange={(e) => setPaginationShowFirstLast(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Tampilkan First / Last Page
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <Pagination
+                            currentPage={paginationPage}
+                            totalPages={paginationTotalPages}
+                            onPageChange={(page) => setPaginationPage(page)}
+                            size={paginationSize}
+                            showFirstLast={paginationShowFirstLast}
+                            enableQuickJump={true}
+                          />
+                          <div className="pt-2 font-mono text-xs text-slate-500">
+                            Halaman Aktif: <span className="font-semibold text-slate-800 dark:text-slate-200">{paginationPage}</span> dari {paginationTotalPages}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
             {/* ORGANISMS: CARD */}
             {selectedId === "card" && (
               <DocCard
@@ -6922,6 +8471,79 @@ export default function App() {
                           />
                         </div>
                       </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </DocCard>
+            )}
+
+            {/* ORGANISM: STATUS PLACEHOLDER */}
+            {selectedId === "status-placeholder" && (
+              <DocCard
+                title="Status Placeholder"
+                badgeText="Molecule"
+                description="Komponen status placeholder untuk kondisi Empty, Success, Warning, Danger, serta pratinjau berkas/dokumen terunggah."
+                snippets={statusPlaceholderSnippets}
+              >
+                <div className="space-y-8">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-base">Status Placeholder Variants</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2 lg:grid-cols-4">
+                      {/* Empty */}
+                      <StatusPlaceholder
+                        variant="empty"
+                        title="Empty State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="primary">Button</Button>}
+                      />
+
+                      {/* Success */}
+                      <StatusPlaceholder
+                        variant="success"
+                        title="Success State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="primary">Button</Button>}
+                      />
+
+                      {/* Warning */}
+                      <StatusPlaceholder
+                        variant="warning"
+                        title="Warning State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="secondary">Button</Button>}
+                      />
+
+                      {/* Danger */}
+                      <StatusPlaceholder
+                        variant="danger"
+                        title="Danger State Title"
+                        description="Description / helper text goes here"
+                        slotComponent="Slot component"
+                        actionButton={<Button variant="danger">Button</Button>}
+                      />
+                    </CardContent>
+                  </Card>
+
+                  {/* File Preview Showcase */}
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-base">Uploaded File Preview</CardTitle>
+                      <CardDescription className="text-xs">
+                        Pratinjau berkas dengan indikator terpilih (outline biru) dan tombol hapus.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-wrap gap-6 pt-2">
+                      <FilePreviewPlaceholder pageNumber={1} isSelected={false} />
+                      <FilePreviewPlaceholder
+                        pageNumber={1}
+                        isSelected={true}
+                        onRemove={() => alert('Remove file')}
+                      />
                     </CardContent>
                   </Card>
                 </div>
