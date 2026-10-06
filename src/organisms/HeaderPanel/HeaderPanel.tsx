@@ -7,14 +7,14 @@ import {
   IconSun 
 } from '@tabler/icons-react';
 
-export interface BreadcrumbItem {
+export interface HeaderPanelBreadcrumbItem {
   label: string;
   href?: string;
   onClick?: () => void;
 }
 
 export interface HeaderPanelProps {
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: HeaderPanelBreadcrumbItem[];
   onToggleLeftSidebar?: () => void;
   onToggleRightSidebar?: () => void;
   onPrimaryAction?: () => void;
