@@ -8630,7 +8630,7 @@ function CustomAnswerDemo() {
                 snippets={statusPlaceholderSnippets}
               >
                 <div className="space-y-8">
-                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-800">
                     <CardHeader>
                       <CardTitle className="text-base">Status Placeholder Variants</CardTitle>
                     </CardHeader>
@@ -8674,7 +8674,7 @@ function CustomAnswerDemo() {
                   </Card>
 
                   {/* File Preview Showcase */}
-                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-800">
                     <CardHeader>
                       <CardTitle className="text-base">Uploaded File Preview</CardTitle>
                       <CardDescription className="text-xs">
