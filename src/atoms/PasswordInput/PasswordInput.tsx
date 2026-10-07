@@ -42,12 +42,14 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
 
   return (
     <div className="flex flex-col w-full gap-1.5 font-sans">
+      {/* Label */}
       {label && (
         <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
           {label}
         </label>
       )}
 
+      {/* Base Input dari Atom */}
       <Input
         {...props}
         inputSize={inputSize}
@@ -73,7 +75,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
         }
       />
 
-      {/* Helper / Warning / Error message di bawah input */}
+      {/* Helper / Warning / Error Message */}
       {(helperText || activeWarning || activeError) && (
         <span
           className={`text-xs mt-0.5 ${

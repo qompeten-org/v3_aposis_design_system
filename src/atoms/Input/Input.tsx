@@ -60,7 +60,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             // 1. Background & Text Color (Support Light & Dark Mode)
             "w-full transition-colors duration-150",
-            "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100",
+            "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100",
             "placeholder:text-slate-400 dark:placeholder:text-slate-500",
             "focus:outline-none focus:ring-2 focus:ring-offset-0",
 
