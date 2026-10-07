@@ -675,6 +675,11 @@ export default function App() {
   const [accordionDisabled, setAccordionDisabled] = useState<boolean>(false);
   const [accordionPreviewKey, setAccordionPreviewKey] = useState<number>(0);
 
+  // State untuk Breadcrumbs Interactive Showcase
+  const [simulatedPath, setSimulatedPath] = useState<string>('/dashboard/academic/students/detail');
+  const [breadcrumbSeparator, setBreadcrumbSeparator] = useState<string>('/');
+  const [breadcrumbLog, setBreadcrumbLog] = useState<string>('Siap menerima interaksi klik');
+
   // Interactive DataTable Configurator state
   const [dtTitle, setDtTitle] = useState<string>("Title");
   const [dtDescription, setDtDescription] = useState<string>("Description");
@@ -1103,6 +1108,36 @@ export default function App() {
     tooltipArrow,
     tooltipTriggerText,
   ]);
+
+  const breadcrumbSnippets = [
+    {
+      language: 'tsx',
+      filename: 'BreadcrumbsExample.tsx',
+      code: `import { Breadcrumbs } from '@/components/molecules/Breadcrumbs';
+  import { generateBreadcrumbs } from '@/utils/breadcrumb';
+
+  export const BreadcrumbDemo = () => {
+    // Auto-generate dari URL path
+    const autoItems = generateBreadcrumbs('/dashboard/settings/user-profile');
+
+    return (
+      <div className="space-y-4">
+        {/* Manual items */}
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: '#' },
+            { label: 'Projects', href: '#' },
+            { label: 'Design System', active: true },
+          ]}
+        />
+
+        {/* Auto-generated items */}
+        <Breadcrumbs items={autoItems} />
+      </div>
+    );
+  };`,
+    },
+  ];
 
   const tooltipSnippets = [
     {
@@ -5530,44 +5565,152 @@ export default function App() {
                 </div>
               </DocCard>
             )}
-
+            
             {/* MOLECULES: BREADCRUMBS */}
             {selectedId === "breadcrumb" && (
               <DocCard
-                badgeText="Molecule"
                 title="Breadcrumb"
-                description="Komponen navigasi hierarki dengan dukungan helper pembuat otomatis dari URL path."
-                usageSnippet={`import { Breadcrumb } from '../molecules';
-                import { generateBreadcrumbs } from '../utils/breadcrumb';
-
-                // Dihasilkan otomatis dari path: "/dashboard/settings/user-profile"
-                const items = generateBreadcrumbs(location.pathname);
-
-                <Breadcrumb items={items} />`}
+                badgeText="Molecule"
+                description="Komponen navigasi hirarki halaman dengan dukungan pembuatan otomatis (auto-generate) dari URL path serta kustomisasi separator."
+                snippets={breadcrumbSnippets}
+                tips={
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
+                    <div className="font-semibold mb-1 flex items-center gap-1.5">
+                      <IconInfoCircle size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                      Tips Auto Generation:
+                    </div>
+                    Gunakan utilitas <code className="font-semibold text-aposis-blue-60">generateBreadcrumbs(pathname)</code> untuk mengubah string path URL menjadi array item breadcrumb secara otomatis.
+                  </div>
+                }
               >
-                <div className="p-4 space-y-6 bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-slate-500">
-                      1. Manual Items:
-                    </p>
-                    <Breadcrumbs
-                      items={[
-                        { label: "Home", href: "#" },
-                        { label: "Projects", href: "#" },
-                        { label: "Design System", active: true },
-                      ]}
-                    />
+                <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                  <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                      <div>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          Interactive Breadcrumb Configurator
+                        </CardTitle>
+                        <CardDescription className="mt-1 text-xs">
+                          Simulasikan URL path kustom dan ganti karakter separator untuk menguji generator breadcrumbs secara live.
+                        </CardDescription>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSimulatedPath('/dashboard/academic/students/detail');
+                          setBreadcrumbSeparator('/');
+                          setBreadcrumbLog('Reset konfigurasi breadcrumbs');
+                        }}
+                      >
+                        Reset Config
+                      </Button>
+                    </div>
+                  </CardHeader>
+
+                <CardContent className="pt-6 pb-8 space-y-6">
+                  {/* Controls Configurator Grid */}
+                  <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                    {/* Input Path Simulator */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Simulasi Path URL:
+                      </label>
+                      <input
+                        type="text"
+                        value={simulatedPath}
+                        onChange={(e) => {
+                          setSimulatedPath(e.target.value);
+                          setBreadcrumbLog(`Path diubah ke: ${e.target.value}`);
+                        }}
+                        placeholder="/masukkan/path/halaman"
+                        className="w-full px-3 py-2 font-mono text-xs bg-white border rounded-lg dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Select Separator */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Simbol Separator:
+                      </label>
+                      <select
+                        value={breadcrumbSeparator}
+                        onChange={(e) => {
+                          setBreadcrumbSeparator(e.target.value);
+                          setBreadcrumbLog(`Separator diubah ke: '${e.target.value}'`);
+                        }}
+                        className="w-full px-3 py-2 text-xs bg-white border rounded-lg dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="/">Garis Miring ( / )</option>
+                        <option value=">">Siku Kanan ( &gt; )</option>
+                        <option value="→">Panah Kanan ( → )</option>
+                        <option value="•">Titik Poin ( • )</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div>
-                    <p className="mb-2 text-xs font-semibold text-slate-500">
-                      2. Auto Generated from Path:
-                    </p>
-                    <Breadcrumbs items={autoGeneratedItems} />
+                  {/* Live Preview Display */}
+                  <div className="space-y-4">
+                    {/* Section 1: Auto Generated */}
+                    <div className="p-4 space-y-2 bg-white border rounded-xl dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                        1. Auto-Generated dari Path URL ({simulatedPath})
+                      </span>
+                      <div className="px-1 py-2 overflow-x-auto">
+                        <Breadcrumbs
+                          items={generateBreadcrumbs(simulatedPath).map((item) => ({
+                            ...item,
+                            onClick: (e: React.MouseEvent) => {
+                              e.preventDefault();
+                              setBreadcrumbLog(`Navigasi diklik: "${item.label}"`);
+                            },
+                          }))}
+                          separator={breadcrumbSeparator}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Section 2: Manual Static Items */}
+                    <div className="p-4 space-y-2 bg-white border rounded-xl dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                        2. Manual Static Items (Custom Label)
+                      </span>
+                      <div className="px-1 py-2 overflow-x-auto">
+                        <Breadcrumbs
+                          items={[
+                            {
+                              label: 'Beranda',
+                              href: '#',
+                              onClick: (e) => {
+                                e.preventDefault();
+                                setBreadcrumbLog('Navigasi diklik: Beranda');
+                              },
+                            },
+                            {
+                              label: 'Manajemen Kelas',
+                              href: '#',
+                              onClick: (e) => {
+                                e.preventDefault();
+                                setBreadcrumbLog('Navigasi diklik: Manajemen Kelas');
+                              },
+                            },
+                            { label: 'Kelas X IPA 1 (Aktif)', active: true },
+                          ]}
+                          separator={breadcrumbSeparator}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Interaction Logger */}
+                    <div className="p-3 font-mono text-xs text-center border rounded-lg bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                      Log Aktivitas: <span className="font-semibold text-blue-600 dark:text-blue-400">{breadcrumbLog}</span>
+                    </div>
                   </div>
-                </div>
-              </DocCard>
-            )}
+                </CardContent>
+              </Card>
+            </DocCard>
+          )}
 
             {/* TAG MOLECULE */}
             {selectedId === "tag" && (
