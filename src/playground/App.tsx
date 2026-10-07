@@ -4,6 +4,8 @@ import {
   type ButtonVariant,
   type ButtonSize,
   Input,
+  PasswordInput,
+  TextInput,
   Badge,
   Avatar,
   Spinner,
@@ -41,8 +43,6 @@ import {
   Tag,
   TagGroup,
   OverflowMenu,
-  PasswordInput,
-  TextInput,
 } from "../molecules";
 import {
   Card,
@@ -634,6 +634,11 @@ export default function App() {
   const [tooltipTriggerText, setTooltipTriggerText] =
     useState<string>("Definition tooltip");
 
+    // ProgressBar Configurator Interactive State
+  const [progressValue, setProgressValue] = useState<number>(50);
+  const [progressSize, setProgressSize] = useState<'sm' | 'md'>('sm');
+  const [progressLabel, setProgressLabel] = useState<string>('Subtitle');
+  
   // Interactive Notification Configurator state
   const [notifVariant, setNotifVariant] = useState<NotificationVariant>("info");
   const [notifPos, setNotifPos] = useState<NotificationPosition>("top-right");
@@ -698,11 +703,13 @@ export default function App() {
   const [showcase4Expanded, setShowcase4Expanded] = useState<(string | number)[]>(["2"]);
   const [showcase4Page, setShowcase4Page] = useState<number>(1);
 
-  // Interactive AnswerOption Configurator
-  const [answerMulti, setAnswerMulti] = useState<boolean>(false);
-  const [answerSingleSelected, setAnswerSingleSelected] = useState<string>('c');
-  const [answerMultiSelected, setAnswerMultiSelected] = useState<string[]>(['a', 'c']);
-  const [answerGroupDisabled, setAnswerGroupDisabled] = useState<boolean>(false);
+  //Interactive AnswerOption Configurator 
+  const [answerType, setAnswerType] = useState<'radio' | 'checkbox'>('radio');
+  const [answerSelected, setAnswerSelected] = useState<boolean>(false);
+  const [answerDisabled, setAnswerDisabled] = useState<boolean>(false);
+  const [answerLabel, setAnswerLabel] = useState<string>('Label');
+  const [answerValue, setAnswerValue] = useState<string>('Input Text');
+  const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
 
   // State Header Panel
   const [headerLang, setHeaderLang] = useState<'EN' | 'ID'>('EN');
@@ -1106,84 +1113,54 @@ export default function App() {
   ];
 
   const answerOptionSnippets = [
-    {
-      label: 'Single Choice (Radio)',
-      desc: 'Mendukung array list opsi jawaban dengan multi={false}. Indikator visual berupa radio dan latar belakang kartu terpilih aktif otomatis.',
-      code: `import { useState } from 'react';
-import { AnswerOption, type AnswerOptionItem } from '@aposis/design-system';
-
-const options: AnswerOptionItem[] = [
-  { label: 'A. Mengatur pembukaan dan penutupan stomata', value: 'a' },
-  { label: 'B. Menghambat proses fotosintesis sel', value: 'b' },
-  { label: 'C. Mengurangi penyerapan unsur hara', value: 'c' },
-  { label: 'D. Opsi Lainnya', value: 'other', customAnswer: true, placeholder: 'Ketik jawaban kustom...' },
-];
-
-function QuizSingle() {
-  const [selected, setSelected] = useState<string>('a');
-
-  return (
+  {
+    label: 'Single Select (Radio)',
+    code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
     <AnswerOption
-      multi={false}
-      options={options}
-      value={selected}
-      onChange={(val) => setSelected(val)}
-    />
-  );
-}`,
-    },
-    {
-      label: 'Multi Choice (Checkbox)',
-      desc: 'Mendukung pemilihan lebih dari satu opsi dengan multi={true}. Indikator visual berupa checkbox dan background menandai item terpilih.',
-      code: `import { useState } from 'react';
-import { AnswerOption, type AnswerOptionItem } from '@aposis/design-system';
+      type="radio"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Selected')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+      {
+        label: 'Multi Select (Checkbox)',
+        code: `import { AnswerOption } from '../components/organisms/AnswerOption/AnswerOption';
 
-const subjects: AnswerOptionItem[] = [
-  { label: 'Matematika Terapan', value: 'math' },
-  { label: 'Fisika Kuantum', value: 'physics' },
-  { label: 'Kimia Organik', value: 'chemistry' },
-  { label: 'Pilihan Tambahan', value: 'custom', customAnswer: true, placeholder: 'Sebutkan mata kuliah...' },
-];
-
-function QuizMultiple() {
-  const [selectedList, setSelectedList] = useState<string[]>(['math', 'physics']);
-
-  return (
     <AnswerOption
-      multi={true}
-      options={subjects}
-      value={selectedList}
-      onChange={(vals) => setSelectedList(vals)}
-    />
-  );
-}`,
-    },
-    {
-      label: 'Custom Answer Langsung Kirim Value',
-      desc: 'Ketika opsi memiliki customAnswer={true}, input teks akan muncul. Nilai teks yang diketik pengguna langsung dikirimkan ke callback onChange.',
-      code: `import { useState } from 'react';
-import { AnswerOption } from '@aposis/design-system';
+      type="checkbox"
+      label="Label"
+      value="Input Text"
+      helperText="Helper text"
+      selected={true}
+      onSelect={() => console.log('Toggled')}
+      onTextChange={(val) => console.log(val)}
+    />`,
+      },
+    ];
 
-function CustomAnswerDemo() {
-  const [answer, setAnswer] = useState<string>('');
+    const progressBarSnippets = [
+      {
+        language: 'tsx',
+        filename: 'ProgressBarExample.tsx',
+        code: `import { ProgressBar } from '@/components/Molecules/ProgressBar';
 
-  return (
-    <AnswerOption
-      multi={false}
-      options={[
-        { label: 'Setuju dengan kriteria standar', value: 'agree' },
-        { label: 'Alasan Khusus', value: 'custom', customAnswer: true, placeholder: 'Tuliskan alasan Anda...' },
-      ]}
-      value={answer}
-      onChange={(val) => {
-        // val langsung berupa teks yang diketik di input custom answer
-        setAnswer(val);
-      }}
-    />
-  );
-}`,
-    },
-  ];
+    export const Example = () => {
+      return (
+        <div className="w-full max-w-md space-y-4">
+          {/* Small Thickness (4px) */}
+          <ProgressBar value={50} label="Subtitle" size="sm" />
+
+          {/* Medium Thickness (8px) */}
+          <ProgressBar value={75} label="Subtitle" size="md" />
+        </div>
+      );
+    };`,
+      },
+    ];
 
     const leftPanelSnippets = [
       {
@@ -1870,6 +1847,9 @@ function CustomAnswerDemo() {
         { id: "link", label: "Link", icon: IconArrowRight },
         { id: "icon", label: "Icon (Tabler)", icon: IconSparkles },
         { id: "input", label: "Input", icon: IconForms },
+        { id: "password-input", label: "PasswordInput", icon: IconLock },
+        { id: "text-input", label: "Text-Input", icon: IconPencil },
+        { id: "dropdown", label: "Dropdown", icon: IconSelector },
         { id: "badge", label: "Badge", icon: IconIdBadge },
         { id: "avatar", label: "Avatar", icon: IconUser },
         { id: "checkbox", label: "Checkbox", icon: IconCheckbox },
@@ -1888,12 +1868,9 @@ function CustomAnswerDemo() {
         { id: "tooltip", label: "Tooltip", icon: IconHelpCircle },
         { id: "toggle", label: "Toggle", icon: IconToggleLeft },
         { id: "breadcrumb", label: "Breadcrumb", icon: IconLayoutList },
-        { id: "dropdown", label: "Dropdown", icon: IconSelector },
         { id: "overflow-menu", label: "OverflowMenu", icon: IconDotsVertical },
         { id: "progress-bar", label: "ProgressBar", icon: IconActivity },
         { id: "tag", label: "Tag", icon: IconTags },
-        { id: "password-input", label: "PasswordInput", icon: IconLock },
-        { id: "text-input", label: "Text-Input", icon: IconPencil },
         { id: "notification", label: "Notification", icon: IconBell },
       ],
     },
@@ -1913,9 +1890,9 @@ function CustomAnswerDemo() {
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
         { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
-        { id:"header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
-        { id:"left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
-        { id:"right-panel", label: "RightPanel", icon: IconLayoutSidebarRight},
+        { id: "header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
+        { id: "left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
+        { id: "right-panel", label: "RightPanel", icon: IconLayoutSidebarRight},
       ],
     },
     {
@@ -5150,33 +5127,150 @@ function CustomAnswerDemo() {
               <DocCard
                 badgeText="Molecule"
                 title="ProgressBar"
-                description="Komponen indikator progres dengan variasi thickness (sm & md)."
-                usageSnippet={`import { ProgressBar } from '../molecules';
-
-            // Small (4px track)
-            <ProgressBar value={50} label="Subtitle" size="sm" />
-
-            // Medium (8px track)
-            <ProgressBar value={50} label="Subtitle" size="md" />`}
+                description="Komponen indikator progres interaktif dengan variasi ketebalan track (sm: 4px & md: 8px), teks subtitle kustom, dan indikator persentase real-time."
+                snippets={progressBarSnippets}
               >
-                <div className="max-w-xl p-4 space-y-6 bg-white border rounded-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-                  <div className="space-y-3">
-                    <p className="text-xs font-semibold text-slate-500">Thickness: Small (4px)</p>
-                    <ProgressBar value={10} label="Subtitle" size="sm" />
-                    <ProgressBar value={50} label="Subtitle" size="sm" />
-                    <ProgressBar value={100} label="Subtitle" size="sm" />
-                  </div>
+                <div className="space-y-6">
+                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
+                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                        <div>
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            Interactive ProgressBar Configurator
+                          </CardTitle>
+                          <CardDescription className="mt-1 text-xs">
+                            Ubah parameter di bawah untuk menguji perubahan persentase progres, ketebalan track, dan subtitle secara live.
+                          </CardDescription>
+                        </div>
 
-                  <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-800">
-                    <p className="text-xs font-semibold text-slate-500">Thickness: Medium (8px)</p>
-                    <ProgressBar value={10} label="Subtitle" size="md" />
-                    <ProgressBar value={50} label="Subtitle" size="md" />
-                    <ProgressBar value={100} label="Subtitle" size="md" />
-                  </div>
+                        {/* Quick Presets */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {[0, 25, 50, 75, 100].map((preset) => (
+                            <Button
+                              key={preset}
+                              variant={progressValue === preset ? 'primary' : 'outline'}
+                              size="sm"
+                              onClick={() => setProgressValue(preset)}
+                              className="h-7 text-xs px-2.5"
+                            >
+                              {preset}%
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-6 pb-8 space-y-6">
+                      {/* Controls Configurator Grid */}
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        {/* Input 1: Progres Value Slider */}
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                              Nilai Progres ({progressValue}%)
+                            </label>
+                          </div>
+                          <input
+                            type="range"
+                            min={0}
+                            max={100}
+                            value={progressValue}
+                            onChange={(e) => setProgressValue(Number(e.target.value))}
+                            className="w-full h-2 rounded-lg cursor-pointer accent-blue-600 bg-slate-200 dark:bg-slate-700"
+                          />
+                        </div>
+
+                        {/* Input 2: Size / Thickness */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Ketebalan (Thickness)
+                          </label>
+                          <select
+                            value={progressSize}
+                            onChange={(e) => setProgressSize(e.target.value as 'sm' | 'md')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="sm">Small (4px Track)</option>
+                            <option value="md">Medium (8px Track)</option>
+                          </select>
+                        </div>
+
+                        {/* Input 3: Subtitle Label */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Label / Subtitle Text
+                          </label>
+                          <input
+                            type="text"
+                            value={progressLabel}
+                            onChange={(e) => setProgressLabel(e.target.value)}
+                            onKeyDown={(e) => {
+                              e.stopPropagation();
+                              if (e.key === 'Enter') {
+                                e.currentTarget.blur();
+                              }
+                            }}
+                            onBlur={(e) => {
+                              setProgressLabel(e.target.value);
+                            }}
+                            placeholder="Masukkan label..."
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live Interactive Preview */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <div className="w-full max-w-lg space-y-2">
+                            <ProgressBar
+                              value={progressValue}
+                              label={progressLabel}
+                              size={progressSize}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Static Thickness Comparison Matrix */}
+                      <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-800">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Static Thickness Comparison
+                        </span>
+                        <div className="p-6 space-y-6 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          {/* Small Section */}
+                          <div className="space-y-3">
+                            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                              Thickness: Small (4px)
+                            </p>
+                            <div className="max-w-xl space-y-4">
+                              <ProgressBar value={10} label="Subtitle" size="sm" />
+                              <ProgressBar value={50} label="Subtitle" size="sm" />
+                              <ProgressBar value={100} label="Subtitle" size="sm" />
+                            </div>
+                          </div>
+
+                          {/* Medium Section */}
+                          <div className="pt-4 space-y-3 border-t border-slate-100 dark:border-slate-800/80">
+                            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                              Thickness: Medium (8px)
+                            </p>
+                            <div className="max-w-xl space-y-4">
+                              <ProgressBar value={10} label="Subtitle" size="md" />
+                              <ProgressBar value={50} label="Subtitle" size="md" />
+                              <ProgressBar value={100} label="Subtitle" size="md" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </DocCard>
             )}
-
               {/* MOLECULES: PASSWORD INPUT */}
               {selectedId === "password-input" && (
               <DocCard
@@ -5270,8 +5364,7 @@ function CustomAnswerDemo() {
                           inputSize={textInputConfigSize}
                           label="Interactive Label"
                           placeholder="Ketik sesuatu di sini..."
-                          value={textInputConfigValue}
-                          onChange={(e) => setTextInputConfigValue(e.target.value)}
+                          defaultValue=""
                           disabled={textInputConfigDisabled}
                           error={textInputConfigError || undefined}
                           warning={textInputConfigWarning || undefined}
@@ -7487,20 +7580,19 @@ function CustomAnswerDemo() {
               <DocCard
                 title="Answer Option"
                 badgeText="Organism"
-                description="Komponen opsi jawaban asesmen yang mendukung pemilihan tunggal (Radio, multi={false}) atau jamak (Checkbox, multi={true}), input teks dinamis untuk jawaban kustom (customAnswer={true}), serta penanda visual status terpilih berbasis latar belakang kartu."
+                description="Komponen opsi jawaban interaktif berbasis pilihan tunggal (Radio) atau pilihan ganda (Checkbox) lengkap dengan label urutan, input teks jawaban, dan helper text."
                 snippets={answerOptionSnippets}
               >
                 <div className="space-y-6">
-                  {/* Card 1: Interactive Array List Playground */}
                   <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
                     <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
                       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                         <div>
                           <CardTitle className="flex items-center gap-2 text-base">
-                            Interactive Quiz Question Playground
+                            Interactive Answer Option Configurator
                           </CardTitle>
                           <CardDescription className="mt-1 text-xs">
-                            Simulasi penggunaan array list opsi jawaban pada lembar ujian atau asesmen siswa. Mendukung single select (radio), multi select (checkbox), dan jawaban kustom.
+                            Ubah parameter di bawah untuk menguji perubahan tipe (Radio/Checkbox), teks label, status terpilih, dan kondisi disabled secara live.
                           </CardDescription>
                         </div>
 
@@ -7510,13 +7602,15 @@ function CustomAnswerDemo() {
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setAnswerMulti(false);
-                              setAnswerSingleSelected('kloroplas');
-                              setAnswerMultiSelected(['kloroplas']);
-                              setAnswerGroupDisabled(false);
+                              setAnswerType('radio');
+                              setAnswerSelected(false);
+                              setAnswerDisabled(false);
+                              setAnswerLabel('Label');
+                              setAnswerValue('Input Text');
+                              setAnswerHelper('Helper text');
                             }}
                           >
-                            Reset Pilihan
+                            Reset Config
                           </Button>
                         </div>
                       </div>
@@ -7524,185 +7618,89 @@ function CustomAnswerDemo() {
 
                     <CardContent className="pt-6 pb-8 space-y-6">
                       {/* Controls Configurator */}
-                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Mode Seleksi (Prop multi: boolean)
+                            Tipe Selection (Type)
                           </label>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setAnswerMulti(false)}
-                              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
-                                !answerMulti
-                                  ? 'bg-aposis-blue-60 text-white border-aposis-blue-60 shadow-xs'
-                                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                              }`}
-                            >
-                              Single Select
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setAnswerMulti(true)}
-                              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
-                                answerMulti
-                                  ? 'bg-aposis-blue-60 text-white border-aposis-blue-60 shadow-xs'
-                                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                              }`}
-                            >
-                              Multi Select
-                            </button>
-                          </div>
+                          <select
+                            value={answerType}
+                            onChange={(e) => setAnswerType(e.target.value as 'radio' | 'checkbox')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="radio">Radio (Single Select)</option>
+                            <option value="checkbox">Checkbox (Multi Select)</option>
+                          </select>
                         </div>
 
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Status Dinonaktifkan (Disabled)
+                            Teks Label
                           </label>
-                          <label className="inline-flex items-center gap-2 mt-1 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                          <input
+                            type="text"
+                            value={answerLabel}
+                            onChange={(e) => setAnswerLabel(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Helper Text
+                          </label>
+                          <input
+                            type="text"
+                            value={answerHelper}
+                            onChange={(e) => setAnswerHelper(e.target.value)}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        {/* Checkbox Toggles for States */}
+                        <div className="flex items-center gap-4 pt-2 border-t sm:col-span-3 border-slate-200 dark:border-slate-800">
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
                             <input
                               type="checkbox"
-                              checked={answerGroupDisabled}
-                              onChange={(e) => setAnswerGroupDisabled(e.target.checked)}
-                              className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                              checked={answerSelected}
+                              onChange={(e) => setAnswerSelected(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
                             />
-                            Disabled
+                            Selected State
+                          </label>
+
+                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={answerDisabled}
+                              onChange={(e) => setAnswerDisabled(e.target.checked)}
+                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                            />
+                            Disabled State
                           </label>
                         </div>
                       </div>
 
-                      {/* Live Question Assessment Preview */}
-                      <div className="p-5 border rounded-2xl bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 space-y-4">
-                        <div className="pb-3 border-b border-slate-100 dark:border-slate-800/80">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <Badge variant="primary" size="sm">
-                              Soal 1
-                            </Badge>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                              Kategori: Biologi Sel
-                            </span>
-                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                              Bobot: 10 Poin
-                            </span>
+                      {/* Live Preview Showcase */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                          Live Interactive Preview
+                        </span>
+                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+                          <AnswerOption
+                            type={answerType}
+                            label={answerLabel}
+                            value={answerValue}
+                            helperText={answerHelper}
+                            selected={answerSelected}
+                            disabled={answerDisabled}
+                            onSelect={() => setAnswerSelected(!answerSelected)}
+                            onTextChange={(val) => setAnswerValue(val)}
+                          />
+                          <div className="pt-2 font-mono text-xs text-slate-500">
+                            Status Terpilih: <span className="font-semibold text-slate-800 dark:text-slate-200">{answerSelected ? 'True' : 'False'}</span>
                           </div>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            Manakah organel sel tumbuhan yang berfungsi utama sebagai tempat berlangsungnya proses fotosintesis?
-                          </p>
-                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                            {answerMulti
-                              ? 'Petunjuk: Anda dapat memilih lebih dari satu jawaban (mode checkbox).'
-                              : 'Petunjuk: Pilihlah satu jawaban yang paling tepat (mode radio).'}
-                          </p>
                         </div>
-
-                        {/* AnswerOption Component with Array List */}
-                        <AnswerOption
-                          multi={answerMulti}
-                          disabled={answerGroupDisabled}
-                          value={answerMulti ? answerMultiSelected : answerSingleSelected}
-                          onChange={(val) => {
-                            if (answerMulti) {
-                              setAnswerMultiSelected(val);
-                            } else {
-                              setAnswerSingleSelected(val);
-                            }
-                          }}
-                          options={[
-                            {
-                              label: 'A. Kloroplas',
-                              value: 'kloroplas',
-                            },
-                            {
-                              label: 'B. Mitokondria',
-                              value: 'mitokondria',
-                            },
-                            {
-                              label: 'C. Ribosom',
-                              value: 'ribosom',
-                            },
-                            {
-                              label: 'D. Lainnya:',
-                              value: 'custom_organel',
-                              customAnswer: true,
-                              placeholder: 'Tuliskan nama organel atau penjelasan kustom...',
-                            },
-                          ]}
-                        />
-
-                        {/* Realtime Value Inspection */}
-                        <div className="p-3.5 mt-4 rounded-xl border bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                              Nilai Terkirim ke onChange:
-                            </span>
-                            <code className="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-blue-100 dark:bg-blue-950 text-aposis-blue-70 dark:text-blue-300">
-                              {JSON.stringify(answerMulti ? answerMultiSelected : answerSingleSelected)}
-                            </code>
-                          </div>
-                          <span className="text-[11px] text-slate-400">
-                            {answerMulti ? 'Format: Array of String' : 'Format: String'}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Card 2: Visual State Showcase (Selected via Background) */}
-                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800">
-                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800/80">
-                      <CardTitle className="text-sm">
-                        Visual State Comparison: Highlight Background & Disabled
-                      </CardTitle>
-                      <CardDescription className="text-xs">
-                        Status terpilih (selected state) ditandai jelas melalui highlight warna latar belakang kartu dan border aktif, sehingga user dapat langsung mengenali pilihan secara instan.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-5 space-y-3">
-                      <div>
-                        <span className="block mb-1.5 text-xs font-medium text-slate-500">
-                          1. State Default (Unselected)
-                        </span>
-                        <AnswerOption
-                          multi={false}
-                          label="Pilihan default belum dipilih (background putih/gelap bersih)"
-                          selected={false}
-                        />
-                      </div>
-
-                      <div>
-                        <span className="block mb-1.5 text-xs font-medium text-slate-500">
-                          2. State Terpilih (Selected via Background)
-                        </span>
-                        <AnswerOption
-                          multi={false}
-                          label="Pilihan sedang aktif (background biru lembut, border aksen, dan ring)"
-                          selected={true}
-                        />
-                      </div>
-
-                      <div>
-                        <span className="block mb-1.5 text-xs font-medium text-slate-500">
-                          3. State Jawaban Kustom (customAnswer=true)
-                        </span>
-                        <AnswerOption
-                          multi={false}
-                          label="Lainnya:"
-                          customAnswer={true}
-                          placeholder="Kotak input muncul khusus jika customAnswer={true}"
-                          selected={true}
-                          customValue="Teks jawaban kustom pengguna"
-                        />
-                      </div>
-
-                      <div>
-                        <span className="block mb-1.5 text-xs font-medium text-slate-500">
-                          4. State Nonaktif (Disabled)
-                        </span>
-                        <AnswerOption
-                          multi={false}
-                          label="Pilihan dinonaktifkan (redup dan tidak dapat diklik)"
-                          disabled={true}
-                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -8630,7 +8628,7 @@ function CustomAnswerDemo() {
                 snippets={statusPlaceholderSnippets}
               >
                 <div className="space-y-8">
-                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
                     <CardHeader>
                       <CardTitle className="text-base">Status Placeholder Variants</CardTitle>
                     </CardHeader>
@@ -8674,7 +8672,7 @@ function CustomAnswerDemo() {
                   </Card>
 
                   {/* File Preview Showcase */}
-                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                  <Card className="shadow-sm dark:bg-slate-900 border-slate-200">
                     <CardHeader>
                       <CardTitle className="text-base">Uploaded File Preview</CardTitle>
                       <CardDescription className="text-xs">

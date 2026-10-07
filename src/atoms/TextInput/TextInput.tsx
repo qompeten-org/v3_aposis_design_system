@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
-import { Input, InputProps } from '../../atoms/Input/Input';
+import { Input, InputProps } from '../Input/Input';
 import { cn } from '../../utils/cn';
 
 export interface TextInputProps
@@ -10,13 +10,13 @@ export interface TextInputProps
   warning?: boolean | string;
   state?: 'default' | 'warning' | 'error';
   inputSize?: 'xs' | 'sm' | 'md' | 'lg';
-  multiline?: boolean; 
+  multiline?: boolean;
   rows?: number;
-  highlighted?: boolean; 
-  badgeText?: string; 
+  highlighted?: boolean;
+  badgeText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  showToolbar?: boolean; 
+  showToolbar?: boolean;
 }
 
 const ErrorIcon = ({ size = 16 }: { size?: number }) => (
@@ -160,9 +160,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     },
     ref
   ) => {
-
     const editorRef = useRef<HTMLDivElement>(null);
-
     const [activeFormats, setActiveFormats] = useState<Record<string, boolean>>({});
 
     useImperativeHandle(ref, () => editorRef.current as any);
@@ -187,8 +185,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
           strikeThrough: document.queryCommandState('strikeThrough'),
           insertUnorderedList: document.queryCommandState('insertUnorderedList'),
         });
-      } catch (e) {
-      }
+      } catch (e) {}
     };
 
     const handleExecCommand = (command: string, val: string = '') => {
@@ -206,7 +203,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
     };
 
     const inputContent = (
-      <div className="flex flex-col w-full gap-1">
+      <div className="flex flex-col w-full gap-1.5">
         {label && (
           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             {label}
@@ -216,13 +213,13 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
         {multiline ? (
           <div
             className={cn(
-              'relative w-full rounded-xl border bg-slate-100 dark:bg-slate-900 transition-colors overflow-hidden',
+              'relative w-full rounded-xl border bg-white dark:bg-slate-900 transition-colors overflow-hidden',
               activeError
-                ? 'border-rose-500 focus-within:ring-2 focus-within:ring-rose-200'
+                ? 'border-rose-400 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-200 dark:border-rose-500 dark:focus-within:ring-rose-950/50'
                 : activeWarning
-                ? 'border-amber-500 focus-within:ring-2 focus-within:ring-amber-200'
-                : 'border-slate-300 hover:border-slate-400 focus-within:border-aposis-500 focus-within:ring-2 focus-within:ring-aposis-200',
-              disabled && 'bg-slate-100 opacity-60 cursor-not-allowed'
+                ? 'border-amber-500 focus-within:border-amber-600 focus-within:ring-2 focus-within:ring-amber-200 dark:border-amber-500 dark:focus-within:ring-amber-950/50'
+                : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20',
+              disabled && 'bg-slate-50 dark:bg-slate-800/50 opacity-60 cursor-not-allowed'
             )}
           >
             {showToolbar && (
@@ -239,7 +236,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
                 data-placeholder={placeholder}
                 className={cn(
                   'w-full bg-transparent text-slate-900 dark:text-slate-100 focus:outline-none text-sm min-h-[80px]',
-                  'before:text-slate-400 before:content-[attr(data-placeholder)] before:block empty:before:inline-block focus:empty:before:inline-block [&:not(:empty)]:before:hidden',
+                  'before:text-slate-400 dark:before:text-slate-500 before:content-[attr(data-placeholder)] before:block empty:before:inline-block focus:empty:before:inline-block [&:not(:empty)]:before:hidden',
                   '[&_ul]:list-disc [&_ul]:list-inside [&_ul]:pl-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:pl-2 [&_a]:text-blue-500 [&_a]:underline',
                   className
                 )}
@@ -260,6 +257,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
             </div>
           </div>
         ) : (
+          /* Menggunakan Base Input Component dari Atom */
           <Input
             ref={ref as React.Ref<HTMLInputElement>}
             inputSize={inputSize}
@@ -267,10 +265,12 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
             warning={activeWarning ? String(activeWarning) : undefined}
             leftIcon={leftIcon}
             rightIcon={
-              <div className="flex items-center gap-1.5">
-                {rightIcon}
-                {renderStatusIcon()}
-              </div>
+              (rightIcon || activeError || activeWarning) ? (
+                <div className="flex items-center gap-1.5">
+                  {rightIcon}
+                  {renderStatusIcon()}
+                </div>
+              ) : undefined
             }
             disabled={disabled}
             className={className}
@@ -290,7 +290,7 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
               activeError
                 ? 'text-rose-500'
                 : activeWarning
-                ? 'text-amber-600'
+                ? 'text-amber-600 dark:text-amber-400'
                 : 'text-slate-500 dark:text-slate-400'
             )}
           >
@@ -306,9 +306,9 @@ export const TextInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Text
 
     if (highlighted) {
       return (
-        <div className="p-4 rounded-xl bg-[#EDF5FF] dark:bg-blue-950/40 border border-blue-500/80 flex items-start gap-4 w-full">
+        <div className="flex items-start w-full gap-4 p-4 border rounded-xl bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700">
           {badgeText && (
-            <div className="w-9 h-9 shrink-0 rounded-full bg-[#EDF5FF] border border-blue-200 dark:border-blue-800 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300">
+            <div className="flex items-center justify-center text-xs font-semibold border rounded-full w-9 h-9 shrink-0 bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200">
               {badgeText}
             </div>
           )}

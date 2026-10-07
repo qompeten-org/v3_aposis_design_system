@@ -17,6 +17,8 @@ export interface AnswerOptionItem {
 }
 
 export interface AnswerOptionProps {
+  /** Jenis opsi input: 'radio' atau 'checkbox' (opsional, alternatif pengganti prop multi) */
+  type?: 'radio' | 'checkbox';
   /** Mode pilihan: true untuk checkbox (multi-select), false untuk radio (single-select). Default: false */
   multi?: boolean;
   /** Daftar opsi jawaban yang disediakan */
@@ -52,7 +54,8 @@ export interface AnswerOptionProps {
 }
 
 export const AnswerOption: React.FC<AnswerOptionProps> = ({
-  multi = false,
+  type,
+  multi: multiProp = false,
   options,
   value,
   onChange,
@@ -70,6 +73,9 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
   onTextChange,
   customValue = '',
 }) => {
+  // Gabungkan penentuan mode multi: prioritaskan prop `type`, lalu fallback ke `multiProp`
+  const isMulti = type ? type === 'checkbox' : multiProp;
+
   // State untuk menyimpan teks custom answer per opsi (key: option.value)
   const [customTextMap, setCustomTextMap] = useState<Record<string, string>>({});
 
@@ -86,7 +92,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
 
     return (
       <div
-        role={multi ? 'checkbox' : 'radio'}
+        role={isMulti ? 'checkbox' : 'radio'}
         aria-checked={isSelected}
         aria-disabled={isDisabled}
         data-name={name}
@@ -109,7 +115,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
       >
         {/* Selector Visual Indicator (Radio vs Checkbox) */}
         <div className="flex items-center justify-center shrink-0">
-          {multi ? (
+          {isMulti ? (
             <div
               className={cn(
                 'w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-150',
@@ -133,15 +139,15 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
                   : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'
               )}
             >
-              {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+              {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
             </div>
           )}
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 flex items-center justify-between gap-3 min-w-0">
+        <div className="flex items-center justify-between flex-1 min-w-0 gap-3">
           {singleCustomAnswer ? (
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 gap-2 sm:flex-row sm:items-center">
               <span
                 className={cn(
                   'text-sm font-medium shrink-0',
@@ -207,7 +213,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
     const currentCustomVal = customTextMap[opt.value] || '';
     const optionActiveValue = opt.customAnswer && currentCustomVal ? currentCustomVal : opt.value;
 
-    if (multi) {
+    if (isMulti) {
       // Multi-select toggle
       const isCurrentlySelected =
         selectedList.includes(opt.value) ||
@@ -234,7 +240,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
     // Kirim value langsung
     const valueToSend = typedVal.trim() !== '' ? typedVal : opt.value;
 
-    if (multi) {
+    if (isMulti) {
       const filtered = selectedList.filter((v) => v !== prevTypedVal && v !== opt.value);
       onChange?.([...filtered, valueToSend]);
     } else {
@@ -244,14 +250,14 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
 
   return (
     <div
-      role={multi ? 'group' : 'radiogroup'}
+      role={isMulti ? 'group' : 'radiogroup'}
       aria-disabled={groupDisabled}
       data-name={name}
       className={cn('flex flex-col gap-2.5 w-full', className)}
     >
       {options.map((opt) => {
         const currentCustomVal = customTextMap[opt.value] || '';
-        const isSelected = multi
+        const isSelected = isMulti
           ? selectedList.includes(opt.value) ||
             (Boolean(opt.customAnswer && currentCustomVal) && selectedList.includes(currentCustomVal))
           : value === opt.value ||
@@ -262,7 +268,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
         return (
           <div
             key={opt.value}
-            role={multi ? 'checkbox' : 'radio'}
+            role={isMulti ? 'checkbox' : 'radio'}
             aria-checked={isSelected}
             aria-disabled={isDisabled}
             tabIndex={isDisabled ? -1 : 0}
@@ -284,7 +290,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
           >
             {/* Visual Selector Indicator */}
             <div className="flex items-center justify-center shrink-0">
-              {multi ? (
+              {isMulti ? (
                 <div
                   className={cn(
                     'w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-150',
@@ -308,15 +314,15 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
                       : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'
                   )}
                 >
-                  {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                  {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                 </div>
               )}
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 flex items-center justify-between gap-3 min-w-0">
+            <div className="flex items-center justify-between flex-1 min-w-0 gap-3">
               {opt.customAnswer ? (
-                <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
+                <div className="flex flex-col flex-1 min-w-0 gap-2 sm:flex-row sm:items-center">
                   <span
                     className={cn(
                       'text-sm font-medium shrink-0',

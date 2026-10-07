@@ -12,8 +12,8 @@ import {
   IconSortDescending,
   IconLoader,
 } from '@tabler/icons-react';
-import { Button } from '../../atoms/Button';
-import { Checkbox } from '../../atoms/Checkbox';
+import { Button } from '../../atoms/Button/Button';
+import { Checkbox } from '../../atoms/Checkbox/Checkbox';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -372,7 +372,7 @@ export function DataTable<T>({
           )}
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <div className="flex items-center self-end gap-2 sm:self-auto shrink-0">
             {toolbarActions}
 
             {/* Secondary Icon Buttons */}
@@ -383,7 +383,7 @@ export function DataTable<T>({
                 aria-label={action.ariaLabel || action.label || `Action ${idx + 1}`}
                 disabled={action.disabled}
                 onClick={action.onClick}
-                className="w-9 h-9 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/70 flex items-center justify-center transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
+                className="flex items-center justify-center transition-colors bg-white border shadow-xs w-9 h-9 rounded-xl border-slate-200/90 dark:border-slate-700/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/70 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {action.icon || <IconPlus size={16} stroke={2.5} />}
               </button>
@@ -407,7 +407,7 @@ export function DataTable<T>({
       )}
 
       {/* 3. Table Container Card */}
-      <div className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col">
+      <div className="flex flex-col w-full overflow-hidden bg-white border shadow-xs dark:bg-slate-900 rounded-2xl border-slate-200/80 dark:border-slate-800">
         <div className="w-full overflow-x-auto">
           <table className={cn('w-full text-left border-collapse', tableClassName)}>
             {/* Table Header */}
@@ -483,10 +483,10 @@ export function DataTable<T>({
             </thead>
 
             {/* Table Body */}
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/90 text-sm text-slate-700 dark:text-slate-300">
+            <tbody className="text-sm divide-y divide-slate-100 dark:divide-slate-800/90 text-slate-700 dark:text-slate-300">
               {isLoading ? (
                 <tr>
-                  <td colSpan={totalColumnCount} className="py-14 text-center text-slate-400">
+                  <td colSpan={totalColumnCount} className="text-center py-14 text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2.5">
                       <IconLoader className="w-6 h-6 text-aposis-blue-60 animate-spin" />
                       <span className="text-xs font-medium text-slate-500">{loadingMessage}</span>
@@ -495,7 +495,7 @@ export function DataTable<T>({
                 </tr>
               ) : sortedData.length === 0 ? (
                 <tr>
-                  <td colSpan={totalColumnCount} className="py-14 text-center text-slate-400">
+                  <td colSpan={totalColumnCount} className="text-center py-14 text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <IconInbox className="w-9 h-9 text-slate-300 dark:text-slate-600 stroke-[1.5]" />
                       <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -578,7 +578,7 @@ export function DataTable<T>({
 
                       {/* Expandable row detail container */}
                       {expandable && isExpanded && expandedRowRender && (
-                        <tr className="bg-slate-50/70 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800">
+                        <tr className="border-b bg-slate-50/70 dark:bg-slate-900/60 border-slate-100 dark:border-slate-800">
                           <td colSpan={totalColumnCount} className="px-6 py-4">
                             {expandedRowRender(row, index)}
                           </td>
@@ -596,7 +596,7 @@ export function DataTable<T>({
         {pagination && (
           <div className="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 select-none">
             {/* Info / item count */}
-            <div className="order-2 sm:order-1 text-center sm:text-left">
+            <div className="order-2 text-center sm:order-1 sm:text-left">
               {pagination.totalItems !== undefined ? (
                 <span>
                   Total <strong className="text-slate-700 dark:text-slate-200">{pagination.totalItems}</strong> data
@@ -610,14 +610,14 @@ export function DataTable<T>({
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex items-center gap-1 order-1 sm:order-2">
+            <div className="flex items-center order-1 gap-1 sm:order-2">
               {/* Previous button */}
               <button
                 type="button"
                 disabled={pagination.currentPage <= 1}
                 onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
                 aria-label="Halaman sebelumnya"
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 transition-colors rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <IconChevronLeft size={16} />
               </button>
@@ -626,7 +626,7 @@ export function DataTable<T>({
               {paginationPages.map((page, idx) => {
                 if (page === '...') {
                   return (
-                    <span key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-slate-400">
+                    <span key={`dots-${idx}`} className="flex items-center justify-center w-8 h-8 text-slate-400">
                       ...
                     </span>
                   );
@@ -658,7 +658,7 @@ export function DataTable<T>({
                 disabled={pagination.currentPage >= pagination.totalPages}
                 onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
                 aria-label="Halaman selanjutnya"
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 transition-colors rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <IconChevronRight size={16} />
               </button>
