@@ -11,6 +11,4 @@ export * from './StatusPlaceholder/StatusPlaceholder';
 export * from './AnswerOption/AnswerOption';
 export * from './ScoreList/ScoreList';
 export  * from './ContainedList/ContainedList';
-export * from './HeaderPanel/HeaderPanel';
-export * from './LeftPanel/LeftPanel';
-export * from './RightPanel/RightPanel';   
+export * from './Panel/Panel'; 

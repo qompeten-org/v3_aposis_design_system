@@ -70,9 +70,7 @@ import {
   ContainedListSize,
   ContainedListOrientation,
   ContainedListItemData,
-  HeaderPanel,
-  LeftPanel,
-  RightPanel,
+  Panel,
 } from "../organisms";
 import {
   IconComponents,
@@ -138,8 +136,6 @@ import {
   IconUser, 
   IconFileText, 
   IconChartBar,
-  IconLayoutSidebar,
-  IconLayoutSidebarRight,
 } from "@tabler/icons-react";
 import { units } from "../tokens/units";
 import { primitiveColors } from "../tokens/colors";
@@ -711,21 +707,40 @@ export default function App() {
   const [answerValue, setAnswerValue] = useState<string>('Input Text');
   const [answerHelper, setAnswerHelper] = useState<string>('Helper text');
 
-  // State Header Panel
+  // 1. State Header Panel
   const [headerLang, setHeaderLang] = useState<'EN' | 'ID'>('EN');
   const [headerTheme, setHeaderTheme] = useState<'light' | 'dark'>('light');
   const [headerLog, setHeaderLog] = useState<string>('Belum ada aksi diklik');
   const [breadcrumbCount, setBreadcrumbCount] = useState<number>(5);
 
-  // State Left Panel Showcase
+  // 2. State Left Panel
   const [leftPanelCompact, setLeftPanelCompact] = useState<boolean>(false);
   const [leftPanelSelected, setLeftPanelSelected] = useState<string>('link-1');
   const [leftPanelLog, setLeftPanelLog] = useState<string>('Item "link-1" terpilih');
 
-  // State Right Panel
+  // 3. State Right Panel
   const [rightPanelOpen, setRightPanelOpen] = useState<boolean>(true);
   const [rightPanelTab, setRightPanelTab] = useState<string>('tab-1');
   const [rightPanelLog, setRightPanelLog] = useState<string>('Right panel siap');
+
+  // // Unified State untuk Panel Showcase
+  // const [panelState, setPanelState] = useState({
+  //   // Header Panel States
+  //   headerLang: 'EN' as 'EN' | 'ID',
+  //   headerTheme: 'light' as 'light' | 'dark',
+  //   headerLog: 'Belum ada aksi diklik',
+  //   breadcrumbCount: 5,
+
+  //   // Left Panel States
+  //   leftCompact: false,
+  //   leftSelectedId: 'link-1',
+  //   leftLog: 'Item "link-1" terpilih',
+
+  //   // Right Panel States
+  //   rightOpen: true,
+  //   rightActiveTabId: 'tab-1',
+  //   rightLog: 'Right panel siap',
+  // });
 
   const sampleActivities = [
     {
@@ -1162,53 +1177,8 @@ export default function App() {
       },
     ];
 
-    const leftPanelSnippets = [
-      {
-        language: 'tsx',
-        filename: 'LeftPanelExample.tsx',
-        code: `import { LeftPanel } from '@/components/Organism/UIShell-LeftPanel';
-
-    export const LeftPanelDemo = () => {
-      return (
-        <div className="h-[700px] flex">
-          <LeftPanel
-            isCompact={false}
-            selectedId="link-1"
-            navGroups={sampleNavGroups}
-            onSelectNav={(id) => console.log('Selected:', id)}
-            onCtaClick={() => console.log('CTA Banner Clicked')}
-          />
-        </div>
-      );
-    };`,
-      },
-    ];
-    
-    const rightPanelSnippets = [
-      {
-        language: 'tsx',
-        filename: 'RightPanelExample.tsx',
-        code: `import { RightPanel } from '@/components/Organism/UIShell-RightPanel';
-
-    export const RightPanelDemo = () => {
-      return (
-        <RightPanel
-          isOpen={true}
-          title="Inspection Panel"
-          activeTabId="tab-1"
-          onTabChange={(tabId) => console.log('Tab selected:', tabId)}
-          activities={sampleActivities}
-          onCancel={() => console.log('Batal clicked')}
-          onPrimaryAction={() => console.log('Primary Action clicked')}
-          onClose={() => console.log('Closed')}
-        />
-      );
-    };`,
-      },
-    ];
-
   const [textInputConfigSize, setTextInputConfigSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
-  const [textInputConfigValue, setTextInputConfigValue] = useState('');
+  // const [textInputConfigValue, setTextInputConfigValue] = useState('');
   const [textInputConfigDisabled, setTextInputConfigDisabled] = useState(false);
   const [textInputConfigError, setTextInputConfigError] = useState('');
   const [textInputConfigWarning, setTextInputConfigWarning] = useState('');
@@ -1287,32 +1257,6 @@ export default function App() {
       label: "Komponen Statis / Inline",
       desc: "Bisa langsung dipasang di dalam halaman atau panel card sebagai banner notifikasi.",
       code: `import { Notification } from '@aposis/design-system';\n\n<Notification\n  variant="warning"\n  teks="Perhatian"\n  description="Masa pengisian rapor semester ganjil berakhir 3 hari lagi."\n  actionTrigger={{ label: 'Isi Sekarang', onClick: () => alert('Isi') }}\n/>`,
-    },
-  ];
-
-  const headerPanelSnippets = [
-    {
-      language: 'tsx',
-      filename: 'UIShell-HeaderPanel.tsx',
-      code: `import { HeaderPanel } from '@/components/Organism/UIShell-HeaderPanel';
-
-  export const Example = () => {
-    return (
-      <HeaderPanel
-        breadcrumbs={[
-          { label: 'Home', href: '/' },
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Settings' }
-        ]}
-        language="EN"
-        theme="light"
-        onToggleLeftSidebar={() => console.log('Toggle Left Sidebar')}
-        onToggleRightSidebar={() => console.log('Toggle Right Sidebar')}
-        onPrimaryAction={() => console.log('Primary Action')}
-        onSecondaryAction={() => console.log('Secondary Action')}
-      />
-    );
-  };`,
     },
   ];
 
@@ -1799,6 +1743,71 @@ export default function App() {
     },
   ];
 
+  const panelSnippets = [
+    {
+      language: 'tsx',
+      filename: 'PanelHeaderExample.tsx',
+      code: `import { Panel } from '@/components/molecules/Panel';
+
+  export const PanelHeaderExample = () => {
+    return (
+      <Panel.Header
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Settings' }
+        ]}
+        language="EN"
+        theme="light"
+        onToggleLeftSidebar={() => console.log('Toggle Left Sidebar')}
+        onToggleRightSidebar={() => console.log('Toggle Right Sidebar')}
+        onPrimaryAction={() => console.log('Primary Action')}
+        onSecondaryAction={() => console.log('Secondary Action')}
+      />
+    );
+  };`,
+    },
+    {
+      language: 'tsx',
+      filename: 'PanelLeftExample.tsx',
+      code: `import { Panel } from '@/components/molecules/Panel';
+
+  export const PanelLeftExample = () => {
+    return (
+      <div className="h-[700px] flex">
+        <Panel.Left
+          isCompact={false}
+          selectedId="link-1"
+          navGroups={sampleNavGroups}
+          onSelectNav={(id) => console.log('Selected:', id)}
+          onCtaClick={() => console.log('CTA Banner Clicked')}
+        />
+      </div>
+    );
+  };`,
+    },
+    {
+      language: 'tsx',
+      filename: 'PanelRightExample.tsx',
+      code: `import { Panel } from '@/components/molecules/Panel';
+
+  export const PanelRightExample = () => {
+    return (
+      <Panel.Right
+        isOpen={true}
+        title="Inspection Panel"
+        activeTabId="tab-1"
+        onTabChange={(tabId) => console.log('Tab selected:', tabId)}
+        activities={sampleActivities}
+        onCancel={() => console.log('Batal clicked')}
+        onPrimaryAction={() => console.log('Primary Action clicked')}
+        onClose={() => console.log('Closed')}
+      />
+    );
+  };`,
+    },
+  ];
+  
   const sidebarNavGroups = [
     {
       title: "Tokens & Foundations",
@@ -1890,9 +1899,7 @@ export default function App() {
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
         { id: "contained-list", label: "ContainedList", icon: IconLayoutList},
-        { id: "header-panel", label: "HeaderPanel", icon: IconLayoutDashboard},
-        { id: "left-panel", label: "LeftPanel", icon: IconLayoutSidebar},
-        { id: "right-panel", label: "RightPanel", icon: IconLayoutSidebarRight},
+        { id: "panel", label: "Panel", icon: IconLayoutDashboard},
       ],
     },
     {
@@ -8011,13 +8018,22 @@ export default function App() {
               </DocCard>
             )}
 
-            {/* ORGANISMS: UI SHELL HEADER PANEL */}
-            {selectedId === "header-panel" && (
+            {/* ORGANISM: UNIFIED UI SHELL PANEL */}
+            {selectedId === "panel" && (
               <DocCard
-                title="UI Shell - Header Panel"
+                title="UI Shell - Panel System"
                 badgeText="Organism"
-                description="Komponen bilah navigasi atas (top header bar) yang dilengkapi kontrol sidebar, quick actions (+), navigasi breadcrumb hirarkis, serta utility badges untuk switch bahasa dan tema."
-                snippets={headerPanelSnippets}
+                description="Sistem UI Shell terpadu yang menggabungkan Header Panel (navbar atas), Left Panel (sidebar navigasi interaktif), dan Right Panel (drawer/inspeksi) ke dalam satu arsitektur komponen Panel."
+                snippets={panelSnippets}
+                tips={
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs text-blue-900 dark:text-blue-200">
+                    <div className="font-semibold mb-1 flex items-center gap-1.5">
+                      <IconInfoCircle size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                      Sub-Component API Panel:
+                    </div>
+                    Gunakan <code className="font-semibold text-aposis-blue-60">&lt;Panel.Header /&gt;</code> untuk navbar atas, <code className="font-semibold text-aposis-blue-60">&lt;Panel.Left /&gt;</code> untuk sidebar navigasi, dan <code className="font-semibold text-aposis-blue-60">&lt;Panel.Right /&gt;</code> untuk drawer samping.
+                  </div>
+                }
               >
                 <div className="space-y-6">
                   <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
@@ -8025,14 +8041,14 @@ export default function App() {
                       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                         <div>
                           <CardTitle className="flex items-center gap-2 text-base">
-                            Interactive Header Panel Configurator
+                            Interactive UI Shell Configurator
                           </CardTitle>
                           <CardDescription className="mt-1 text-xs">
-                            Sesuaikan parameter di bawah untuk menguji responsivitas interaksi, penambahan breadcrumb, dan switch tema secara live.
+                            Ubah parameter di bawah untuk menguji responsivitas Header, Left Sidebar, dan Right Panel secara live.
                           </CardDescription>
                         </div>
 
-                        {/* Quick Actions / Reset Controls */}
+                        {/* Global Reset Controls */}
                         <div className="flex items-center gap-2">
                           <Button
                             variant="outline"
@@ -8041,7 +8057,11 @@ export default function App() {
                               setHeaderLang('EN');
                               setHeaderTheme('light');
                               setBreadcrumbCount(5);
+                              setLeftPanelCompact(false);
+                              setRightPanelOpen(true);
                               setHeaderLog('Reset ke konfigurasi awal');
+                              setLeftPanelLog('Reset ke konfigurasi awal');
+                              setRightPanelLog('Reset ke konfigurasi awal');
                             }}
                           >
                             Reset Config
@@ -8052,10 +8072,11 @@ export default function App() {
 
                     <CardContent className="pt-6 pb-8 space-y-6">
                       {/* Controls Configurator Grid */}
-                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 lg:grid-cols-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
+                        {/* Header: Breadcrumbs Count */}
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Jumlah Breadcrumb Items
+                            Jumlah Breadcrumb
                           </label>
                           <select
                             value={breadcrumbCount}
@@ -8069,9 +8090,10 @@ export default function App() {
                           </select>
                         </div>
 
+                        {/* Header: Language */}
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Bahasa (Language Badge)
+                            Bahasa (Header)
                           </label>
                           <select
                             value={headerLang}
@@ -8083,47 +8105,70 @@ export default function App() {
                           </select>
                         </div>
 
+                        {/* Left Panel: Mode */}
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Preview Theme Mode
+                            Mode Left Sidebar
                           </label>
                           <select
-                            value={headerTheme}
-                            onChange={(e) => setHeaderTheme(e.target.value as 'light' | 'dark')}
+                            value={leftPanelCompact ? 'compact' : 'expanded'}
+                            onChange={(e) => setLeftPanelCompact(e.target.value === 'compact')}
                             className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <option value="light">Light Mode</option>
-                            <option value="dark">Dark Mode</option>
+                            <option value="expanded">Expanded (256px)</option>
+                            <option value="compact">Compact (80px)</option>
+                          </select>
+                        </div>
+
+                        {/* Right Panel: Visibility */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                            Status Right Panel
+                          </label>
+                          <select
+                            value={rightPanelOpen ? 'open' : 'closed'}
+                            onChange={(e) => setRightPanelOpen(e.target.value === 'open')}
+                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="open">Tampil (Open)</option>
+                            <option value="closed">Tutup (Closed)</option>
                           </select>
                         </div>
                       </div>
 
-                      {/* Live Preview Showcase */}
+                      {/* Live Integrated UI Shell Layout Preview */}
                       <div className="space-y-2">
                         <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Live Interactive Preview
+                          Live Integrated Shell Layout Preview
                         </span>
+
                         <div
-                          className={`p-6 border rounded-2xl transition-colors overflow-x-auto ${
+                          className={`p-4 border rounded-2xl transition-colors overflow-hidden ${
                             headerTheme === 'dark'
                               ? 'bg-slate-950 border-slate-800'
                               : 'bg-slate-100/70 border-slate-200'
                           }`}
                         >
-                          <div className="w-full min-w-[700px]">
-                            <HeaderPanel
-                              breadcrumbs={Array.from({ length: breadcrumbCount }).map(
-                                (_, i) => ({
-                                  label:
-                                    i === breadcrumbCount - 1 ? 'Current Page' : `Link ${i + 1}`,
-                                  href: '#',
-                                  onClick: () => setHeaderLog(`Navigasi diklik: Link ${i + 1}`),
-                                })
-                              )}
+                          {/* Box Pembungkus Layout Simulasi App */}
+                          <div className="flex flex-col w-full overflow-hidden bg-white border shadow-lg border-slate-200 dark:border-slate-800 rounded-xl dark:bg-slate-900">
+                            
+                            {/* 1. Header Panel Sub-Component */}
+                            <Panel.Header
+                              breadcrumbs={Array.from({ length: breadcrumbCount }).map((_, i) => ({
+                                label: i === breadcrumbCount - 1 ? 'Current Page' : `Link ${i + 1}`,
+                                href: '#',
+                                onClick: () => setHeaderLog(`Navigasi diklik: Link ${i + 1}`),
+                              }))}
                               language={headerLang}
                               theme={headerTheme}
-                              onToggleLeftSidebar={() => setHeaderLog('Left Sidebar Toggle diklik')}
-                              onToggleRightSidebar={() => setHeaderLog('Right Sidebar Toggle diklik')}
+                              onToggleLeftSidebar={() => {
+                                setLeftPanelCompact((prev) => !prev);
+                                setHeaderLog('Toggle Left Sidebar diklik');
+                              }}
+                              onToggleRightSidebar={() => {
+                                setRightPanelOpen((prev) => !prev);
+                                setHeaderLog('Toggle Right Sidebar diklik');
+                              }}
                               onPrimaryAction={() => setHeaderLog('Primary Action (+) diklik')}
                               onSecondaryAction={() => setHeaderLog('Secondary Action (+) diklik')}
                               onLanguageChange={() => {
@@ -8137,132 +8182,82 @@ export default function App() {
                                 setHeaderLog(`Tema diubah ke: ${nextTheme}`);
                               }}
                             />
-                          </div>
 
-                          {/* Interaction Activity Logger */}
-                          <div className="pt-3 mt-4 font-mono text-xs text-center border-t border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
-                            Log Aktivitas: <span className="font-semibold text-slate-800 dark:text-slate-200">{headerLog}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </DocCard>
-            )}
+                            {/* 2. Body Area (Left Panel + Main Canvas Workspace + Right Panel) */}
+                            <div className="h-[580px] flex overflow-hidden relative">
+                              {/* Left Navigation Panel Sub-Component */}
+                              <Panel.Left
+                                isCompact={leftPanelCompact}
+                                selectedId={leftPanelSelected}
+                                navGroups={sampleNavGroups}
+                                onSelectNav={(id) => {
+                                  setLeftPanelSelected(id);
+                                  setLeftPanelLog(`Navigasi dipilih: ${id}`);
+                                }}
+                                onCtaClick={() => setLeftPanelLog('CTA Banner diklik!')}
+                                onProfileClick={() => setLeftPanelLog('Footer Profile diklik!')}
+                              />
 
-            {/* ORGANISMS: UI SHELL RIGHT PANEL */}
-            {selectedId === "right-panel" && (
-              <DocCard
-                title="UI Shell - Right Panel v3.1"
-                badgeText="Organism"
-                description="Komponen bilah inspeksi/detail kanan (side panel/sheet) interaktif yang dilengkapi header icon, tab bar, placeholder slot component, feed kartu aktivitas, dan sticky bottom footer action bar."
-                snippets={rightPanelSnippets}
-              >
-                <div className="space-y-6">
-                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
-                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
-                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-                        <div>
-                          <CardTitle className="flex items-center gap-2 text-base">
-                            Interactive Right Panel Configurator
-                          </CardTitle>
-                          <CardDescription className="mt-1 text-xs">
-                            Ubah parameter di bawah untuk menguji respon interaksi tab, kustomisasi slot, dan tombol penutup.
-                          </CardDescription>
-                        </div>
+                              {/* Canvas Area Konten Utama */}
+                              <div className="flex flex-col justify-between flex-1 p-6 overflow-y-auto bg-slate-50 dark:bg-slate-950">
+                                <div className="space-y-4">
+                                  <div className="p-4 bg-white border shadow-xs dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                                    <h4 className="mb-1 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                      Main Content Workspace
+                                    </h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                      Pengaturan pada header dan sidebar kiri/kanan akan langsung berdampak pada tampilan simulasi ini secara langsung.
+                                    </p>
+                                  </div>
 
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setRightPanelOpen(!rightPanelOpen)}
-                          >
-                            {rightPanelOpen ? "Sembunyikan Panel" : "Tampilkan Panel"}
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
+                                  {/* Log Feeds Display */}
+                                  <div className="p-4 space-y-2 font-mono text-xs bg-white border border-slate-200 dark:border-slate-800 rounded-xl dark:bg-slate-900">
+                                    <div className="pb-1 font-sans font-semibold border-b text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-800">
+                                      Status & Log Interaksi:
+                                    </div>
+                                    <p className="text-slate-600 dark:text-slate-400">
+                                      Header Log: <span className="font-semibold text-blue-600 dark:text-blue-400">{headerLog}</span>
+                                    </p>
+                                    <p className="text-slate-600 dark:text-slate-400">
+                                      Left Panel Log: <span className="font-semibold text-blue-600 dark:text-blue-400">{leftPanelLog}</span>
+                                    </p>
+                                    <p className="text-slate-600 dark:text-slate-400">
+                                      Right Panel Log: <span className="font-semibold text-blue-600 dark:text-blue-400">{rightPanelLog}</span>
+                                    </p>
+                                  </div>
+                                </div>
 
-                    <CardContent className="pt-6 pb-8 space-y-6">
-                      {/* Controls Configurator */}
-                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Status Visibilitas Panel
-                          </label>
-                          <select
-                            value={rightPanelOpen ? "open" : "closed"}
-                            onChange={(e) => setRightPanelOpen(e.target.value === "open")}
-                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="open">Tampil (Open)</option>
-                            <option value="closed">Tutup (Closed)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Tab Aktif Saat Ini
-                          </label>
-                          <input
-                            type="text"
-                            readOnly
-                            value={rightPanelTab}
-                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Live Preview Container */}
-                      <div className="space-y-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Live Interactive Inspection Panel Preview
-                        </span>
-                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
-                          {/* Box pembungkus simulasi viewport layout */}
-                          <div className="w-full h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex justify-end">
-                            {/* Area Konten Utama Simulasi */}
-                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
-                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                Main Content Workspace
+                                {!rightPanelOpen && (
+                                  <div className="pt-4 text-center">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => setRightPanelOpen(true)}
+                                    >
+                                      Buka Right Inspector Panel
+                                    </Button>
+                                  </div>
+                                )}
                               </div>
-                              <div className="max-w-xs mt-1 text-xs text-slate-500">
-                                Detail informasi atau riwayat aktivitas ditampilkan pada Right Panel di sebelah kanan.
-                              </div>
-                              {!rightPanelOpen && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="mt-4"
-                                  onClick={() => setRightPanelOpen(true)}
-                                >
-                                  Buka Right Panel
-                                </Button>
-                              )}
+
+                              {/* Right Inspector Panel Sub-Component */}
+                              <Panel.Right
+                                isOpen={rightPanelOpen}
+                                activeTabId={rightPanelTab}
+                                onTabChange={(tabId) => {
+                                  setRightPanelTab(tabId);
+                                  setRightPanelLog(`Tab diubah ke: ${tabId}`);
+                                }}
+                                activities={sampleActivities}
+                                onClose={() => {
+                                  setRightPanelOpen(false);
+                                  setRightPanelLog('Tombol Close diklik');
+                                }}
+                                onCancel={() => setRightPanelLog('Tombol Batal diklik')}
+                                onPrimaryAction={() => setRightPanelLog('Tombol Primary Action diklik')}
+                              />
                             </div>
 
-                            {/* Right Panel Component */}
-                            <RightPanel
-                              isOpen={rightPanelOpen}
-                              activeTabId={rightPanelTab}
-                              onTabChange={(tabId) => {
-                                setRightPanelTab(tabId);
-                                setRightPanelLog(`Tab diubah ke: ${tabId}`);
-                              }}
-                              activities={sampleActivities}
-                              onClose={() => {
-                                setRightPanelOpen(false);
-                                setRightPanelLog('Tombol Close diklik');
-                              }}
-                              onCancel={() => setRightPanelLog('Tombol Batal diklik')}
-                              onPrimaryAction={() => setRightPanelLog('Tombol Primary Action diklik')}
-                            />
-                          </div>
-
-                          {/* Activity Logger */}
-                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
-                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{rightPanelLog}</span>
                           </div>
                         </div>
                       </div>
@@ -8271,113 +8266,6 @@ export default function App() {
                 </div>
               </DocCard>
             )}
-
-            {/* ORGANISMS: UI SHELL LEFT PANEL */}
-            {selectedId === "left-panel" && (
-              <DocCard
-                title="UI Shell - Left Panel v3.1"
-                badgeText="Organism"
-                description="Komponen bilah navigasi samping utama (sidebar) yang fleksibel dengan dukungan mode Expanded & Compact, accordion sub-menu, CTA Card Banner dengan slot kustom, serta footer profile."
-                snippets={leftPanelSnippets}
-              >
-                <div className="space-y-6">
-                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
-                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
-                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-                        <div>
-                          <CardTitle className="flex items-center gap-2 text-base">
-                            Interactive Left Panel Configurator
-                          </CardTitle>
-                          <CardDescription className="mt-1 text-xs">
-                            Ubah konfigurasi di bawah untuk menguji transisi smooth antara mode Expanded dan Compact.
-                          </CardDescription>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setLeftPanelCompact(!leftPanelCompact)}
-                          >
-                            Toggle Mode: {leftPanelCompact ? "Expanded" : "Compact"}
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="pt-6 pb-8 space-y-6">
-                      {/* Configurator Controls */}
-                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-2 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Mode Tampilan Sidebar
-                          </label>
-                          <select
-                            value={leftPanelCompact ? 'compact' : 'expanded'}
-                            onChange={(e) => setLeftPanelCompact(e.target.value === 'compact')}
-                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="expanded">Expanded (Full Width - 256px)</option>
-                            <option value="compact">Compact (Icons Only - 80px)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                            Item Navigasi Aktif Saat Ini
-                          </label>
-                          <input
-                            type="text"
-                            readOnly
-                            value={leftPanelSelected}
-                            className="w-full px-3 py-2 text-xs border rounded-lg bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Live Preview Container */}
-                      <div className="space-y-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Live Interactive Sidebar Preview
-                        </span>
-                        <div className="flex flex-col items-center justify-center p-6 border rounded-2xl bg-slate-100/70 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
-                          {/* Box pembungkus dengan tinggi tetap untuk mensimulasikan Layout App */}
-                          <div className="h-[650px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-slate-900 flex">
-                            <LeftPanel
-                              isCompact={leftPanelCompact}
-                              selectedId={leftPanelSelected}
-                              navGroups={sampleNavGroups}
-                              onSelectNav={(id) => {
-                                setLeftPanelSelected(id);
-                                setLeftPanelLog(`Item diklik: ${id}`);
-                              }}
-                              onCtaClick={() => setLeftPanelLog('CTA Banner Button diklik!')}
-                              onProfileClick={() => setLeftPanelLog('Footer Profile diklik!')}
-                            />
-                            
-                            {/* Visual Area Konten Utama dummy */}
-                            <div className="flex flex-col items-center justify-center flex-1 p-8 text-center bg-slate-50 dark:bg-slate-950">
-                              <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                Main Workspace Area
-                              </div>
-                              <div className="mt-1 text-xs text-slate-500">
-                                Sidebar di samping bertindak sebagai navigasi utama.
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Activity Logger */}
-                          <div className="pt-3 mt-4 font-mono text-xs text-center text-slate-500 dark:text-slate-400">
-                            Log Interaksi: <span className="font-semibold text-slate-800 dark:text-slate-200">{leftPanelLog}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </DocCard>
-            )}
-
             {/* ORGANISMS: PAGINATION */}
             {selectedId === "pagination" && (
               <DocCard
