@@ -2,19 +2,51 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import { iconSizes, type IconSize } from './Icon';
 
-export interface CustomIconProps extends React.SVGAttributes<SVGSVGElement> {
-  size?: IconSize;
-  strokeWidth?: number;
+export interface CustomIconProps extends Omit<React.SVGAttributes<SVGSVGElement>, 'stroke'> {
+  size?: IconSize | number | string;
+  strokeWidth?: number | string;
+  stroke?: number | string;
 }
+
+const resolveIconConfig = (
+  size?: IconSize | number | string,
+  strokeWidth?: number | string,
+  stroke?: number | string
+) => {
+  let resolvedSize: number | string = 20;
+  let resolvedStroke: number | string = 1.5;
+
+  if (typeof size === 'string' && size in iconSizes) {
+    const config = iconSizes[size as IconSize];
+    resolvedSize = config.size;
+    resolvedStroke = config.strokeWidth;
+  } else if (typeof size === 'number') {
+    resolvedSize = size;
+  } else if (typeof size === 'string') {
+    const num = Number(size);
+    if (!isNaN(num) && num > 0) {
+      resolvedSize = num;
+    } else if (size.endsWith('px') || size.endsWith('rem') || size.endsWith('em') || size.endsWith('%')) {
+      resolvedSize = size;
+    }
+  }
+
+  const finalStroke = strokeWidth ?? stroke ?? resolvedStroke;
+
+  return {
+    size: resolvedSize,
+    strokeWidth: finalStroke,
+  };
+};
 
 export const IconLanguageId: React.FC<CustomIconProps> = ({
   size = 'md',
   strokeWidth,
+  stroke,
   className,
   ...props
 }) => {
-  const config = iconSizes[size];
-  const sw = strokeWidth ?? config.strokeWidth;
+  const config = resolveIconConfig(size, strokeWidth, stroke);
   return (
     <svg
       width={config.size}
@@ -22,7 +54,7 @@ export const IconLanguageId: React.FC<CustomIconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={sw}
+      strokeWidth={config.strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={cn('shrink-0', className)}
@@ -43,15 +75,16 @@ export const IconLanguageId: React.FC<CustomIconProps> = ({
     </svg>
   );
 };
+IconLanguageId.displayName = 'IconLanguageId';
 
 export const IconLanguageEn: React.FC<CustomIconProps> = ({
   size = 'md',
   strokeWidth,
+  stroke,
   className,
   ...props
 }) => {
-  const config = iconSizes[size];
-  const sw = strokeWidth ?? config.strokeWidth;
+  const config = resolveIconConfig(size, strokeWidth, stroke);
   return (
     <svg
       width={config.size}
@@ -59,7 +92,7 @@ export const IconLanguageEn: React.FC<CustomIconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={sw}
+      strokeWidth={config.strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={cn('shrink-0', className)}
@@ -80,15 +113,16 @@ export const IconLanguageEn: React.FC<CustomIconProps> = ({
     </svg>
   );
 };
+IconLanguageEn.displayName = 'IconLanguageEn';
 
 export const IconMathSqrt: React.FC<CustomIconProps> = ({
   size = 'md',
   strokeWidth,
+  stroke,
   className,
   ...props
 }) => {
-  const config = iconSizes[size];
-  const sw = strokeWidth ?? config.strokeWidth;
+  const config = resolveIconConfig(size, strokeWidth, stroke);
   return (
     <svg
       width={config.size}
@@ -96,7 +130,7 @@ export const IconMathSqrt: React.FC<CustomIconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={sw}
+      strokeWidth={config.strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={cn('shrink-0', className)}
@@ -109,3 +143,4 @@ export const IconMathSqrt: React.FC<CustomIconProps> = ({
     </svg>
   );
 };
+IconMathSqrt.displayName = 'IconMathSqrt';

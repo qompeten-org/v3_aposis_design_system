@@ -6,7 +6,7 @@ export type IconSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export interface IconProps extends Omit<TablerIconProps, 'size'> {
   icon: TablerIconType | React.ComponentType<any>;
-  size?: IconSize;
+  size?: IconSize | number | string;
   className?: string;
 }
 
@@ -24,13 +24,35 @@ export const Icon: React.FC<IconProps> = ({
   className,
   ...props
 }) => {
-  const config = iconSizes[size];
-  const finalStrokeWidth = strokeWidth !== undefined ? strokeWidth : config.strokeWidth;
+  if (!IconComponent) {
+    return null;
+  }
+
+  let resolvedSize: number | string = 20;
+  let defaultStroke = 1.5;
+
+  if (typeof size === 'string' && size in iconSizes) {
+    const config = iconSizes[size as IconSize];
+    resolvedSize = config.size;
+    defaultStroke = config.strokeWidth;
+  } else if (typeof size === 'number') {
+    resolvedSize = size;
+  } else if (typeof size === 'string') {
+    const num = Number(size);
+    if (!isNaN(num) && num > 0) {
+      resolvedSize = num;
+    } else {
+      resolvedSize = size;
+    }
+  }
+
+  const finalStrokeWidth = strokeWidth !== undefined ? strokeWidth : defaultStroke;
 
   return (
     <IconComponent
-      size={config.size}
+      size={resolvedSize}
       strokeWidth={finalStrokeWidth}
+      stroke={finalStrokeWidth}
       className={cn('shrink-0 transition-colors', className)}
       {...props}
     />
