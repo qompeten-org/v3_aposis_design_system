@@ -5628,26 +5628,6 @@ export default function App() {
                         className="w-full px-3 py-2 font-mono text-xs bg-white border rounded-lg dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
-
-                    {/* Select Separator */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                        Simbol Separator:
-                      </label>
-                      <select
-                        value={breadcrumbSeparator}
-                        onChange={(e) => {
-                          setBreadcrumbSeparator(e.target.value);
-                          setBreadcrumbLog(`Separator diubah ke: '${e.target.value}'`);
-                        }}
-                        className="w-full px-3 py-2 text-xs bg-white border rounded-lg dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="/">Garis Miring ( / )</option>
-                        <option value=">">Siku Kanan ( &gt; )</option>
-                        <option value="→">Panah Kanan ( → )</option>
-                        <option value="•">Titik Poin ( • )</option>
-                      </select>
-                    </div>
                   </div>
 
                   {/* Live Preview Display */}
