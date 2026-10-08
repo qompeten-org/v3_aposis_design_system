@@ -5,10 +5,12 @@ export interface BreadcrumbItem {
   label: string;
   href?: string;
   active?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement>) => void;
 }
 
 export interface BreadcrumbsProps {
   items: BreadcrumbItem[];
+  separator?: React.ReactNode;
   className?: string;
   onItemClick?: (item: BreadcrumbItem, index: number) => void;
 }

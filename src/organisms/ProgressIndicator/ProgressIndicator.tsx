@@ -45,12 +45,12 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                   </div>
                 ) : isCurrent ? (
                   // Current State: White Circle with Blue Outline & Blue Text
-                  <div className="w-8 h-8 rounded-full bg-white ring-2 ring-[#0F62FE] ring-inset flex items-center justify-center text-[#0F62FE] font-semibold text-base transition-all duration-200">
+                  <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 ring-2 ring-[#0F62FE] dark:ring-blue-500 ring-inset flex items-center justify-center text-[#0F62FE] dark:text-blue-400 font-semibold text-base transition-all duration-200">
                     {index + 1}
                   </div>
                 ) : (
                   // Upcoming / Disabled State: White Circle with Gray Outline
-                  <div className="w-8 h-8 rounded-full bg-white ring-1 ring-[#94A3B8] ring-inset flex items-center justify-center text-[#64748B] font-semibold text-base transition-all duration-200">
+                  <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-900 ring-1 ring-[#94A3B8] dark:ring-slate-700 ring-inset flex items-center justify-center text-[#64748B] dark:text-slate-400 font-semibold text-base transition-all duration-200">
                     {index + 1}
                   </div>
                 )}
@@ -61,14 +61,14 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 <span
                   className={`text-sm font-normal leading-[18.2px] transition-colors duration-200 ${
                     isCurrent || isCompleted
-                      ? 'text-[#0F172A] font-medium'
-                      : 'text-[#64748B]'
+                      ? 'text-[#0F172A] dark:text-slate-100 font-medium'
+                      : 'text-[#64748B] dark:text-slate-400'
                   }`}
                 >
                   {step.label}
                 </span>
                 {step.description && (
-                  <span className="text-xs text-[#94A3B8] mt-0.5">
+                  <span className="text-xs text-[#94A3B8] dark:text-slate-500 mt-0.5">
                     {step.description}
                   </span>
                 )}
@@ -80,7 +80,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
               <div className="flex-1 max-w-[240px] min-w-[32px] pt-4 px-2">
                 <div
                   className={`h-[2px] w-full transition-colors duration-300 ${
-                    index < currentStep ? 'bg-[#0F62FE]' : 'bg-[#E2E8F0]'
+                    index < currentStep ? 'bg-[#0F62FE]' : 'bg-[#E2E8F0] dark:bg-slate-800'
                   }`}
                 />
               </div>

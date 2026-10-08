@@ -116,8 +116,8 @@ export const Pagination: React.FC<PaginationProps> = ({
         aria-current={isSelected ? 'page' : undefined}
         className={`relative flex flex-col items-center justify-center font-lexend rounded-xl transition-all duration-150 ${sizeStyles.button} ${
           isSelected
-            ? 'font-semibold text-slate-900'
-            : 'font-normal text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+            ? 'font-semibold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800'
+            : 'font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
         }`}
       >
         <span className="flex items-center justify-center flex-1">{page}</span>
@@ -139,14 +139,14 @@ export const Pagination: React.FC<PaginationProps> = ({
       <div key={position} className="relative inline-block" ref={dropdownRef}>
         <button
           onClick={() => enableQuickJump && setOpenDropdown(isOpen ? null : position)}
-          className={`flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors ${sizeStyles.button}`}
+          className={`flex items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${sizeStyles.button}`}
           title={enableQuickJump ? 'Lompat ke halaman' : undefined}
         >
           <MoreHorizontal className={sizeStyles.icon} />
         </button>
 
         {isOpen && enableQuickJump && (
-          <div className="absolute z-50 py-1 mt-2 overflow-y-auto -translate-x-1/2 border rounded-lg shadow-lg top-full left-1/2 w-28 max-h-48 bg-slate-50 border-slate-300 scrollbar-thin">
+          <div className="absolute z-50 py-1 mt-2 overflow-y-auto -translate-x-1/2 border rounded-lg shadow-lg top-full left-1/2 w-28 max-h-48 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 scrollbar-thin">
             {dropdownPages.map((p) => (
               <button
                 key={p}
@@ -154,12 +154,12 @@ export const Pagination: React.FC<PaginationProps> = ({
                   onPageChange(p);
                   setOpenDropdown(null);
                 }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-lexend flex items-center gap-2 hover:bg-slate-200/60 transition-colors ${
-                  currentPage === p ? 'bg-slate-200/80 text-slate-900 font-medium' : 'text-slate-700'
+                className={`w-full text-left px-3 py-1.5 text-xs font-lexend flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors ${
+                  currentPage === p ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-medium' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
                 <div className="flex items-center justify-center w-4 h-4">
-                  {currentPage === p && <Check className="w-3.5 h-3.5 text-slate-600" />}
+                  {currentPage === p && <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
                 </div>
                 <span>{p}</span>
               </button>
@@ -173,14 +173,14 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <nav
       aria-label="Pagination Navigation"
-      className={`inline-flex items-center gap-1 border-t border-slate-200 pt-2 ${className}`}
+      className={`inline-flex items-center gap-1 border-t border-slate-200 dark:border-slate-800 pt-2 ${className}`}
     >
       {/* First Page Button */}
       {showFirstLast && (
         <button
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
-          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 hover:bg-slate-100`}
+          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
           title="Halaman Pertama"
         >
           &laquo;
@@ -191,7 +191,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 hover:bg-slate-100`}
+        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
         aria-label="Halaman Sebelumnya"
       >
         <ChevronLeft className={sizeStyles.icon} />
@@ -208,7 +208,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 hover:bg-slate-100`}
+        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
         aria-label="Halaman Selanjutnya"
       >
         <ChevronRight className={sizeStyles.icon} />
@@ -219,7 +219,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 hover:bg-slate-100`}
+          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
           title="Halaman Terakhir"
         >
           &raquo;

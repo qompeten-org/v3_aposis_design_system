@@ -88,7 +88,6 @@ export const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
-
   const sizeStyles = {
     small: "h-9 px-3 py-2 text-xs rounded-lg",
     medium: "h-11 px-4 py-3 text-sm rounded-xl",
@@ -98,19 +97,20 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   const getFieldStateStyles = () => {
     if (disabled)
-      return "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed";
+      return "bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed";
     if (readOnly)
-      return "bg-slate-100 border-slate-300 text-slate-900 cursor-default";
+      return "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 cursor-default";
     if (state === "error")
-      return "bg-slate-100 border-red-500 ring-2 ring-red-100";
+      return "bg-slate-100 dark:bg-slate-900 border-red-500 ring-2 ring-red-100 dark:ring-red-950/40 text-slate-900 dark:text-slate-100";
     if (state === "warning")
-      return "bg-slate-100 border-amber-500 ring-2 ring-amber-100";
-    if (isOpen) return "bg-slate-100 border-[#0F62FE] ring-2 ring-[#0F62FE]/20";
-    return "bg-[#F1F5F9] border-b border-[#94A3B8] hover:border-slate-500 focus:ring-2 focus:ring-[#0F62FE]";
+      return "bg-slate-100 dark:bg-slate-900 border-amber-500 ring-2 ring-amber-100 dark:ring-amber-950/40 text-slate-900 dark:text-slate-100";
+    if (isOpen)
+      return "bg-slate-100 dark:bg-slate-800 border-blue-600 dark:border-blue-500 ring-2 ring-blue-500/20 text-slate-900 dark:text-slate-100";
+    return "bg-slate-100 dark:bg-slate-800/80 border-b border-slate-400 dark:border-slate-600 hover:border-slate-500 dark:hover:border-slate-400 focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100";
   };
 
   const handleRemoveOption = (e: React.MouseEvent, optionValue: string) => {
-    e.stopPropagation(); // Mencegah menu dropdown terbuka/tertutup saat tombol 'X' diklik
+    e.stopPropagation();
     if (disabled || readOnly) return;
     if (Array.isArray(value)) {
       const updated = value.filter((val) => val !== optionValue);
@@ -129,14 +129,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
             return (
               <div
                 key={val}
-                className="inline-flex items-center gap-1 bg-[#1E293B] text-white text-xs font-medium rounded-full px-2.5 py-1 shrink-0"
+                className="inline-flex items-center gap-1 bg-slate-800 dark:bg-slate-700 text-slate-100 border border-slate-700 dark:border-slate-600 text-xs font-medium rounded-full px-2.5 py-1 shrink-0"
               >
                 <span className="truncate max-w-[100px]">{labelText}</span>
                 {!disabled && !readOnly && (
                   <button
                     type="button"
                     onClick={(e) => handleRemoveOption(e, val)}
-                    className="hover:text-red-300 focus:outline-none transition-colors p-0.5 rounded-full"
+                    className="hover:text-slate-300 focus:outline-none transition-colors p-0.5 rounded-full"
                     title={`Hapus ${labelText}`}
                   >
                     <svg
@@ -165,7 +165,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
     if (!isMulti && value && typeof value === "string") {
       const selectedObj = options.find((opt) => opt.value === value);
       return (
-        <span className="truncate text-[#0F172A] font-normal">
+        <span className="font-medium truncate text-slate-800 dark:text-slate-100">
           {selectedObj?.label || value}
         </span>
       );
@@ -173,7 +173,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
     // Placeholder
     return (
-      <span className="font-normal truncate text-slate-400">
+      <span className="font-normal truncate text-slate-500 dark:text-slate-400">
         {readOnly ? "No option selected" : placeholder}
       </span>
     );
@@ -185,12 +185,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
       : state === "warning"
         ? warningMessage
         : helperText;
+
   const messageColor =
     state === "error"
       ? "text-red-500"
       : state === "warning"
-        ? "text-amber-600"
-        : "text-slate-500";
+        ? "text-amber-600 dark:text-amber-400"
+        : "text-slate-500 dark:text-slate-400";
 
   return (
     <div
@@ -199,7 +200,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
     >
       {/* Label */}
       {label && (
-        <label className="flex items-center gap-1 text-xs font-medium text-slate-700">
+        <label className="flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300">
           {label}
           {required && <span className="text-red-500">*</span>}
         </label>
@@ -214,7 +215,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
           className={cn(
             "w-full flex items-center justify-between gap-2 transition-all outline-none",
             sizeStyles[size],
-            getFieldStateStyles(),
+            getFieldStateStyles()
           )}
         >
           <div className="flex-1 flex items-center overflow-hidden text-left font-normal text-sm leading-[18.2px]">
@@ -236,8 +237,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
             {!readOnly && (
               <svg
                 className={cn(
-                  "w-4 h-4 text-[#0F172A] transition-transform duration-200",
-                  isOpen && "rotate-180",
+                  "w-4 h-4 text-slate-700 dark:text-slate-300 transition-transform duration-200",
+                  isOpen && "rotate-180"
                 )}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -256,9 +257,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
         {/* Dropdown Menu Listbox */}
         {isOpen && !disabled && !readOnly && (
-          <div className="absolute z-50 w-full py-1 mt-1 overflow-y-auto bg-white border shadow-lg border-slate-200 rounded-xl max-h-60">
+          <div className="absolute z-50 w-full py-1 mt-1 overflow-y-auto bg-white border shadow-lg dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl max-h-60">
             {options.length === 0 ? (
-              <div className="px-4 py-2.5 text-sm text-slate-400">
+              <div className="px-4 py-2.5 text-sm text-slate-500 dark:text-slate-400">
                 Tidak ada opsi
               </div>
             ) : (
@@ -273,20 +274,21 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     className={cn(
                       "w-full text-left px-3.5 py-2.5 text-sm flex items-center gap-3 rounded-lg border transition-all duration-150",
                       option.disabled &&
-                        "opacity-50 cursor-not-allowed bg-slate-100 border-transparent text-slate-400",
+                        "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-800/40 border-transparent text-slate-400 dark:text-slate-500",
                       !option.disabled &&
-                        "hover:border-[#0F62FE] hover:bg-slate-100/80 cursor-pointer text-slate-800 border-transparent",
-                      selected && "bg-slate-100 text-slate-900 font-medium",
+                        "hover:border-blue-500 dark:hover:border-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer text-slate-700 dark:text-slate-200 border-transparent",
+                      selected &&
+                        "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50 font-semibold border-slate-200 dark:border-slate-700"
                     )}
                   >
-                    {/* Checkbox (Hanya muncul jika mode Multiselect) */}
+                    {/* Checkbox (Mode Multiselect) */}
                     {isMulti && (
                       <div
                         className={cn(
                           "w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0",
                           selected
-                            ? "bg-[#0F172A] border-[#0F172A] text-white"
-                            : "border-slate-400 bg-white",
+                            ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-white"
+                            : "border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"
                         )}
                       >
                         {selected && (
