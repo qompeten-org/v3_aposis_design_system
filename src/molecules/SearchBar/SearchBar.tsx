@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { cn } from '../../utils/cn';
 import { Search, X } from 'lucide-react';
+
+// Utility helper debounce
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+};
 
 export interface SearchBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
   onSearch?: (value: string) => void;
-  autoSearch?: boolean; // Prop opsional: atur apakah mau auto-search atau manual Enter
+  autoSearch?: boolean;
+  debounceDelay?: number;
   shortcut?: string;
   size?: 'sm' | 'md' | 'lg';
   inputId?: string;
@@ -18,7 +28,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   value: controlledValue,
   onChange,
   onSearch,
-  autoSearch = false, // Set default false jika TIDAK ingin auto-search
+  autoSearch = false,
+  debounceDelay = 500,
   shortcut = '⌘K',
   className,
   size = 'md',
@@ -30,10 +41,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const isControlled = controlledValue !== undefined;
   const query = isControlled ? controlledValue : internalValue;
 
+  // Callback debounced search
+  const debouncedSearch = useCallback(
+    debounce((searchTerm: string) => {
+      onSearch?.(searchTerm);
+    }, debounceDelay),
+    [onSearch, debounceDelay]
+  );
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     if (!isControlled) setInternalValue(val);
-    onChange?.(val); // Hanya meng-update teks input di UI secara realtime
+    onChange?.(val);
+
+    if (autoSearch) {
+      debouncedSearch(val);
+    }
   };
 
   const handleClear = () => {
@@ -43,16 +66,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // 🎯 PENCARIAN HANYA DIPICU DI SINI (SAAT ENTER DITEKAN)
     if (e.key === 'Enter') {
       e.preventDefault();
       onSearch?.(query);
     }
   };
 
+  const sizeClasses = {
+    sm: 'text-xs py-1.5 pl-8 pr-14',
+    md: 'text-sm py-2 pl-9 pr-16',
+    lg: 'text-base py-3 pl-11 pr-20',
+  };
+
+  const iconSizes = {
+    sm: 'w-3.5 h-3.5 left-2.5',
+    md: 'w-4 h-4 left-3',
+    lg: 'w-5 h-5 left-3.5',
+  };
+
   return (
     <div id={id} className={cn('relative flex items-center w-full max-w-md', className)} {...props}>
-      <Search className="absolute w-4 h-4 pointer-events-none left-3 text-slate-400 dark:text-slate-500" />
+      <Search
+        className={cn(
+          'absolute text-slate-400 dark:text-slate-500 pointer-events-none stroke-[2]',
+          iconSizes[size]
+        )}
+      />
       <input
         id={inputId}
         type="text"
@@ -64,7 +103,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           'w-full text-slate-900 dark:text-slate-100 rounded-xl transition-all duration-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500',
           'bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100',
           'dark:bg-slate-800 dark:hover:bg-slate-800/80 dark:focus:bg-slate-800 dark:border-slate-700 dark:hover:border-slate-600 dark:focus:border-blue-500 dark:focus:ring-blue-500/20',
-          'text-sm py-2 pl-9 pr-16'
+          sizeClasses[size]
         )}
       />
       <div className="absolute right-2.5 flex items-center gap-1">
