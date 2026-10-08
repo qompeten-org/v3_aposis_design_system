@@ -31,14 +31,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     <div className={cn("w-full flex flex-col gap-1 font-['Lexend'] text-xs", className)}>
       {/* Header Area */}
       {(currentLabel || icon || editableLabel) && (
-        <div className="inline-flex items-center gap-2 text-[#475569]">
-          {icon ?? <PlusIcon />}
+        <div className="inline-flex items-center gap-2 text-[#475569] dark:text-white">
+          {icon ?? <PlusIcon className="w-3.5 h-3.5 stroke-current" />}
           {editableLabel ? (
             <input
               type="text"
               value={currentLabel ?? ''}
               onChange={(e) => setCurrentLabel(e.target.value)}
-              className="bg-transparent border-b border-slate-300 focus:outline-none focus:border-blue-500 font-normal leading-[18px] tracking-[0.12px]"
+              className="bg-transparent border-b border-slate-300 dark:border-slate-700 dark:text-white focus:outline-none focus:border-blue-500 font-normal leading-[18px] tracking-[0.12px]"
             />
           ) : (
             <span className="font-normal leading-[18px] tracking-[0.12px]">
@@ -51,7 +51,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {/* Track & Value Container */}
       <div className="inline-flex items-center w-full gap-3">
         <div className="relative flex items-center flex-1 h-3">
-          <div className={cn("w-full bg-[#E2E8F0] overflow-hidden relative", trackHeightClass)}>
+          <div className={cn("w-full bg-[#E2E8F0] dark:bg-slate-800 overflow-hidden relative", trackHeightClass)}>
             <div
               className="h-full bg-[#0F62FE] transition-all duration-300 ease-in-out"
               style={{ width: `${normalizedValue}%` }}
@@ -64,7 +64,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         </div>
 
         {showValue && (
-          <span className="w-9 text-right font-normal text-[#0F172A] leading-[18px] tracking-[0.12px] select-none">
+          <span className="w-9 text-right font-normal text-[#0F172A] dark:text-white leading-[18px] tracking-[0.12px] select-none">
             {normalizedValue}%
           </span>
         )}

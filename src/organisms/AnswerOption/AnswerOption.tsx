@@ -151,7 +151,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
               <span
                 className={cn(
                   'text-sm font-medium shrink-0',
-                  isSelected ? 'text-aposis-blue-90 dark:text-blue-100 font-semibold' : 'text-slate-800 dark:text-slate-200'
+                  isSelected ? 'text-aposis-blue-90 dark:text-white font-semibold' : 'text-slate-800 dark:text-white'
                 )}
               >
                 {label}
@@ -182,7 +182,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
             <span
               className={cn(
                 'text-sm font-medium truncate',
-                isSelected ? 'text-aposis-blue-90 dark:text-blue-100 font-semibold' : 'text-slate-800 dark:text-slate-200'
+                isSelected ? 'text-aposis-blue-90 dark:text-white font-semibold' : 'text-slate-800 dark:text-white'
               )}
             >
               {label}
@@ -327,8 +327,8 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
                     className={cn(
                       'text-sm font-medium shrink-0',
                       isSelected
-                        ? 'text-aposis-blue-90 dark:text-blue-100 font-semibold'
-                        : 'text-slate-800 dark:text-slate-200'
+                        ? 'text-aposis-blue-90 dark:text-white font-semibold'
+                        : 'text-slate-800 dark:text-white'
                     )}
                   >
                     {opt.label}
@@ -360,8 +360,8 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
                   className={cn(
                     'text-sm font-medium truncate',
                     isSelected
-                      ? 'text-aposis-blue-90 dark:text-blue-100 font-semibold'
-                      : 'text-slate-800 dark:text-slate-200'
+                      ? 'text-aposis-blue-90 dark:text-white font-semibold'
+                      : 'text-slate-800 dark:text-white'
                   )}
                 >
                   {opt.label}

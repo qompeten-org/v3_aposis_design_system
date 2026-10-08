@@ -44,11 +44,11 @@ export const Tag: React.FC<TagProps> = ({
   };
 
   const colorStyles: Record<TagColor, string> = {
-    slate: 'bg-[#E2E8F0] text-[#475569] border-[#CBD5E1] hover:bg-slate-300',
-    blue: 'bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200',
-    emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-200',
-    amber: 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-200',
-    rose: 'bg-rose-100 text-rose-700 border-rose-200 hover:bg-rose-200',
+    slate: 'bg-[#E2E8F0] dark:bg-slate-800 text-[#475569] dark:text-slate-200 border-[#CBD5E1] dark:border-slate-700 hover:bg-slate-300 dark:hover:bg-slate-700',
+    blue: 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/80 hover:bg-blue-200 dark:hover:bg-blue-900/60',
+    emerald: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-200 dark:hover:bg-emerald-900/60',
+    amber: 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/80 hover:bg-amber-200 dark:hover:bg-amber-900/60',
+    rose: 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/80 hover:bg-rose-200 dark:hover:bg-rose-900/60',
   };
 
   return (
@@ -98,7 +98,7 @@ export interface TagGroupProps {
 export const TagGroup: React.FC<TagGroupProps> = ({ label, children, className }) => {
   return (
     <div className={cn('flex flex-col gap-2 w-full', className)}>
-      {label && <span className="text-xs font-normal text-[#475569] tracking-wide">{label}</span>}
+      {label && <span className="text-xs font-normal text-[#475569] dark:text-white tracking-wide">{label}</span>}
       <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>
   );
