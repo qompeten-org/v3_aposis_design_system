@@ -62,7 +62,6 @@ import {
   type AccordionWidth,
   ChartHeader,
   ProgressIndicator,
-  Pagination,
   StatusPlaceholder,
   FilePreviewPlaceholder,
   AnswerOption,
@@ -124,7 +123,6 @@ import {
   IconDotsVertical,
   IconTable,
   IconChartPie,
-  IconListNumbers,
   IconLayoutBoard,
   IconAB,
   IconListCheck, 
@@ -673,13 +671,10 @@ export default function App() {
   const [breadcrumbLog, setBreadcrumbLog] = useState<string>('Siap menerima interaksi klik');
 
   // Interactive DataTable Configurator state
-  const [dtTitle, setDtTitle] = useState<string>("Title");
-  const [dtDescription, setDtDescription] = useState<string>("Description");
-  const [dtSearchable, setDtSearchable] = useState<boolean>(true);
   const [dtSelectable, setDtSelectable] = useState<boolean>(true);
   const [dtExpandable, setDtExpandable] = useState<boolean>(true);
-  const [dtHasToolbarActions, setDtHasToolbarActions] = useState<boolean>(true);
   const [dtHasPagination, setDtHasPagination] = useState<boolean>(true);
+  const [dtPaginationShowFirstLast, setDtPaginationShowFirstLast] = useState<boolean>(false);
   const [dtIsLoading, setDtIsLoading] = useState<boolean>(false);
   const [dtIsEmpty, setDtIsEmpty] = useState<boolean>(false);
   const [dtPage, setDtPage] = useState<number>(1);
@@ -695,6 +690,7 @@ export default function App() {
   const [showcase4Selected, setShowcase4Selected] = useState<(string | number)[]>(["1", "3"]);
   const [showcase4Expanded, setShowcase4Expanded] = useState<(string | number)[]>(["2"]);
   const [showcase4Page, setShowcase4Page] = useState<number>(1);
+  const [showcase6Page, setShowcase6Page] = useState<number>(3);
 
   // Interactive AnswerOption Configurator
   const [answerMulti, setAnswerMulti] = useState<boolean>(false);
@@ -858,12 +854,6 @@ export default function App() {
     },
   ];
 
-  
-  // Interactive Pagination Configurator state
-  const [paginationPage, setPaginationPage] = useState(1);
-  const [paginationTotalPages, setPaginationTotalPages] = useState(30);
-  const [paginationSize, setPaginationSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
-  const [paginationShowFirstLast, setPaginationShowFirstLast] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -1397,28 +1387,7 @@ function CustomAnswerDemo() {
     },
   ];
 
-  const paginationSnippets: SnippetItem[] = [
-    {
-      label: "React",
-      code: `import { useState } from 'react';
-  import { Pagination } from '@aposis/design-system';
 
-  export function Example() {
-    const [page, setPage] = useState(1);
-
-    return (
-      <Pagination
-        currentPage={page}
-        totalPages={30}
-        onPageChange={(newPage) => setPage(newPage)}
-        size="md"
-        variant="underline"
-        enableQuickJump={true}
-      />
-    );
-  }`,
-    },
-  ];
     
   const chartHeaderSnippets: SnippetItem[] = [
   {
@@ -1474,41 +1443,30 @@ function CustomAnswerDemo() {
 
   const dynamicDataTableCode = useMemo(() => {
     let code = `import { DataTable, type Column } from '@aposis/design-system';\n\n`;
-    code += `// Definisi Kolom\nconst columns: Column<DataRecord>[] = [\n  { key: 'col1', header: 'Header', sortable: true },\n  { key: 'col2', header: 'Header', sortable: true },\n  { key: 'col3', header: 'Header' },\n  // ...\n  { key: 'actions', header: '...', render: () => <Button size="xs" variant="secondary">Button</Button> },\n];\n\n`;
+    code += `// Definisi Kolom\nconst columns: Column<DataRecord>[] = [\n  { key: 'col1', header: 'Header 1', sortable: true },\n  { key: 'col2', header: 'Header 2', sortable: true },\n  { key: 'col3', header: 'Header 3' },\n  // ...\n  { key: 'actions', header: 'Aksi', render: (row) => <button className="text-xs text-blue-600 hover:underline">Detail</button> },\n];\n\n`;
     code += `<DataTable\n`;
-    if (dtTitle.trim()) code += `  title="${dtTitle}"\n`;
-    if (dtDescription.trim()) code += `  description="${dtDescription}"\n`;
     code += `  columns={columns}\n`;
     code += `  data={${dtIsEmpty ? "[]" : "data"}}\n`;
     code += `  keyExtractor={(item) => item.id}\n`;
-    if (dtSearchable) {
-      code += `  searchable\n  searchPlaceholder="Search input text"\n`;
-    }
     if (dtSelectable) {
       code += `  selectable\n  selectedRowKeys={selectedKeys}\n  onSelectionChange={(keys) => setSelectedKeys(keys)}\n`;
     }
     if (dtExpandable) {
       code += `  expandable\n  expandedRowRender={(row) => (\n    <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl">\n      Detail informasi untuk baris #{row.id}\n    </div>\n  )}\n`;
     }
-    if (dtHasToolbarActions) {
-      code += `  primaryAction={{\n    label: 'Button +',\n    onClick: () => handleCreate(),\n  }}\n  showDefaultSecondaryActions\n`;
-    }
     if (dtIsLoading) {
       code += `  isLoading\n`;
     }
     if (dtHasPagination) {
-      code += `  pagination={{\n    currentPage: ${dtPage},\n    totalPages: 30,\n    totalItems: 150,\n    onPageChange: (p) => setPage(p),\n  }}\n`;
+      code += `  pagination={{\n    currentPage: ${dtPage},\n    totalPages: 30,\n    totalItems: 150,\n    onPageChange: (p) => setPage(p),\n${dtPaginationShowFirstLast ? '    showFirstLast: true,\n' : ''}  }}\n`;
     }
     code += `/>`;
     return code;
   }, [
-    dtTitle,
-    dtDescription,
-    dtSearchable,
     dtSelectable,
     dtExpandable,
-    dtHasToolbarActions,
     dtHasPagination,
+    dtPaginationShowFirstLast,
     dtIsLoading,
     dtIsEmpty,
     dtPage,
@@ -1589,28 +1547,33 @@ function CustomAnswerDemo() {
   const dataTableSnippets = [
     {
       label: "Dasar (Standard Table)",
-      desc: "Tabel data lengkap dengan judul, deskripsi, pencarian terintegrasi, tombol aksi toolbar, dan paginasi.",
-      code: `import { DataTable, type Column } from '@aposis/design-system';\n\ninterface UserRow {\n  id: string;\n  name: string;\n  role: string;\n}\n\nconst columns: Column<UserRow>[] = [\n  { key: 'name', header: 'Nama Lengkap', sortable: true },\n  { key: 'role', header: 'Peran' },\n];\n\n<DataTable\n  title="Daftar Pengguna"\n  description="Kelola hak akses dan peran pengguna dalam sistem."\n  columns={columns}\n  data={userData}\n  keyExtractor={(item) => item.id}\n  searchable\n  primaryAction={{\n    label: 'Tambah Pengguna',\n    onClick: () => handleAdd(),\n  }}\n  pagination={{\n    currentPage: 1,\n    totalPages: 10,\n    totalItems: 100,\n    onPageChange: (page) => setPage(page),\n  }}\n/>`,
+      desc: "Tabel data standar dengan definisi kolom, sorting, dan paginasi terintegrasi.",
+      code: `import { DataTable, type Column } from '@aposis/design-system';\n\ninterface UserRow {\n  id: string;\n  name: string;\n  role: string;\n}\n\nconst columns: Column<UserRow>[] = [\n  { key: 'name', header: 'Nama Lengkap', sortable: true },\n  { key: 'role', header: 'Peran' },\n];\n\n<DataTable\n  columns={columns}\n  data={userData}\n  keyExtractor={(item) => item.id}\n  pagination={{\n    currentPage: 1,\n    totalPages: 10,\n    totalItems: 100,\n    onPageChange: (page) => setPage(page),\n  }}\n/>`,
     },
     {
       label: "Baris Dapat Diekspansi (Expandable Rows)",
       desc: "Mendukung tombol chevron pada setiap baris untuk menampilkan panel detail atau sub-tabel yang fleksibel.",
-      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  title="Laporan Transaksi"\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-4 space-y-1 bg-slate-50 dark:bg-slate-800/40 rounded-xl">\n      <div className="font-semibold text-slate-800 dark:text-slate-200">\n        Rincian Transaksi #{row.id}\n      </div>\n      <div className="text-xs text-slate-500">\n        Status verifikasi berhasil dicatat ke sistem audit.\n      </div>\n    </div>\n  )}\n/>`,
+      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-4 space-y-1 bg-slate-50 dark:bg-slate-800/40 rounded-xl">\n      <div className="font-semibold text-slate-800 dark:text-slate-200">\n        Rincian Transaksi #{row.id}\n      </div>\n      <div className="text-xs text-slate-500">\n        Status verifikasi berhasil dicatat ke sistem audit.\n      </div>\n    </div>\n  )}\n/>`,
     },
     {
       label: "Seleksi Baris (Selectable with Checkboxes)",
       desc: "Dilengkapi checkbox pada setiap baris dan select-all checkbox di header dengan status parsial (indeterminate).",
-      code: `import { useState } from 'react';\nimport { DataTable } from '@aposis/design-system';\n\nconst [selectedKeys, setSelectedKeys] = useState<(string | number)[]>([]);\n\n<DataTable\n  title="Manajemen Arsip"\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  selectable\n  selectedRowKeys={selectedKeys}\n  onSelectionChange={(keys, rows) => {\n    setSelectedKeys(keys);\n    console.log('Baris terpilih:', rows);\n  }}\n/>`,
+      code: `import { useState } from 'react';\nimport { DataTable } from '@aposis/design-system';\n\nconst [selectedKeys, setSelectedKeys] = useState<(string | number)[]>([]);\n\n<DataTable\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  selectable\n  selectedRowKeys={selectedKeys}\n  onSelectionChange={(keys, rows) => {\n    setSelectedKeys(keys);\n    console.log('Baris terpilih:', rows);\n  }}\n/>`,
     },
     {
       label: "Kombinasi Expandable & Selectable",
       desc: "Menghadirkan fungsionalitas ekspansi baris dan pemilihan multi-baris sekaligus secara harmonis.",
-      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  title="Data Komprehensif"\n  description="Mode kombinasi ekspansi dan seleksi."\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  searchable\n  selectable\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-3 text-xs text-slate-600 dark:text-slate-300">\n      Informasi pelengkap untuk record ID {row.id}\n    </div>\n  )}\n  pagination={{\n    currentPage: 1,\n    totalPages: 30,\n    onPageChange: (p) => setPage(p),\n  }}\n/>`,
+      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  columns={columns}\n  data={data}\n  keyExtractor={(item) => item.id}\n  selectable\n  expandable\n  expandedRowRender={(row) => (\n    <div className="p-3 text-xs text-slate-600 dark:text-slate-300">\n      Informasi pelengkap untuk record ID {row.id}\n    </div>\n  )}\n  pagination={{\n    currentPage: 1,\n    totalPages: 30,\n    onPageChange: (p) => setPage(p),\n  }}\n/>`,
     },
     {
       label: "Data Akademik Siswa",
       desc: "Penerapan nyata untuk manajemen siswa dengan komponen Avatar, Badge status, perataan kolom, dan sortable.",
-      code: `import { DataTable, Avatar, Badge, type Column } from '@aposis/design-system';\n\nconst studentColumns: Column<Student>[] = [\n  {\n    key: 'name',\n    header: 'Nama Siswa',\n    render: (row) => (\n      <div className="flex items-center gap-2.5">\n        <Avatar name={row.name} size="sm" />\n        <div>\n          <div className="font-semibold text-slate-800 dark:text-slate-200">{row.name}</div>\n          <div className="text-[11px] text-slate-400">NISN: {row.nisn}</div>\n        </div>\n      </div>\n    ),\n  },\n  { key: 'class', header: 'Kelas' },\n  {\n    key: 'status',\n    header: 'Status',\n    render: (row) => <Badge variant="success" dot appearance="subtle">{row.status}</Badge>,\n  },\n  {\n    key: 'gpa',\n    header: 'IPK / Rata-rata',\n    align: 'right',\n    render: (row) => <span className="font-bold">{row.gpa.toFixed(2)}</span>,\n  },\n];\n\n<DataTable\n  title="Daftar Siswa Aktif"\n  description="Data siswa tahun ajaran 2025/2026."\n  columns={studentColumns}\n  data={students}\n  keyExtractor={(item) => item.id}\n  searchable\n  pagination={{ currentPage: 1, totalPages: 5, onPageChange: setPage }}\n/>`,
+      code: `import { DataTable, Avatar, Badge, type Column } from '@aposis/design-system';\n\nconst studentColumns: Column<Student>[] = [\n  {\n    key: 'name',\n    header: 'Nama Siswa',\n    render: (row) => (\n      <div className="flex items-center gap-2.5">\n        <Avatar name={row.name} size="sm" />\n        <div>\n          <div className="font-semibold text-slate-800 dark:text-slate-200">{row.name}</div>\n          <div className="text-[11px] text-slate-400">NISN: {row.nisn}</div>\n        </div>\n      </div>\n    ),\n  },\n  { key: 'class', header: 'Kelas' },\n  {\n    key: 'status',\n    header: 'Status',\n    render: (row) => <Badge variant="success" dot appearance="subtle">{row.status}</Badge>,\n  },\n  {\n    key: 'gpa',\n    header: 'IPK / Rata-rata',\n    align: 'right',\n    render: (row) => <span className="font-bold">{row.gpa.toFixed(2)}</span>,\n  },\n];\n\n<DataTable\n  columns={studentColumns}\n  data={students}\n  keyExtractor={(item) => item.id}\n  pagination={{ currentPage: 1, totalPages: 5, onPageChange: setPage }}\n/>`,
+    },
+    {
+      label: "Paginasi Terintegrasi (Built-in Pagination)",
+      desc: "Paginasi menyatu langsung di dalam DataTable tanpa perlu komponen terpisah, mendukung tombol Awal/Akhir (showFirstLast), hitungan total baris, dan navigasi halaman.",
+      code: `import { DataTable } from '@aposis/design-system';\n\n<DataTable\n  columns={columns}\n  data={userData}\n  keyExtractor={(item) => item.id}\n  pagination={{\n    currentPage: 1,\n    totalPages: 25,\n    totalItems: 250,\n    showFirstLast: true,\n    onPageChange: (newPage) => handlePageChange(newPage),\n  }}\n/>`,
     },
   ];
 
@@ -1953,7 +1916,6 @@ function CustomAnswerDemo() {
         { id: "card", label: "Card", icon: IconComponents },
         { id: "chart-header", label: "ChartHeader", icon: IconChartPie },
         { id: "progress-indicator", label: "ProgressIndicator", icon: IconActivity },
-        { id: "pagination", label: "Pagination", icon: IconListNumbers},
         { id: "status-placeholder", label: "StatusPlaceholder", icon: IconLayoutBoard},
         { id: "answer-option", label: "AnswerOption", icon: IconAB},
         { id: "score-list", label: "ScoreList", icon: IconListCheck},
@@ -7339,7 +7301,7 @@ function CustomAnswerDemo() {
               <DocCard
                 title="DataTable"
                 badgeText="Organism"
-                description="Organism tabel data komprehensif dan modular. Dilengkapi judul dan deskripsi, toolbar dengan input pencarian dan tombol aksi, seleksi baris checkbox (termasuk select-all dan status indeterminate), baris expandable dengan rotasi chevron mulus 180 derajat, sorting kolom, serta navigasi paginasi berangka."
+                description="Organism tabel data modular yang berfokus murni pada struktur dan interaksi tabel. Mendukung pengurutan kolom (sorting), seleksi multi-baris (checkbox & indeterminate), ekspansi baris detail (expandable), status loading & empty, serta paginasi terintegrasi."
                 snippets={dataTableSnippets}
               >
                 <div className="space-y-8">
@@ -7357,20 +7319,17 @@ function CustomAnswerDemo() {
                             Interactive DataTable Tester & Configurator
                           </CardTitle>
                           <CardDescription className="mt-1 text-xs">
-                            Uji coba berbagai fitur interaktif tabel: seleksi checkbox, ekspansi baris, pencarian teks, tombol aksi toolbar, status loading, dan paginasi.
+                            Uji coba fitur interaktif tabel: seleksi checkbox, ekspansi baris, status loading, simulasi data kosong, dan kontrol paginasi.
                           </CardDescription>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setDtTitle("Title");
-                            setDtDescription("Description");
-                            setDtSearchable(true);
                             setDtSelectable(true);
                             setDtExpandable(true);
-                            setDtHasToolbarActions(true);
                             setDtHasPagination(true);
+                            setDtPaginationShowFirstLast(false);
                             setDtIsLoading(false);
                             setDtIsEmpty(false);
                             setDtPage(1);
@@ -7384,108 +7343,67 @@ function CustomAnswerDemo() {
                     </CardHeader>
                     <CardContent className="pt-6 space-y-6">
                       {/* Controls Grid */}
-                      <div className="grid grid-cols-1 gap-5 p-4 text-xs border lg:grid-cols-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl border-slate-200 dark:border-slate-700/60">
-                        {/* Column 1: Feature Toggles */}
-                        <div className="space-y-3">
-                          <span className="block font-semibold text-slate-700 dark:text-slate-300">
-                            Fitur & Opsi Interaksi:
-                          </span>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtSearchable}
-                                onChange={(e) => setDtSearchable(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Pencarian (searchable)</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtSelectable}
-                                onChange={(e) => setDtSelectable(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Seleksi Baris (selectable)</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtExpandable}
-                                onChange={(e) => setDtExpandable(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Baris Lipat (expandable)</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtHasToolbarActions}
-                                onChange={(e) => setDtHasToolbarActions(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Aksi Toolbar (action buttons)</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtHasPagination}
-                                onChange={(e) => setDtHasPagination(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Paginasi (pagination)</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtIsLoading}
-                                onChange={(e) => setDtIsLoading(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Simulasi Loading</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                              <input
-                                type="checkbox"
-                                checked={dtIsEmpty}
-                                onChange={(e) => setDtIsEmpty(e.target.checked)}
-                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
-                              />
-                              <span>Simulasi Data Kosong</span>
-                            </label>
-                          </div>
-                        </div>
-
-                        {/* Column 2: Titles & Text Customization */}
-                        <div className="space-y-3">
-                          <span className="block font-semibold text-slate-700 dark:text-slate-300">
-                            Teks Judul & Deskripsi:
-                          </span>
-                          <div>
-                            <label className="block mb-1 text-slate-600 dark:text-slate-400">
-                              Judul Header (title):
-                            </label>
+                      <div className="p-4 text-xs border bg-slate-50 dark:bg-slate-800/40 rounded-xl border-slate-200 dark:border-slate-700/60">
+                        <span className="block mb-3 font-semibold text-slate-700 dark:text-slate-300">
+                          Fitur & Opsi Interaksi Tabel:
+                        </span>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                          <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
                             <input
-                              type="text"
-                              value={dtTitle}
-                              onChange={(e) => setDtTitle(e.target.value)}
-                              className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
-                              placeholder="Masukkan judul..."
+                              type="checkbox"
+                              checked={dtSelectable}
+                              onChange={(e) => setDtSelectable(e.target.checked)}
+                              className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
                             />
-                          </div>
-                          <div>
-                            <label className="block mb-1 text-slate-600 dark:text-slate-400">
-                              Deskripsi Header (description):
-                            </label>
+                            <span>Seleksi Baris (selectable)</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
                             <input
-                              type="text"
-                              value={dtDescription}
-                              onChange={(e) => setDtDescription(e.target.value)}
-                              className="w-full px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-aposis-blue-60"
-                              placeholder="Masukkan deskripsi..."
+                              type="checkbox"
+                              checked={dtExpandable}
+                              onChange={(e) => setDtExpandable(e.target.checked)}
+                              className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
                             />
-                          </div>
+                            <span>Baris Lipat (expandable)</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={dtHasPagination}
+                              onChange={(e) => setDtHasPagination(e.target.checked)}
+                              className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
+                            />
+                            <span>Paginasi (pagination)</span>
+                          </label>
+                          {dtHasPagination && (
+                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                              <input
+                                type="checkbox"
+                                checked={dtPaginationShowFirstLast}
+                                onChange={(e) => setDtPaginationShowFirstLast(e.target.checked)}
+                                className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
+                              />
+                              <span>Tombol Awal/Akhir (showFirstLast)</span>
+                            </label>
+                          )}
+                          <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={dtIsLoading}
+                              onChange={(e) => setDtIsLoading(e.target.checked)}
+                              className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
+                            />
+                            <span>Simulasi Loading</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={dtIsEmpty}
+                              onChange={(e) => setDtIsEmpty(e.target.checked)}
+                              className="w-4 h-4 rounded text-aposis-blue-60 focus:ring-aposis-blue-60"
+                            />
+                            <span>Simulasi Data Kosong</span>
+                          </label>
                         </div>
                       </div>
 
@@ -7521,13 +7439,9 @@ function CustomAnswerDemo() {
 
                         <div className="p-1 border sm:p-2 bg-slate-50/60 dark:bg-slate-950/40 rounded-2xl border-slate-200/80 dark:border-slate-800">
                           <DataTable
-                            title={dtTitle || undefined}
-                            description={dtDescription || undefined}
                             columns={figmaColumns}
                             data={dtIsEmpty ? [] : figmaMockData}
                             keyExtractor={(item) => item.id}
-                            searchable={dtSearchable}
-                            searchPlaceholder="Search input text"
                             selectable={dtSelectable}
                             selectedRowKeys={dtSelectedRows}
                             onSelectionChange={(keys) => setDtSelectedRows(keys)}
@@ -7556,20 +7470,6 @@ function CustomAnswerDemo() {
                                 </p>
                               </div>
                             )}
-                            showDefaultSecondaryActions={dtHasToolbarActions}
-                            primaryAction={
-                              dtHasToolbarActions
-                                ? {
-                                    label: "Button +",
-                                    onClick: () => {
-                                      notification.info({
-                                        teks: "Aksi Tombol Utama",
-                                        description: "Tombol 'Button +' diklik.",
-                                      });
-                                    },
-                                  }
-                                : undefined
-                            }
                             isLoading={dtIsLoading}
                             pagination={
                               dtHasPagination
@@ -7577,6 +7477,7 @@ function CustomAnswerDemo() {
                                     currentPage: dtPage,
                                     totalPages: 30,
                                     totalItems: 150,
+                                    showFirstLast: dtPaginationShowFirstLast,
                                     onPageChange: (p) => setDtPage(p),
                                   }
                                 : undefined
@@ -7643,23 +7544,9 @@ function CustomAnswerDemo() {
                       </CardHeader>
                       <CardContent className="pt-4">
                         <DataTable
-                          title="Title"
-                          description="Description"
                           columns={figmaColumns}
                           data={figmaMockData}
                           keyExtractor={(item) => item.id}
-                          searchable
-                          searchPlaceholder="Search input text"
-                          showDefaultSecondaryActions
-                          primaryAction={{
-                            label: "Button +",
-                            onClick: () => {
-                              notification.info({
-                                teks: "Button +",
-                                description: "Tombol aksi tambah diklik.",
-                              });
-                            },
-                          }}
                           pagination={{
                             currentPage: showcase1Page,
                             totalPages: 30,
@@ -7689,13 +7576,9 @@ function CustomAnswerDemo() {
                       </CardHeader>
                       <CardContent className="pt-4">
                         <DataTable
-                          title="Title"
-                          description="Description"
                           columns={figmaColumns}
                           data={figmaMockData}
                           keyExtractor={(item) => item.id}
-                          searchable
-                          searchPlaceholder="Search input text"
                           expandable
                           expandedRowKeys={showcase2Expanded}
                           onExpandRow={(key, isExp) => {
@@ -7713,16 +7596,6 @@ function CustomAnswerDemo() {
                               </p>
                             </div>
                           )}
-                          showDefaultSecondaryActions
-                          primaryAction={{
-                            label: "Button +",
-                            onClick: () => {
-                              notification.info({
-                                teks: "Button +",
-                                description: "Tombol aksi tambah diklik.",
-                              });
-                            },
-                          }}
                           pagination={{
                             currentPage: showcase2Page,
                             totalPages: 30,
@@ -7752,26 +7625,12 @@ function CustomAnswerDemo() {
                       </CardHeader>
                       <CardContent className="pt-4">
                         <DataTable
-                          title="Title"
-                          description="Description"
                           columns={figmaColumns}
                           data={figmaMockData}
                           keyExtractor={(item) => item.id}
-                          searchable
-                          searchPlaceholder="Search input text"
                           selectable
                           selectedRowKeys={showcase3Selected}
                           onSelectionChange={(keys) => setShowcase3Selected(keys)}
-                          showDefaultSecondaryActions
-                          primaryAction={{
-                            label: "Button +",
-                            onClick: () => {
-                              notification.info({
-                                teks: "Button +",
-                                description: `Tombol aksi diklik dengan ${showcase3Selected.length} baris terpilih.`,
-                              });
-                            },
-                          }}
                           pagination={{
                             currentPage: showcase3Page,
                             totalPages: 30,
@@ -7801,13 +7660,9 @@ function CustomAnswerDemo() {
                       </CardHeader>
                       <CardContent className="pt-4">
                         <DataTable
-                          title="Title"
-                          description="Description"
                           columns={figmaColumns}
                           data={figmaMockData}
                           keyExtractor={(item) => item.id}
-                          searchable
-                          searchPlaceholder="Search input text"
                           selectable
                           selectedRowKeys={showcase4Selected}
                           onSelectionChange={(keys) => setShowcase4Selected(keys)}
@@ -7828,16 +7683,6 @@ function CustomAnswerDemo() {
                               </p>
                             </div>
                           )}
-                          showDefaultSecondaryActions
-                          primaryAction={{
-                            label: "Button +",
-                            onClick: () => {
-                              notification.info({
-                                teks: "Button +",
-                                description: "Tombol aksi pada mode kombinasi diklik.",
-                              });
-                            },
-                          }}
                           pagination={{
                             currentPage: showcase4Page,
                             totalPages: 30,
@@ -7867,27 +7712,47 @@ function CustomAnswerDemo() {
                       </CardHeader>
                       <CardContent className="pt-4">
                         <DataTable
-                          title="Daftar Siswa Aktif"
-                          description="Data kesiswaan tahun akademik 2025/2026 semester ganjil."
                           columns={studentColumns}
                           data={mockStudents}
                           keyExtractor={(item) => item.id}
-                          searchable
-                          searchPlaceholder="Cari siswa berdasarkan nama atau NISN..."
-                          primaryAction={{
-                            label: "Tambah Siswa +",
-                            onClick: () => {
-                              notification.success({
-                                teks: "Tambah Siswa",
-                                description: "Modal formulir pendaftaran siswa baru akan dibuka.",
-                              });
-                            },
-                          }}
                           pagination={{
                             currentPage: tablePage,
                             totalPages: 5,
                             totalItems: 48,
                             onPageChange: setTablePage,
+                          }}
+                        />
+                      </CardContent>
+                    </Card>
+
+                    {/* Mode 6: Built-in Full Pagination Table */}
+                    <Card className="shadow-xs dark:bg-slate-900 dark:border-slate-800">
+                      <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800/80">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                              Mode 6: DataTable Terintegrasi Paginasi Penuh
+                            </CardTitle>
+                            <CardDescription className="text-xs">
+                              Navigasi paginasi menyatu di dalam tabel dengan tombol lompat halaman awal («) dan akhir (»), indikator halaman aktif, serta hitungan total baris.
+                            </CardDescription>
+                          </div>
+                          <Badge variant="primary" appearance="subtle" size="sm">
+                            Integrated Pagination
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <DataTable
+                          columns={figmaColumns}
+                          data={figmaMockData}
+                          keyExtractor={(item) => item.id}
+                          pagination={{
+                            currentPage: showcase6Page,
+                            totalPages: 20,
+                            totalItems: 200,
+                            showFirstLast: true,
+                            onPageChange: (p) => setShowcase6Page(p),
                           }}
                         />
                       </CardContent>
@@ -8678,131 +8543,7 @@ function CustomAnswerDemo() {
                 </div>
               </DocCard>
             )}
-            {/* ORGANISMS: PAGINATION */}
-            {selectedId === "pagination" && (
-              <DocCard
-                title="Pagination"
-                badgeText="Molecule"
-                description="Komponen navigasi penomoran halaman interaktif dengan penanda aktif underline, ellipsis otomatis, variasi ukuran, serta fitur quick-jump dropdown."
-                snippets={paginationSnippets}
-              >
-                <div className="space-y-6">
-                  <Card className="shadow-sm dark:bg-slate-900 dark:border-slate-800 border-aposis-blue-20/60">
-                    <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
-                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-                        <div>
-                          <CardTitle className="flex items-center gap-2 text-base">
-                            Interactive Pagination Configurator
-                          </CardTitle>
-                          <CardDescription className="mt-1 text-xs">
-                            Ubah parameter di bawah untuk menguji perubahan ukuran, total halaman, dan navigasi secara live.
-                          </CardDescription>
-                        </div>
-                        
-                        {/* Quick Controls */}
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={paginationPage === 1}
-                            onClick={() => setPaginationPage(1)}
-                          >
-                            Reset ke Hal 1
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
 
-                    <CardContent className="pt-6 pb-8 space-y-6">
-                      {/* Controls Configurator */}
-                      <div className="grid grid-cols-1 gap-4 p-4 border sm:grid-cols-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800">
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-white mb-1.5">
-                            Ukuran (Size)
-                          </label>
-                          <select
-                            value={paginationSize}
-                            onChange={(e) => setPaginationSize(e.target.value as any)}
-                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="xs">XS (Extra Small)</option>
-                            <option value="sm">SM (Small)</option>
-                            <option value="md">MD (Medium)</option>
-                            <option value="lg">LG (Large)</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 dark:text-white mb-1.5">
-                            Total Halaman
-                          </label>
-                          <input
-                            type="number"
-                            min={1}
-                            max={100}
-                            defaultValue={paginationTotalPages}
-                            key={paginationTotalPages} 
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                e.currentTarget.blur();
-                              }
-                              e.stopPropagation();
-                            }}
-                            onBlur={(e) => {
-                              const val = parseInt(e.target.value, 10);
-                              if (isNaN(val) || val < 1) {
-                                e.target.value = "1";
-                                setPaginationTotalPages(1);
-                                if (paginationPage > 1) setPaginationPage(1);
-                              } else {
-                                setPaginationTotalPages(val);
-                                if (paginationPage > val) {
-                                  setPaginationPage(val);
-                                }
-                              }
-                            }}
-                            className="w-full px-3 py-2 text-xs bg-white border rounded-lg border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-
-                        <div className="flex items-end pb-2">
-                          <label className="flex items-center gap-2 text-xs cursor-pointer select-none text-slate-700 dark:text-slate-300">
-                            <input
-                              type="checkbox"
-                              checked={paginationShowFirstLast}
-                              onChange={(e) => setPaginationShowFirstLast(e.target.checked)}
-                              className="text-blue-600 rounded border-slate-300 focus:ring-blue-500"
-                            />
-                            Tampilkan First / Last Page
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Live Preview Showcase */}
-                      <div className="space-y-2">
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                          Live Interactive Preview
-                        </span>
-                        <div className="flex flex-col items-center justify-center gap-4 p-8 bg-white border rounded-2xl dark:bg-slate-950 border-slate-200 dark:border-slate-800">
-                          <Pagination
-                            currentPage={paginationPage}
-                            totalPages={paginationTotalPages}
-                            onPageChange={(page) => setPaginationPage(page)}
-                            size={paginationSize}
-                            showFirstLast={paginationShowFirstLast}
-                            enableQuickJump={true}
-                          />
-                          <div className="pt-2 font-mono text-xs text-slate-500">
-                            Halaman Aktif: <span className="font-semibold text-slate-800 dark:text-slate-200">{paginationPage}</span> dari {paginationTotalPages}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </DocCard>
-            )}
 
             {/* ORGANISMS: CARD */}
             {selectedId === "card" && (

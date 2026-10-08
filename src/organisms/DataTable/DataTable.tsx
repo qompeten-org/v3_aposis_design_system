@@ -1,18 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { cn } from '../../utils/cn';
 import {
-  IconSearch,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
-  IconPlus,
   IconInbox,
   IconArrowsSort,
   IconSortAscending,
   IconSortDescending,
   IconLoader,
 } from '@tabler/icons-react';
-import { Button } from '../../atoms/Button/Button';
 import { Checkbox } from '../../atoms/Checkbox/Checkbox';
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -36,8 +33,20 @@ export interface PaginationConfig {
   totalItems?: number;
   pageSize?: number;
   showItemCount?: boolean;
+  showFirstLast?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  variant?: 'underline' | 'pill' | 'bordered';
+  enableQuickJump?: boolean;
 }
 
+export {
+  Pagination,
+  type PaginationProps,
+  type PaginationSize,
+  type PaginationVariant,
+} from '../Pagination/Pagination';
+
+/** @deprecated Toolbar actions have been removed from DataTable. Use external Card or layout wrappers. */
 export interface PrimaryActionConfig {
   label?: string;
   icon?: React.ReactNode;
@@ -46,6 +55,7 @@ export interface PrimaryActionConfig {
   className?: string;
 }
 
+/** @deprecated Toolbar actions have been removed from DataTable. Use external Card or layout wrappers. */
 export interface SecondaryActionConfig {
   icon?: React.ReactNode;
   label?: string;
@@ -56,33 +66,13 @@ export interface SecondaryActionConfig {
 }
 
 export interface DataTableProps<T>
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
-  /** Optional main heading title */
-  title?: React.ReactNode;
-  /** Optional secondary description beneath title */
-  description?: React.ReactNode;
-
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** Column configuration definitions */
   columns: Column<T>[];
   /** Data records */
   data: T[];
   /** Key extractor to identify unique row key */
   keyExtractor?: (item: T, index: number) => string | number;
-
-  /** Enable integrated search field */
-  searchable?: boolean;
-  searchPlaceholder?: string;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-
-  /** Custom right side toolbar actions container */
-  toolbarActions?: React.ReactNode;
-  /** Primary button action (e.g. Button +) */
-  primaryAction?: PrimaryActionConfig;
-  /** Secondary icon buttons (e.g. 3 plus action buttons) */
-  secondaryActions?: SecondaryActionConfig[];
-  /** Whether to render default 3 plus action buttons if secondaryActions not specified */
-  showDefaultSecondaryActions?: boolean;
 
   /** Enable row selection with checkboxes */
   selectable?: boolean;
@@ -115,19 +105,9 @@ export interface DataTableProps<T>
 }
 
 export function DataTable<T>({
-  title,
-  description,
   columns,
   data,
   keyExtractor,
-  searchable = false,
-  searchPlaceholder = 'Search input text',
-  searchValue,
-  onSearchChange,
-  toolbarActions,
-  primaryAction,
-  secondaryActions,
-  showDefaultSecondaryActions = false,
   selectable = false,
   selectedRowKeys,
   onSelectionChange,
@@ -153,18 +133,6 @@ export function DataTable<T>({
   const getRowKey = (row: T, index: number): string | number => {
     if (keyExtractor) return keyExtractor(row, index);
     return (row as Record<string, any>)?.id ?? index;
-  };
-
-  // Internal search state (if uncontrolled)
-  const [internalSearch, setInternalSearch] = useState<string>('');
-  const currentSearch = searchValue !== undefined ? searchValue : internalSearch;
-
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (searchValue === undefined) {
-      setInternalSearch(val);
-    }
-    onSearchChange?.(val);
   };
 
   // Internal selection state (if uncontrolled)
@@ -197,26 +165,12 @@ export function DataTable<T>({
     onSortChange?.(colKey, nextDir);
   };
 
-  // Filter data by search query if uncontrolled
-  const filteredData = useMemo(() => {
-    if (!currentSearch.trim() || searchValue !== undefined) {
-      return data;
-    }
-    const query = currentSearch.toLowerCase();
-    return data.filter((item) => {
-      return Object.values(item as Record<string, any>).some((val) => {
-        if (val === null || val === undefined) return false;
-        return String(val).toLowerCase().includes(query);
-      });
-    });
-  }, [data, currentSearch, searchValue]);
-
   // Sort data if uncontrolled
   const sortedData = useMemo(() => {
     if (!currentSortCol || !currentSortDir || sortColumn !== undefined) {
-      return filteredData;
+      return data;
     }
-    return [...filteredData].sort((a, b) => {
+    return [...data].sort((a, b) => {
       const aVal = (a as Record<string, any>)[currentSortCol];
       const bVal = (b as Record<string, any>)[currentSortCol];
 
@@ -232,7 +186,7 @@ export function DataTable<T>({
       const strB = String(bVal).toLowerCase();
       return currentSortDir === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA);
     });
-  }, [filteredData, currentSortCol, currentSortDir, sortColumn]);
+  }, [data, currentSortCol, currentSortDir, sortColumn]);
 
   // Handle select all checkbox
   const allRowKeys = useMemo(
@@ -320,93 +274,9 @@ export function DataTable<T>({
     return pages;
   }, [pagination]);
 
-  // Secondary actions list resolution
-  const resolvedSecondaryActions = useMemo(() => {
-    if (secondaryActions) return secondaryActions;
-    if (showDefaultSecondaryActions) {
-      return [{ ariaLabel: 'Aksi 1' }, { ariaLabel: 'Aksi 2' }, { ariaLabel: 'Aksi 3' }];
-    }
-    return [];
-  }, [secondaryActions, showDefaultSecondaryActions]);
-
-  const hasToolbar = searchable || primaryAction || resolvedSecondaryActions.length > 0 || toolbarActions;
-
   return (
-    <div id={id} className={cn('w-full flex flex-col gap-4 font-sans', className)} {...props}>
-      {/* 1. Header: Title & Description */}
-      {(title || description) && (
-        <div className="space-y-1">
-          {title && (
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-              {title}
-            </h2>
-          )}
-          {description && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {description}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* 2. Toolbar: Search Bar & Action Buttons */}
-      {hasToolbar && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {/* Left: Search input field */}
-          {searchable ? (
-            <div className="relative w-full sm:w-80 md:w-96">
-              <IconSearch
-                size={18}
-                className="absolute text-slate-400 -translate-y-1/2 left-3.5 top-1/2 pointer-events-none"
-              />
-              <input
-                type="text"
-                value={currentSearch}
-                onChange={handleSearchInputChange}
-                placeholder={searchPlaceholder}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-xs md:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-aposis-blue-60 focus:bg-white dark:focus:bg-slate-900 transition-all duration-150"
-              />
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {/* Right: Actions */}
-          <div className="flex items-center self-end gap-2 sm:self-auto shrink-0">
-            {toolbarActions}
-
-            {/* Secondary Icon Buttons */}
-            {resolvedSecondaryActions.map((action, idx) => (
-              <button
-                key={idx}
-                type="button"
-                aria-label={action.ariaLabel || action.label || `Action ${idx + 1}`}
-                disabled={action.disabled}
-                onClick={action.onClick}
-                className="flex items-center justify-center transition-colors bg-white border shadow-xs w-9 h-9 rounded-xl border-slate-200/90 dark:border-slate-700/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/70 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {action.icon || <IconPlus size={16} stroke={2.5} />}
-              </button>
-            ))}
-
-            {/* Primary Action Button */}
-            {primaryAction && (
-              <Button
-                variant="primary"
-                size="md"
-                disabled={primaryAction.disabled}
-                onClick={primaryAction.onClick}
-                className={cn('rounded-xl font-medium shadow-xs', primaryAction.className)}
-                rightIcon={primaryAction.icon || <IconPlus size={16} stroke={2.5} />}
-              >
-                {primaryAction.label || 'Button'}
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 3. Table Container Card */}
+    <div id={id} className={cn('w-full flex flex-col font-sans', className)} {...props}>
+      {/* Table Container Card */}
       <div className="flex flex-col w-full overflow-hidden bg-white border shadow-xs dark:bg-slate-900 rounded-2xl border-slate-200/80 dark:border-slate-800">
         <div className="w-full overflow-x-auto">
           <table className={cn('w-full text-left border-collapse', tableClassName)}>
@@ -611,6 +481,20 @@ export function DataTable<T>({
 
             {/* Pagination Controls */}
             <div className="flex items-center order-1 gap-1 sm:order-2">
+              {/* First button */}
+              {pagination.showFirstLast && (
+                <button
+                  type="button"
+                  disabled={pagination.currentPage <= 1}
+                  onClick={() => pagination.onPageChange(1)}
+                  aria-label="Halaman pertama"
+                  title="Halaman pertama"
+                  className="flex items-center justify-center w-8 h-8 transition-colors rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold"
+                >
+                  &laquo;
+                </button>
+              )}
+
               {/* Previous button */}
               <button
                 type="button"
@@ -662,6 +546,20 @@ export function DataTable<T>({
               >
                 <IconChevronRight size={16} />
               </button>
+
+              {/* Last button */}
+              {pagination.showFirstLast && (
+                <button
+                  type="button"
+                  disabled={pagination.currentPage >= pagination.totalPages}
+                  onClick={() => pagination.onPageChange(pagination.totalPages)}
+                  aria-label="Halaman terakhir"
+                  title="Halaman terakhir"
+                  className="flex items-center justify-center w-8 h-8 transition-colors rounded-lg cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold"
+                >
+                  &raquo;
+                </button>
+              )}
             </div>
           </div>
         )}
