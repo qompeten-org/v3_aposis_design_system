@@ -3,17 +3,19 @@ import { cn } from '../../utils/cn';
 import { X } from 'lucide-react';
 
 export interface ModalProps {
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  children: React.ReactNode;
+  title?: string;
+  description?: string;
+  children?: React.ReactNode;
   footer?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
+  id,
   isOpen,
   onClose,
   title,
@@ -58,6 +60,7 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Dialog */}
       <div
+        id={id}
         role="dialog"
         aria-modal="true"
         className={cn(

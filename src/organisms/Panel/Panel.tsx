@@ -24,7 +24,8 @@ export interface HeaderPanelBreadcrumbItem {
   onClick?: () => void;
 }
 
-export interface HeaderPanelProps {
+export interface HeaderPanelProps extends React.HTMLAttributes<HTMLElement> {
+  id?: string;
   breadcrumbs?: HeaderPanelBreadcrumbItem[];
   onToggleLeftSidebar?: () => void;
   onToggleRightSidebar?: () => void;
@@ -35,9 +36,11 @@ export interface HeaderPanelProps {
   theme?: 'light' | 'dark';
   onThemeToggle?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const HeaderPanel: React.FC<HeaderPanelProps> = ({
+  id,
   breadcrumbs = [
     { label: 'Link', href: '#' },
     { label: 'Link', href: '#' },
@@ -53,14 +56,18 @@ export const HeaderPanel: React.FC<HeaderPanelProps> = ({
   onLanguageChange,
   theme = 'light',
   onThemeToggle,
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   return (
     <header
+      id={id}
       className={cn(
         "flex h-12 w-full items-center justify-start gap-2 border-b border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-2 font-['Lexend'] text-xs leading-[18px] tracking-[0.12px] transition-colors",
         className
       )}
+      {...props}
     >
       {/* Left Controls */}
       <div className="flex items-center gap-1">
@@ -190,7 +197,26 @@ export interface LeftPanelNavGroup {
   items: LeftPanelNavItem[];
 }
 
-export interface LeftPanelProps {
+export const mockLeftPanelNavGroups: LeftPanelNavGroup[] = [
+  {
+    subtitle: 'MENU UTAMA',
+    items: [
+      { id: 'dashboard', label: 'Dashboard' },
+      { id: 'analytics', label: 'Analitik & Laporan' },
+      { id: 'users', label: 'Manajemen Pengguna' },
+    ],
+  },
+  {
+    subtitle: 'PENGATURAN',
+    items: [
+      { id: 'settings', label: 'Konfigurasi Sistem' },
+      { id: 'billing', label: 'Langganan & Tagihan' },
+    ],
+  },
+];
+
+export interface LeftPanelProps extends React.HTMLAttributes<HTMLElement> {
+  id?: string;
   isCompact?: boolean;
   onToggleCompact?: () => void;
   logoUrl?: string;
@@ -209,13 +235,15 @@ export interface LeftPanelProps {
   profileAvatarUrl?: string;
   onProfileClick?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
+  id,
   isCompact = false,
   logoUrl = 'https://placehold.co/116x32?text=APOSIS',
   compactLogoUrl = 'https://placehold.co/32x32?text=A',
-  navGroups = [],
+  navGroups = mockLeftPanelNavGroups,
   selectedId,
   onSelectNav,
   showCtaBanner = true,
@@ -228,7 +256,9 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
   profileCode = 'ABC',
   profileAvatarUrl,
   onProfileClick,
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
@@ -238,11 +268,13 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
   return (
     <aside
+      id={id}
       className={cn(
         "flex flex-col h-full border-r border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 font-['Lexend'] p-4 transition-all duration-300 select-none",
         isCompact ? 'w-20 items-center gap-1.5' : 'w-64 items-start gap-1.5',
         className
       )}
+      {...props}
     >
       {/* Header Logo */}
       <div className={cn("w-full py-2 flex items-center", isCompact ? 'justify-center' : 'justify-start')}>
@@ -401,6 +433,9 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
         </div>
       )}
 
+      {/* Custom Children Slot */}
+      {children && <div className="w-full my-2">{children}</div>}
+
       {/* Footer Profile */}
       <div className="w-full pt-2 border-t border-[#E2E8F0] dark:border-slate-800">
         <button
@@ -457,7 +492,14 @@ export interface ActivityItem {
   badgeText?: string;
 }
 
-export interface RightPanelProps {
+export const mockRightPanelTabs: RightPanelTab[] = [
+  { id: 'tab-1', label: 'Ringkasan' },
+  { id: 'tab-2', label: 'Detail' },
+  { id: 'tab-3', label: 'Riwayat' },
+];
+
+export interface RightPanelProps extends React.HTMLAttributes<HTMLElement> {
+  id?: string;
   isOpen?: boolean;
   onClose?: () => void;
   showHeaderIcon?: boolean;
@@ -482,20 +524,14 @@ export interface RightPanelProps {
 }
 
 export const RightPanel: React.FC<RightPanelProps> = ({
+  id,
   isOpen = true,
   onClose,
   showHeaderIcon = true,
   headerIcon: HeaderIcon = IconPlus,
   title = 'Title',
   showCloseButton = true,
-  tabs = [
-    { id: 'tab-1', label: 'Tab' },
-    { id: 'tab-2', label: 'Tab' },
-    { id: 'tab-3', label: 'Tab' },
-    { id: 'tab-4', label: 'Tab' },
-    { id: 'tab-5', label: 'Tab' },
-    { id: 'tab-6', label: 'Tab' },
-  ],
+  tabs = mockRightPanelTabs,
   activeTabId = 'tab-1',
   onTabChange,
   descriptionText = 'Lorem ipsum dolor sit lorem a amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
@@ -509,17 +545,20 @@ export const RightPanel: React.FC<RightPanelProps> = ({
   primaryLabel = 'Button',
   onPrimaryAction,
   widthClass = 'w-[440px]',
-  className = '',
+  className,
+  ...props
 }) => {
   if (!isOpen) return null;
 
   return (
     <aside
+      id={id}
       className={cn(
         "flex flex-col h-full bg-white dark:bg-slate-900 border-l border-[#E2E8F0] dark:border-slate-800 font-['Lexend'] shadow-lg transition-all duration-300",
         widthClass,
         className
       )}
+      {...props}
     >
       {/* Header Section */}
       <div className="pt-5 px-5 bg-white dark:bg-slate-900 border-b border-[#E2E8F0] dark:border-slate-800 flex flex-col gap-2 shrink-0">
@@ -658,7 +697,8 @@ export const RightPanel: React.FC<RightPanelProps> = ({
 // ==========================================
 // 4. UNIFIED MAIN PANEL COMPONENT & EXPORTS
 // ==========================================
-export interface UnifiedPanelProps {
+export interface UnifiedPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+  id?: string;
   variant?: 'left' | 'right' | 'header' | 'custom';
   leftProps?: LeftPanelProps;
   rightProps?: RightPanelProps;
@@ -672,19 +712,21 @@ export const PanelComponent: React.FC<UnifiedPanelProps> & {
   Left: typeof LeftPanel;
   Right: typeof RightPanel;
 } = ({
+  id,
   variant = 'custom',
   leftProps,
   rightProps,
   headerProps,
   children,
   className,
+  ...props
 }) => {
-  if (variant === 'header') return <HeaderPanel {...headerProps} className={className} />;
-  if (variant === 'left') return <LeftPanel {...leftProps} className={className} />;
-  if (variant === 'right') return <RightPanel {...rightProps} className={className} />;
+  if (variant === 'header') return <HeaderPanel id={id} {...headerProps} className={className} />;
+  if (variant === 'left') return <LeftPanel id={id} {...leftProps} className={className} />;
+  if (variant === 'right') return <RightPanel id={id} {...rightProps} className={className} />;
 
   return (
-    <div className={cn("bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl", className)}>
+    <div id={id} className={cn("bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl", className)} {...props}>
       {children}
     </div>
   );

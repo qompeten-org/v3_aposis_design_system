@@ -10,9 +10,17 @@ export interface OptionItem {
   disabled?: boolean;
 }
 
-export interface DropdownProps {
+export const mockDropdownOptions: OptionItem[] = [
+  { label: 'Ilmu Pengetahuan Alam', value: 'ipa' },
+  { label: 'Matematika Dasar', value: 'matematika' },
+  { label: 'Bahasa Indonesia', value: 'bahasa' },
+  { label: 'Bahasa Inggris', value: 'inggris' },
+];
+
+export interface DropdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'value'> {
+  id?: string;
   label?: string;
-  options: OptionItem[];
+  options?: OptionItem[];
   value?: string | string[];
   onChange?: (value: string | string[]) => void;
   placeholder?: string;
@@ -29,9 +37,10 @@ export interface DropdownProps {
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
+  id,
   label,
   placeholder = "Pilih Opsi",
-  options = [],
+  options = mockDropdownOptions,
   value,
   onChange,
   size = "medium",
@@ -44,6 +53,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   isMulti = false,
   required = false,
   className,
+  ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -195,12 +205,17 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div
+      id={id}
       className={cn("w-full flex flex-col gap-1.5 font-sans", className)}
       ref={dropdownRef}
+      {...props}
     >
       {/* Label */}
       {label && (
-        <label className="flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300">
+        <label
+          htmlFor={id ? `${id}-trigger` : undefined}
+          className="flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300"
+        >
           {label}
           {required && <span className="text-red-500">*</span>}
         </label>
@@ -209,6 +224,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       {/* Input Trigger Box */}
       <div className="relative w-full">
         <button
+          id={id ? `${id}-trigger` : undefined}
           type="button"
           disabled={disabled || readOnly}
           onClick={() => setIsOpen(!isOpen)}
@@ -267,6 +283,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 const selected = isSelected(option.value);
                 return (
                   <button
+                    id={id ? `${id}-opt-${option.value}` : undefined}
                     key={option.value}
                     type="button"
                     disabled={option.disabled}

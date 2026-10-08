@@ -4,7 +4,7 @@ import { cn } from '../../utils/cn';
 export type TagSize = 'large' | 'medium' | 'small' | 'extra-small';
 export type TagColor = 'slate' | 'blue' | 'emerald' | 'amber' | 'rose';
 
-export interface TagProps {
+export interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   size?: TagSize;
   color?: TagColor;
@@ -17,6 +17,7 @@ export interface TagProps {
 }
 
 export const Tag: React.FC<TagProps> = ({
+  id,
   children,
   size = 'large',
   color = 'slate',
@@ -26,6 +27,7 @@ export const Tag: React.FC<TagProps> = ({
   disabled = false,
   className,
   onClick,
+  ...props
 }) => {
 
   const sizeStyles: Record<TagSize, string> = {
@@ -53,6 +55,7 @@ export const Tag: React.FC<TagProps> = ({
 
   return (
     <div
+      id={id}
       onClick={!disabled && !readOnly ? onClick : undefined}
       className={cn(
         'inline-flex items-center justify-center font-[#Lexend] font-semibold tracking-wider transition-all border border-transparent select-none',
@@ -62,6 +65,7 @@ export const Tag: React.FC<TagProps> = ({
         !readOnly && !disabled && 'cursor-pointer active:scale-95',
         className
       )}
+      {...props}
     >
       {/* Leading Icon */}
       {icon && <span className={cn('shrink-0 flex items-center justify-center', iconSizeStyles[size])}>{icon}</span>}
@@ -89,15 +93,15 @@ export const Tag: React.FC<TagProps> = ({
   );
 };
 
-export interface TagGroupProps {
+export interface TagGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export const TagGroup: React.FC<TagGroupProps> = ({ label, children, className }) => {
+export const TagGroup: React.FC<TagGroupProps> = ({ label, children, className, id, ...props }) => {
   return (
-    <div className={cn('flex flex-col gap-2 w-full', className)}>
+    <div id={id} className={cn('flex flex-col gap-2 w-full', className)} {...props}>
       {label && <span className="text-xs font-normal text-[#475569] dark:text-white tracking-wide">{label}</span>}
       <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>

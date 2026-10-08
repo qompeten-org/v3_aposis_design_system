@@ -1,12 +1,21 @@
 import React from 'react';
 import { Plus, SlidersHorizontal, Table, Maximize2, MoreVertical, X } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 export interface ChartTypeOption {
   id: string;
   label: string;
 }
 
-export interface ChartHeaderProps {
+export const mockChartTypes: ChartTypeOption[] = [
+  { id: 'bar', label: 'Bar' },
+  { id: 'treemap', label: 'Treemap' },
+  { id: 'pie', label: 'Pie' },
+  { id: 'sankey', label: 'Sankey' },
+];
+
+export interface ChartHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+  id?: string;
   title: string;
   subtitle?: string;
   chartTypes?: ChartTypeOption[];
@@ -19,17 +28,14 @@ export interface ChartHeaderProps {
   onExpandClick?: () => void;
   onMoreClick?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const ChartHeader: React.FC<ChartHeaderProps> = ({
+  id,
   title,
   subtitle,
-  chartTypes = [
-    { id: 'bar', label: 'Bar' },
-    { id: 'treemap', label: 'Treemap' },
-    { id: 'pie', label: 'Pie' },
-    { id: 'sankey', label: 'Sankey' },
-  ],
+  chartTypes = mockChartTypes,
   activeChartType = 'bar',
   onChartTypeChange,
   activeTags = [],
@@ -38,10 +44,12 @@ export const ChartHeader: React.FC<ChartHeaderProps> = ({
   onTableClick,
   onExpandClick,
   onMoreClick,
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   return (
-    <div className={`w-full flex flex-col gap-3 p-4 bg-white font-['Lexend'] ${className}`}>
+    <div id={id} className={cn('w-full flex flex-col gap-3 p-4 bg-white dark:bg-slate-900 font-sans', className)} {...props}>
       {/* Top Bar: Chart Type Pills & Action Buttons */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Left Side: Chart Type Switcher */}
@@ -129,15 +137,17 @@ export const ChartHeader: React.FC<ChartHeaderProps> = ({
 
       {/* Bottom Row: Title & Subtitle */}
       <div className="flex flex-col gap-0.5 mt-1">
-        <h3 className="text-base font-medium text-[#475569] leading-snug">
+        <h3 className="text-base font-medium text-[#475569] dark:text-slate-200 leading-snug">
           {title}
         </h3>
         {subtitle && (
-          <p className="text-xs font-normal text-[#475569] tracking-[0.12px]">
+          <p className="text-xs font-normal text-[#475569] dark:text-slate-400 tracking-[0.12px]">
             {subtitle}
           </p>
         )}
       </div>
+
+      {children && <div>{children}</div>}
     </div>
   );
 };

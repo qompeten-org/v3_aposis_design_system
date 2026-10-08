@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 export interface ProgressStepItem {
   id?: string | number;
@@ -7,21 +8,34 @@ export interface ProgressStepItem {
   description?: string;
 }
 
-export interface ProgressIndicatorProps {
-  steps: ProgressStepItem[];
+export const mockProgressIndicatorSteps: ProgressStepItem[] = [
+  { id: 'step-1', label: 'Informasi Akun', description: 'Data pribadi' },
+  { id: 'step-2', label: 'Verifikasi', description: 'Konfirmasi OTP' },
+  { id: 'step-3', label: 'Pembayaran', description: 'Metode transfer' },
+  { id: 'step-4', label: 'Selesai', description: 'Akun aktif' },
+];
+
+export interface ProgressIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
+  id?: string;
+  steps?: ProgressStepItem[];
   currentStep: number; // Index step aktif (0-indexed, misal step 1 = index 0)
   onStepClick?: (stepIndex: number) => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
-  steps,
+  id,
+  steps = mockProgressIndicatorSteps,
   currentStep,
   onStepClick,
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   return (
-    <div className={`w-full flex items-start justify-center font-['Lexend'] ${className}`}>
+    <div id={id} className={cn('w-full flex flex-col items-center gap-4 font-sans', className)} {...props}>
+      <div className="w-full flex items-start justify-center">
       {steps.map((step, index) => {
         const isCompleted = index < currentStep;
         const isCurrent = index === currentStep;
@@ -31,9 +45,11 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
           <React.Fragment key={step.id ?? index}>
             {/* Step Node Container */}
             <div
-              className={`relative flex flex-col items-center gap-2 group ${
-                onStepClick ? 'cursor-pointer' : ''
-              }`}
+              id={id ? `${id}-step-${step.id ?? index}` : undefined}
+              className={cn(
+                'relative flex flex-col items-center gap-2 group',
+                onStepClick && 'cursor-pointer'
+              )}
               onClick={() => onStepClick?.(index)}
             >
               {/* Circle Indicator */}
@@ -59,11 +75,12 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
               {/* Step Label */}
               <div className="flex flex-col items-center text-center max-w-[120px]">
                 <span
-                  className={`text-sm font-normal leading-[18.2px] transition-colors duration-200 ${
+                  className={cn(
+                    'text-sm font-normal leading-[18.2px] transition-colors duration-200',
                     isCurrent || isCompleted
                       ? 'text-[#0F172A] dark:text-slate-100 font-medium'
                       : 'text-[#64748B] dark:text-slate-400'
-                  }`}
+                  )}
                 >
                   {step.label}
                 </span>
@@ -79,15 +96,18 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             {!isLast && (
               <div className="flex-1 max-w-[240px] min-w-[32px] pt-4 px-2">
                 <div
-                  className={`h-[2px] w-full transition-colors duration-300 ${
+                  className={cn(
+                    'h-[2px] w-full transition-colors duration-300',
                     index < currentStep ? 'bg-[#0F62FE]' : 'bg-[#E2E8F0] dark:bg-slate-800'
-                  }`}
+                  )}
                 />
               </div>
             )}
           </React.Fragment>
         );
       })}
+      </div>
+      {children && <div className="w-full flex justify-center">{children}</div>}
     </div>
   );
 };

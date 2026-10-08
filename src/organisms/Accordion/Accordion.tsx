@@ -8,9 +8,9 @@ export type AccordionWidth = 'full' | 'sm' | 'md' | 'lg' | 'xl' | string;
 export interface AccordionProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'onToggle'> {
   /** Primary title text or element in header */
-  title: React.ReactNode;
+  title: string;
   /** Optional secondary subtitle in header */
-  subtitle?: React.ReactNode;
+  subtitle?: string;
   /** Size variant controlling padding and typography */
   size?: AccordionSize;
   /** Width constraint ('full', 'sm', 'md', 'lg', 'xl', or custom CSS width/className) */
@@ -96,8 +96,9 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
     ref
   ) => {
     const generatedId = useId();
-    const headerId = `accordion-header-${generatedId}`;
-    const bodyId = `accordion-body-${generatedId}`;
+    const accordionId = props.id || generatedId;
+    const headerId = `${accordionId}-header`;
+    const bodyId = `${accordionId}-body`;
 
     const [uncontrolledOpen, setUncontrolledOpen] = useState<boolean>(defaultOpen);
     const isControlled = isOpen !== undefined;
@@ -212,3 +213,24 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
 );
 
 Accordion.displayName = 'Accordion';
+
+export const mockAccordionItems = [
+  {
+    id: 'item-1',
+    title: 'Bagaimana cara mendaftar akun baru?',
+    subtitle: 'Panduan pendaftaran untuk pengguna baru',
+    content: 'Anda dapat mendaftar dengan mengklik tombol Masuk di pojok kanan atas lalu pilih opsi Daftar Akun Baru.',
+  },
+  {
+    id: 'item-2',
+    title: 'Metode pembayaran apa saja yang didukung?',
+    subtitle: 'Informasi gateway pembayaran dan biaya admin',
+    content: 'Kami mendukung transfer bank, QRIS, e-wallet (GoPay, OVO, Dana), dan kartu kredit berlogo Visa/Mastercard.',
+  },
+  {
+    id: 'item-3',
+    title: 'Apakah data saya aman dan terenkripsi?',
+    subtitle: 'Kebijakan privasi dan standar keamanan data',
+    content: 'Semua data komunikasi dienkripsi menggunakan standar TLS 1.3 dan disimpan dengan enkripsi AES-256 pada database.',
+  },
+];

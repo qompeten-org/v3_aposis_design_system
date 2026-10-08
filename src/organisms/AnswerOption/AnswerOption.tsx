@@ -16,7 +16,15 @@ export interface AnswerOptionItem {
   disabled?: boolean;
 }
 
-export interface AnswerOptionProps {
+export const mockAnswerOptions: AnswerOptionItem[] = [
+  { value: 'a', label: 'Opsi A: Sangat Setuju', helperText: 'Pilihan paling positif' },
+  { value: 'b', label: 'Opsi B: Setuju', helperText: 'Pilihan positif' },
+  { value: 'c', label: 'Opsi C: Kurang Setuju', helperText: 'Pilihan ragu-ragu' },
+  { value: 'd', label: 'Opsi Lainnya', customAnswer: true, placeholder: 'Ketik alasan Anda...' },
+];
+
+export interface AnswerOptionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSelect'> {
+  id?: string;
   /** Jenis opsi input: 'radio' atau 'checkbox' (opsional, alternatif pengganti prop multi) */
   type?: 'radio' | 'checkbox';
   /** Mode pilihan: true untuk checkbox (multi-select), false untuk radio (single-select). Default: false */
@@ -33,6 +41,8 @@ export interface AnswerOptionProps {
   name?: string;
   /** ClassName kustom untuk container pembungkus */
   className?: string;
+  /** Custom children slot */
+  children?: React.ReactNode;
 
   // Single Item Mode (kompatibilitas penggunaan per-elemen)
   /** Label untuk penggunaan mode satuan */
@@ -54,6 +64,7 @@ export interface AnswerOptionProps {
 }
 
 export const AnswerOption: React.FC<AnswerOptionProps> = ({
+  id,
   type,
   multi: multiProp = false,
   options,
@@ -62,6 +73,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
   disabled: groupDisabled = false,
   name,
   className = '',
+  children,
 
   // Single item props
   label = 'Label',
@@ -72,6 +84,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
   onSelect,
   onTextChange,
   customValue = '',
+  ...props
 }) => {
   // Gabungkan penentuan mode multi: prioritaskan prop `type`, lalu fallback ke `multiProp`
   const isMulti = type ? type === 'checkbox' : multiProp;
@@ -92,6 +105,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
 
     return (
       <div
+        id={id}
         role={isMulti ? 'checkbox' : 'radio'}
         aria-checked={isSelected}
         aria-disabled={isDisabled}
@@ -250,10 +264,12 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
 
   return (
     <div
+      id={id}
       role={isMulti ? 'group' : 'radiogroup'}
       aria-disabled={groupDisabled}
       data-name={name}
       className={cn('flex flex-col gap-2.5 w-full', className)}
+      {...props}
     >
       {options.map((opt) => {
         const currentCustomVal = customTextMap[opt.value] || '';
@@ -268,6 +284,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
         return (
           <div
             key={opt.value}
+            id={id ? `${id}-opt-${opt.value}` : opt.value}
             role={isMulti ? 'checkbox' : 'radio'}
             aria-checked={isSelected}
             aria-disabled={isDisabled}
@@ -384,6 +401,7 @@ export const AnswerOption: React.FC<AnswerOptionProps> = ({
           </div>
         );
       })}
+      {children && <div className="mt-1">{children}</div>}
     </div>
   );
 };

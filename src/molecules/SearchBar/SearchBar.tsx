@@ -93,7 +93,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         )}
       />
       <input
-        id={inputId}
+        id={inputId || (id ? `${id}-input` : undefined)}
         type="text"
         value={query}
         onChange={handleChange}
@@ -109,6 +109,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <div className="absolute right-2.5 flex items-center gap-1">
         {query && (
           <button
+            id={id ? `${id}-clear` : undefined}
             type="button"
             onClick={handleClear}
             className="p-1 transition-colors rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"

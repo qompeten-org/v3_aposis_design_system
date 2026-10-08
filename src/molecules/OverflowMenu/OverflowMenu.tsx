@@ -9,8 +9,15 @@ export interface OverflowMenuItem {
   onClick?: () => void;
 }
 
+export const mockOverflowMenuItems: OverflowMenuItem[] = [
+  { id: 'edit', label: 'Edit Data' },
+  { id: 'duplicate', label: 'Duplikat' },
+  { id: 'delete', label: 'Hapus Data', danger: true },
+];
+
 export interface OverflowMenuProps {
-  items: OverflowMenuItem[];
+  id?: string;
+  items?: OverflowMenuItem[];
   align?: 'left' | 'right'; 
   position?: 'bottom' | 'top';
   size?: 'small' | 'medium';
@@ -19,7 +26,8 @@ export interface OverflowMenuProps {
 }
 
 export const OverflowMenu: React.FC<OverflowMenuProps> = ({
-  items = [],
+  id,
+  items = mockOverflowMenuItems,
   align = 'left',
   position = 'bottom',
   size = 'small',
@@ -63,7 +71,7 @@ export const OverflowMenu: React.FC<OverflowMenuProps> = ({
   };
 
   return (
-    <div className={cn('relative inline-block font-["IBM_Plex_Sans",sans-serif]', className)} ref={menuRef}>
+    <div id={id} className={cn('relative inline-block font-["IBM_Plex_Sans",sans-serif]', className)} ref={menuRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -94,6 +102,7 @@ export const OverflowMenu: React.FC<OverflowMenuProps> = ({
         >
           {items.map((item, index) => (
             <button
+              id={id ? `${id}-item-${item.id || index}` : undefined}
               key={item.id || index}
               type="button"
               disabled={item.disabled}
@@ -107,13 +116,11 @@ export const OverflowMenu: React.FC<OverflowMenuProps> = ({
                 item.disabled && 'opacity-40 cursor-not-allowed text-slate-400'
               )}
             >
-              <div className="flex items-center justify-center w-4 h-4 shrink-0 text-slate-500 dark:text-slate-400">
-                {item.icon || (
-                  <svg className="w-3.5 h-3.5 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                )}
-              </div>
+              {item.icon && (
+                <div className="flex items-center justify-center w-4 h-4 shrink-0 text-slate-500 dark:text-slate-400">
+                  {item.icon}
+                </div>
+              )}
               <span className="flex-1 truncate">{item.label}</span>
             </button>
           ))}
