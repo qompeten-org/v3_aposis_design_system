@@ -11,6 +11,23 @@ export interface NavLinkItem {
   onClick?: () => void;
 }
 
+export const mockNavbarLinks: NavLinkItem[] = [
+  { id: 'dashboard', label: 'Dashboard', active: true },
+  { id: 'exams', label: 'Ujian' },
+  { id: 'grades', label: 'Nilai' },
+  { id: 'settings', label: 'Pengaturan' },
+];
+
+export const mockNavbarUser: {
+  name: string;
+  email?: string;
+  avatarUrl?: string;
+} = {
+  name: 'Budi Santoso',
+  email: 'budi@sekolah.sch.id',
+  avatarUrl: 'https://placehold.co/40x40?text=BS',
+};
+
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   brandName?: string;
   brandLogo?: React.ReactNode;
@@ -23,18 +40,20 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   };
   notificationCount?: number;
   onNotificationClick?: () => void;
+  children?: React.ReactNode;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   brandName = 'Aposis',
   brandLogo,
-  navLinks = [],
+  navLinks = mockNavbarLinks,
   actions,
-  user,
+  user = mockNavbarUser,
   notificationCount,
   onNotificationClick,
   className,
   id,
+  children,
   ...props
 }) => {
   return (
@@ -63,6 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav className="items-center hidden gap-1 md:flex">
             {navLinks.map((link) => (
               <a
+                id={id ? `${id}-link-${link.id}` : undefined}
                 key={link.id}
                 href={link.href || '#'}
                 onClick={(e) => {
@@ -84,6 +104,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
         )}
       </div>
+
+      {children && <div className="flex-1 px-4">{children}</div>}
 
       {/* Right Side: Actions, Notifications, User */}
       <div className="flex items-center gap-3">

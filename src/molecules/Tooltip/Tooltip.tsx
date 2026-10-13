@@ -28,6 +28,7 @@ export type TooltipSize = 'sm' | 'md' | 'lg';
 export type TooltipVariant = 'default' | 'definition';
 
 export interface TooltipProps {
+  id?: string;
   /** Tooltip text or complex ReactNode content (childrenable) */
   text?: ReactNode;
   /** Trigger element (or content if text is not provided) */
@@ -144,10 +145,12 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       defaultOpen = false,
       onOpenChange,
       trigger,
+      id,
     },
     ref
   ) => {
-    const tooltipId = useId();
+    const generatedId = useId();
+    const tooltipId = id || generatedId;
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
     const [calculatedPos, setCalculatedPos] = useState<Exclude<TooltipPosition, 'auto'>>('top');
     const triggerContainerRef = useRef<HTMLSpanElement>(null);

@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { cn } from '../../utils/cn';
 import { PlusIcon } from 'lucide-react';
 
-export interface ProgressBarProps {
+export interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
-  label?: string;
+  label?: React.ReactNode;
   icon?: React.ReactNode;
   showValue?: boolean;
   size?: 'sm' | 'md';
-  editableLabel?: boolean; // Prop opsional jika label mau editable
+  editableLabel?: boolean;
   className?: string;
 }
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
+  id,
   value,
   label: initialLabel,
   icon,
@@ -20,15 +21,16 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   size = 'sm',
   editableLabel = false,
   className,
+  ...props
 }) => {
   // State internal untuk label
-  const [currentLabel, setCurrentLabel] = useState(initialLabel);
+  const [currentLabel, setCurrentLabel] = useState<React.ReactNode>(initialLabel);
 
   const normalizedValue = Math.min(Math.max(value, 0), 100);
   const trackHeightClass = size === 'md' ? 'h-2 rounded-full' : 'h-1 rounded-full';
 
   return (
-    <div className={cn("w-full flex flex-col gap-1 font-['Lexend'] text-xs", className)}>
+    <div id={id} className={cn("w-full flex flex-col gap-1 font-['Lexend'] text-xs", className)} {...props}>
       {/* Header Area */}
       {(currentLabel || icon || editableLabel) && (
         <div className="inline-flex items-center gap-2 text-[#475569] dark:text-white">
@@ -36,7 +38,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           {editableLabel ? (
             <input
               type="text"
-              value={currentLabel ?? ''}
+              value={typeof currentLabel === 'string' ? currentLabel : ''}
               onChange={(e) => setCurrentLabel(e.target.value)}
               className="bg-transparent border-b border-slate-300 dark:border-slate-700 dark:text-white focus:outline-none focus:border-blue-500 font-normal leading-[18px] tracking-[0.12px]"
             />

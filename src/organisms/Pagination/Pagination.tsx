@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Check, MoreHorizontal } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 export type PaginationSize = 'xs' | 'sm' | 'md' | 'lg';
 export type PaginationVariant = 'underline' | 'pill' | 'bordered';
 
-export interface PaginationProps {
+export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onPageChange'> {
+  id?: string;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -17,6 +19,7 @@ export interface PaginationProps {
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
+  id,
   currentPage,
   totalPages,
   onPageChange,
@@ -25,7 +28,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   variant = 'underline',
   showFirstLast = false,
   enableQuickJump = true,
-  className = '',
+  className,
+  ...props
 }) => {
   const [openDropdown, setOpenDropdown] = useState<'left' | 'right' | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -112,17 +116,20 @@ export const Pagination: React.FC<PaginationProps> = ({
     return (
       <button
         key={page}
+        id={id ? `${id}-page-${page}` : undefined}
         onClick={() => onPageChange(page)}
         aria-current={isSelected ? 'page' : undefined}
-        className={`relative flex flex-col items-center justify-center font-lexend rounded-xl transition-all duration-150 ${sizeStyles.button} ${
+        className={cn(
+          'relative flex flex-col items-center justify-center font-sans rounded-xl transition-all duration-150',
+          sizeStyles.button,
           isSelected
             ? 'font-semibold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800'
             : 'font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-        }`}
+        )}
       >
         <span className="flex items-center justify-center flex-1">{page}</span>
         {isSelected && variant === 'underline' && (
-          <div className={`w-4 bg-[#0F62FE] rounded-full ${sizeStyles.indicatorHeight}`} />
+          <div className={cn('w-4 bg-[#0F62FE] rounded-full', sizeStyles.indicatorHeight)} />
         )}
       </button>
     );
@@ -138,8 +145,12 @@ export const Pagination: React.FC<PaginationProps> = ({
     return (
       <div key={position} className="relative inline-block" ref={dropdownRef}>
         <button
+          id={id ? `${id}-ellipsis-${position}` : undefined}
           onClick={() => enableQuickJump && setOpenDropdown(isOpen ? null : position)}
-          className={`flex items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${sizeStyles.button}`}
+          className={cn(
+            'flex items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors',
+            sizeStyles.button
+          )}
           title={enableQuickJump ? 'Lompat ke halaman' : undefined}
         >
           <MoreHorizontal className={sizeStyles.icon} />
@@ -150,13 +161,15 @@ export const Pagination: React.FC<PaginationProps> = ({
             {dropdownPages.map((p) => (
               <button
                 key={p}
+                id={id ? `${id}-jump-${p}` : undefined}
                 onClick={() => {
                   onPageChange(p);
                   setOpenDropdown(null);
                 }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-lexend flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors ${
+                className={cn(
+                  'w-full text-left px-3 py-1.5 text-xs font-sans flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors',
                   currentPage === p ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-medium' : 'text-slate-700 dark:text-slate-200'
-                }`}
+                )}
               >
                 <div className="flex items-center justify-center w-4 h-4">
                   {currentPage === p && <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
@@ -172,15 +185,21 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <nav
+      id={id}
       aria-label="Pagination Navigation"
-      className={`inline-flex items-center gap-1 border-t border-slate-200 dark:border-slate-800 pt-2 ${className}`}
+      className={cn('inline-flex items-center gap-1 border-t border-slate-200 dark:border-slate-800 pt-2', className)}
+      {...props}
     >
       {/* First Page Button */}
       {showFirstLast && (
         <button
+          id={id ? `${id}-first` : undefined}
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
-          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
+          className={cn(
+            'flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+            sizeStyles.button
+          )}
           title="Halaman Pertama"
         >
           &laquo;
@@ -189,9 +208,13 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Prev Button*/}
       <button
+        id={id ? `${id}-prev` : undefined}
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
+        className={cn(
+          'flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+          sizeStyles.button
+        )}
         aria-label="Halaman Sebelumnya"
       >
         <ChevronLeft className={sizeStyles.icon} />
@@ -206,9 +229,13 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Next Button */}
       <button
+        id={id ? `${id}-next` : undefined}
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
+        className={cn(
+          'flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+          sizeStyles.button
+        )}
         aria-label="Halaman Selanjutnya"
       >
         <ChevronRight className={sizeStyles.icon} />
@@ -217,9 +244,13 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Last Page Button */}
       {showFirstLast && (
         <button
+          id={id ? `${id}-last` : undefined}
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${sizeStyles.button} text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800`}
+          className={cn(
+            'flex items-center justify-center rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+            sizeStyles.button
+          )}
           title="Halaman Terakhir"
         >
           &raquo;

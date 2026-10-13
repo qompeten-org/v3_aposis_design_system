@@ -27,13 +27,13 @@ export interface NotificationAction {
 export interface NotificationProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Notification primary title or header text */
-  teks?: React.ReactNode;
+  teks?: string;
   /** Alias for teks */
-  title?: React.ReactNode;
+  title?: string;
   /** Notification secondary description / message */
-  description?: React.ReactNode;
+  description?: string;
   /** Alias for description */
-  message?: React.ReactNode;
+  message?: string;
   /** Semantic variant style */
   variant?: NotificationVariant;
   /** Custom icon or set false to hide */

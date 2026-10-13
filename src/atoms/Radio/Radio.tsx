@@ -9,9 +9,9 @@ export type RadioLabelPosition = 'right' | 'left' | 'top' | 'bottom';
 
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** Text or element label */
-  label?: React.ReactNode;
+  label?: string;
   /** Subtext description below label */
-  description?: React.ReactNode;
+  description?: string;
   /** Label position relative to radio circle */
   labelPosition?: RadioLabelPosition;
   /** Visual presentation style */

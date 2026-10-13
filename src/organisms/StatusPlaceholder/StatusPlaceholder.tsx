@@ -1,9 +1,11 @@
 import React from 'react';
 import { Plus, CheckCircle2, AlertTriangle, AlertCircle, X, FileText } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 export type StatusPlaceholderVariant = 'empty' | 'success' | 'warning' | 'danger';
 
-export interface StatusPlaceholderProps {
+export interface StatusPlaceholderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+  id?: string;
   variant?: StatusPlaceholderVariant;
   title: string;
   description?: string;
@@ -16,6 +18,7 @@ export interface StatusPlaceholderProps {
 }
 
 export const StatusPlaceholder: React.FC<StatusPlaceholderProps> = ({
+  id,
   variant = 'empty',
   title,
   description,
@@ -23,8 +26,9 @@ export const StatusPlaceholder: React.FC<StatusPlaceholderProps> = ({
   showDivider = true,
   slotComponent,
   actionButton,
-  className = '',
+  className,
   children,
+  ...props
 }) => {
   const variantStyles = {
     empty: {
@@ -51,7 +55,13 @@ export const StatusPlaceholder: React.FC<StatusPlaceholderProps> = ({
 
   return (
     <div
-      className={`w-full p-5 rounded-[20px] flex flex-col items-center justify-center gap-4 text-center font-lexend ${variantStyles.container} ${className}`}
+      id={id}
+      className={cn(
+        'w-full p-5 rounded-[20px] flex flex-col items-center justify-center gap-4 text-center font-sans',
+        variantStyles.container,
+        className
+      )}
+      {...props}
     >
       {/* Icon Header */}
       <div className="flex items-center justify-center w-6 h-6">
@@ -87,30 +97,39 @@ export const StatusPlaceholder: React.FC<StatusPlaceholderProps> = ({
   );
 };
 
-export interface FilePreviewPlaceholderProps {
+export interface FilePreviewPlaceholderProps extends React.HTMLAttributes<HTMLDivElement> {
+  id?: string;
   fileType?: string;
   imageUrl?: string;
   pageNumber?: number | string;
   isSelected?: boolean;
   onRemove?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const FilePreviewPlaceholder: React.FC<FilePreviewPlaceholderProps> = ({
+  id,
   fileType = 'PDF',
   imageUrl,
   pageNumber = 1,
   isSelected = false,
   onRemove,
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   return (
     <div
-      className={`relative inline-flex flex-col items-center justify-end pb-2 bg-white dark:bg-slate-900 rounded-xl overflow-hidden transition-all font-lexend ${
+      id={id}
+      className={cn(
+        'relative inline-flex flex-col items-center justify-end pb-2 bg-white dark:bg-slate-900 rounded-xl overflow-hidden transition-all font-sans',
         isSelected
           ? 'outline outline-3 outline-[#0F62FE] dark:outline-blue-500'
-          : 'outline outline-1 outline-[#CBD5E1] dark:outline-slate-700'
-      } ${className}`}
+          : 'outline outline-1 outline-[#CBD5E1] dark:outline-slate-700',
+        className
+      )}
+      {...props}
     >
       {/* Card Preview Box (120x170 px) */}
       <div className="relative w-[120px] h-[170px] shadow-[0px_2px_4px_rgba(0,0,0,0.16)] overflow-hidden bg-[#F1F5F9] dark:bg-slate-800 flex flex-col items-center justify-center">
@@ -126,10 +145,12 @@ export const FilePreviewPlaceholder: React.FC<FilePreviewPlaceholderProps> = ({
 
       {/* Footer Number */}
       <div className="text-xs text-[#64748B] dark:text-slate-400 pt-2 font-normal">{pageNumber}</div>
+      {children}
 
       {/* Absolute Remove Button (Pojok Kanan Atas) */}
       {onRemove && (
         <button
+          id={id ? `${id}-remove` : undefined}
           onClick={onRemove}
           className="absolute top-1 right-1 bg-[#283445] dark:bg-slate-700 text-white p-1 rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.16)] hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
           title="Hapus"

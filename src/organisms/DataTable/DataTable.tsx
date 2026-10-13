@@ -65,12 +65,26 @@ export interface SecondaryActionConfig {
   ariaLabel?: string;
 }
 
+export const mockDataTableColumns: Column<any>[] = [
+  { key: 'name', header: 'Nama Siswa', sortable: true },
+  { key: 'class', header: 'Kelas', sortable: true },
+  { key: 'score', header: 'Nilai Akhir', align: 'center', sortable: true },
+  { key: 'status', header: 'Status Kelulusan', align: 'center' },
+];
+
+export const mockDataTableData = [
+  { id: 1, name: 'Ahmad Fauzi', class: 'XII-IPA-1', score: 92, status: 'Lulus' },
+  { id: 2, name: 'Bunga Citra', class: 'XII-IPA-1', score: 88, status: 'Lulus' },
+  { id: 3, name: 'Candra Wijaya', class: 'XII-IPA-2', score: 74, status: 'Remedial' },
+  { id: 4, name: 'Dewi Lestari', class: 'XII-IPA-2', score: 95, status: 'Lulus' },
+];
+
 export interface DataTableProps<T>
   extends React.HTMLAttributes<HTMLDivElement> {
   /** Column configuration definitions */
-  columns: Column<T>[];
+  columns?: Column<T>[];
   /** Data records */
-  data: T[];
+  data?: T[];
   /** Key extractor to identify unique row key */
   keyExtractor?: (item: T, index: number) => string | number;
 
@@ -102,11 +116,14 @@ export interface DataTableProps<T>
   tableClassName?: string;
   headerRowClassName?: string;
   bodyRowClassName?: string;
+
+  /** Optional custom slot */
+  children?: React.ReactNode;
 }
 
 export function DataTable<T>({
-  columns,
-  data,
+  columns = mockDataTableColumns as unknown as Column<T>[],
+  data = mockDataTableData as unknown as T[],
   keyExtractor,
   selectable = false,
   selectedRowKeys,
@@ -126,6 +143,7 @@ export function DataTable<T>({
   tableClassName,
   headerRowClassName,
   bodyRowClassName,
+  children,
   id,
   ...props
 }: DataTableProps<T>) {
@@ -298,6 +316,7 @@ export function DataTable<T>({
                   <th className="w-12 px-4 py-4 text-center shrink-0">
                     <div className="flex items-center justify-center">
                       <Checkbox
+                        id={id ? `${id}-check-all` : undefined}
                         checked={isAllSelected}
                         indeterminate={isPartiallySelected}
                         onChange={(e) => handleSelectAll(e.target.checked)}
@@ -383,6 +402,7 @@ export function DataTable<T>({
                   return (
                     <React.Fragment key={rowKey}>
                       <tr
+                        id={id ? `${id}-row-${rowKey}` : undefined}
                         className={cn(
                           'transition-colors duration-100',
                           isSelected
@@ -395,6 +415,7 @@ export function DataTable<T>({
                         {expandable && (
                           <td className="w-12 px-3 py-3.5 text-center">
                             <button
+                              id={id ? `${id}-expand-${rowKey}` : undefined}
                               type="button"
                               onClick={() => handleToggleExpand(rowKey)}
                               aria-expanded={isExpanded}
@@ -414,6 +435,7 @@ export function DataTable<T>({
                           <td className="w-12 px-4 py-3.5 text-center">
                             <div className="flex items-center justify-center">
                               <Checkbox
+                                id={id ? `${id}-check-${rowKey}` : undefined}
                                 checked={isSelected}
                                 onChange={() => handleSelectRow(rowKey)}
                                 aria-label={`Pilih baris ${index + 1}`}
@@ -561,6 +583,11 @@ export function DataTable<T>({
                 </button>
               )}
             </div>
+          </div>
+        )}
+        {children && (
+          <div className="p-3 border-t border-slate-100 dark:border-slate-800">
+            {children}
           </div>
         )}
       </div>

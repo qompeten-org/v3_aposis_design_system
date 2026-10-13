@@ -7,6 +7,7 @@ import {
   IconChevronRight,
   TablerIcon
 } from '@tabler/icons-react';
+import { cn } from '../../utils/cn';
 
 export type ContainedListSize = 'large' | 'medium' | 'small';
 export type ContainedListItemState = 'enabled' | 'hover' | 'focus' | 'active' | 'disabled';
@@ -25,7 +26,36 @@ export interface ContainedListItemData {
   state?: ContainedListItemState;
 }
 
-export interface ContainedListProps {
+export const mockContainedListItems: ContainedListItemData[] = [
+  {
+    id: 'item-1',
+    itemText: 'Dokumen Persyaratan Akreditasi',
+    subtitle: 'Diunggah 2 jam lalu oleh Admin',
+    badge: 'Verified',
+    status: 'success',
+    actionType: 'chevron',
+  },
+  {
+    id: 'item-2',
+    itemText: 'Laporan Keuangan Q3',
+    subtitle: 'Menunggu tanda tangan direksi',
+    badge: 'Pending',
+    status: 'warning',
+    actionType: 'button',
+    actionLabel: 'Tinjau',
+  },
+  {
+    id: 'item-3',
+    itemText: 'Log Aktivitas Pengguna',
+    subtitle: 'Sinkronisasi otomatis setiap 24 jam',
+    badge: 'Active',
+    status: 'info',
+    actionType: 'overflow',
+  },
+];
+
+export interface ContainedListProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+  id?: string;
   title?: string;
   size?: ContainedListSize;
   headerActionType?: 'overflow' | 'button' | 'link' | 'tag' | 'none';
@@ -42,6 +72,7 @@ export interface ContainedListProps {
 }
 
 export const ContainedList: React.FC<ContainedListProps> = ({
+  id,
   title = 'List title',
   size = 'large',
   headerActionType = 'overflow',
@@ -52,9 +83,10 @@ export const ContainedList: React.FC<ContainedListProps> = ({
   searchPlaceholder = 'Search...',
   itemOrientation = 'horizontal',
   showDividers = true,
-  items = [],
+  items = mockContainedListItems,
   children,
-  className = '',
+  className,
+  ...props
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -74,40 +106,49 @@ export const ContainedList: React.FC<ContainedListProps> = ({
   const filteredItems = items.filter((item) => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
-    return (
-      item.itemText.toLowerCase().includes(q) ||
-      (item.subtitle && item.subtitle.toLowerCase().includes(q))
-    );
+    const itemTextStr = typeof item.itemText === 'string' ? item.itemText.toLowerCase() : '';
+    const subtitleStr = typeof item.subtitle === 'string' ? item.subtitle.toLowerCase() : '';
+    return itemTextStr.includes(q) || subtitleStr.includes(q);
   });
 
   return (
     <div
-      className={`w-full flex flex-col gap-1 rounded-xl bg-white text-slate-900 border border-slate-200 overflow-hidden shadow-sm ${className}`}
+      id={id}
+      className={cn(
+        'w-full flex flex-col gap-1 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs font-sans',
+        className
+      )}
+      {...props}
     >
       {/* HEADER SECTION */}
       {(title || searchable || headerActionType !== 'none') && (
         <div
-          className={`w-full flex items-center justify-between bg-white border-b border-slate-100 transition-all ${headerPaddingMap[size]}`}
+          className={cn(
+            'w-full flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-all',
+            headerPaddingMap[size]
+          )}
         >
           {/* Header Left: Title or Search Field */}
           <div className="flex items-center flex-1 gap-2 mr-3">
             {searchable ? (
               <div
-                className={`flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border transition-all ${
+                className={cn(
+                  'flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border transition-all',
                   isSearchFocused
-                    ? 'border-blue-600 ring-2 ring-blue-600/20 bg-white'
+                    ? 'border-blue-600 ring-2 ring-blue-600/20 bg-white dark:bg-slate-900'
                     : 'border-transparent'
-                }`}
+                )}
               >
                 <IconSearch className="w-4 h-4 text-slate-500 shrink-0" />
                 <input
+                  id={id ? `${id}-search` : undefined}
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   placeholder={searchPlaceholder}
-                  className="w-full text-sm bg-transparent text-slate-900 placeholder-slate-400 focus:outline-none"
+                  className="w-full text-sm bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
                 />
                 {searchQuery && (
                   <button
@@ -116,14 +157,14 @@ export const ContainedList: React.FC<ContainedListProps> = ({
                       setSearchQuery('');
                       if (onSearchChange) onSearchChange('');
                     }}
-                    className="p-0.5 rounded-full hover:bg-slate-200 text-slate-500"
+                    className="p-0.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500"
                   >
                     <IconX className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
             ) : (
-              <h3 className="text-sm font-semibold truncate text-slate-900">
+              <h3 className="text-sm font-semibold truncate text-slate-900 dark:text-slate-100">
                 {title}
               </h3>
             )}
@@ -133,9 +174,10 @@ export const ContainedList: React.FC<ContainedListProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             {headerActionType === 'overflow' && (
               <button
+                id={id ? `${id}-header-overflow` : undefined}
                 type="button"
                 onClick={onHeaderActionClick}
-                className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title="More options"
               >
                 <IconDotsVertical className="w-4 h-4" />
@@ -144,6 +186,7 @@ export const ContainedList: React.FC<ContainedListProps> = ({
 
             {headerActionType === 'button' && (
               <button
+                id={id ? `${id}-header-btn` : undefined}
                 type="button"
                 onClick={onHeaderActionClick}
                 className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors flex items-center gap-1"
@@ -155,6 +198,7 @@ export const ContainedList: React.FC<ContainedListProps> = ({
 
             {headerActionType === 'link' && (
               <button
+                id={id ? `${id}-header-link` : undefined}
                 type="button"
                 onClick={onHeaderActionClick}
                 className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline"
@@ -164,7 +208,7 @@ export const ContainedList: React.FC<ContainedListProps> = ({
             )}
 
             {headerActionType === 'tag' && (
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-200 text-slate-700">
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                 {headerActionLabel || 'Tag'}
               </span>
             )}
@@ -179,6 +223,7 @@ export const ContainedList: React.FC<ContainedListProps> = ({
           : filteredItems.map((item, idx) => (
               <ContainedListItem
                 key={item.id || idx}
+                id={id ? `${id}-item-${item.id || idx}` : item.id}
                 subtitle={item.subtitle}
                 itemText={item.itemText}
                 icon={item.icon}
@@ -208,9 +253,10 @@ export const ContainedList: React.FC<ContainedListProps> = ({
    SUB-COMPONENT: ContainedListItem
    ========================================================================== */
 
-export interface ContainedListItemProps {
+export interface ContainedListItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  id?: string;
   subtitle?: string;
-  itemText: string;
+  itemText?: string;
   icon?: TablerIcon | React.ComponentType<{ size?: number | string; className?: string }>;
   badge?: string | number;
   status?: 'success' | 'warning' | 'danger' | 'info';
@@ -222,9 +268,11 @@ export interface ContainedListItemProps {
   showDivider?: boolean;
   state?: ContainedListItemState;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const ContainedListItem: React.FC<ContainedListItemProps> = ({
+  id,
   subtitle = 'List subtitle',
   itemText = 'List item',
   icon: Icon = IconPlus,
@@ -237,7 +285,9 @@ export const ContainedListItem: React.FC<ContainedListItemProps> = ({
   orientation = 'horizontal',
   showDivider = true,
   state = 'enabled',
-  className = '',
+  className,
+  children,
+  ...props
 }) => {
   const itemPaddingMap: Record<ContainedListSize, string> = {
     large: 'py-[14px] px-4',
@@ -247,10 +297,10 @@ export const ContainedListItem: React.FC<ContainedListItemProps> = ({
 
   // States style mapping
   const stateStyleMap: Record<ContainedListItemState, string> = {
-    enabled: 'bg-transparent text-slate-700 hover:bg-slate-50',
-    hover: 'bg-slate-100 text-slate-900',
-    focus: 'bg-slate-100 ring-2 ring-blue-600 ring-inset',
-    active: 'bg-slate-200 text-slate-900 font-medium',
+    enabled: 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40',
+    hover: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white',
+    focus: 'bg-slate-100 dark:bg-slate-800 ring-2 ring-blue-600 ring-inset',
+    active: 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-medium',
     disabled: 'opacity-50 pointer-events-none text-slate-400',
   };
 
@@ -264,11 +314,15 @@ export const ContainedListItem: React.FC<ContainedListItemProps> = ({
 
   return (
     <div
-      className={`relative w-full flex items-center justify-between transition-colors ${
-        itemPaddingMap[size]
-      } ${stateStyleMap[state]} ${
-        showDivider ? 'border-b border-slate-200' : ''
-      } ${className}`}
+      id={id}
+      className={cn(
+        'relative w-full flex items-center justify-between transition-colors',
+        itemPaddingMap[size],
+        stateStyleMap[state],
+        showDivider && 'border-b border-slate-200 dark:border-slate-800',
+        className
+      )}
+      {...props}
     >
       {/* LEFT & CONTENT AREA */}
       <div className="flex items-center flex-1 min-w-0 gap-3 mr-3">
@@ -353,6 +407,7 @@ export const ContainedListItem: React.FC<ContainedListItemProps> = ({
           </button>
         )}
       </div>
+      {children}
     </div>
   );
 };

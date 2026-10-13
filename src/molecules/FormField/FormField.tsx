@@ -37,7 +37,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         isInvalid: Boolean(error),
       }}
     >
-      <div className={cn('flex flex-col gap-1.5 w-full', className)} {...props}>
+      <div id={id ? `${id}-container` : undefined} className={cn('flex flex-col gap-1.5 w-full', className)} {...props}>
         {label && (
           <label
             id={`${fieldId}-label`}

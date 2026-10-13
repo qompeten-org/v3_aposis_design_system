@@ -2,7 +2,14 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export const mockStatCardData = {
+  title: 'Total Siswa Aktif',
+  value: '1,280',
+  change: { value: '+12%', trend: 'up' as const, label: 'vs bulan lalu' },
+  subtitle: 'Terdaftar di sistem',
+};
+
+export interface StatCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   title: string;
   value: string | number;
   change?: {
@@ -13,15 +20,17 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   iconBg?: string;
   subtitle?: string;
+  children?: React.ReactNode;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
-  title,
-  value,
-  change,
+  title = mockStatCardData.title,
+  value = mockStatCardData.value,
+  change = mockStatCardData.change,
   icon,
   iconBg = 'bg-aposis-50 dark:bg-blue-950/50 text-aposis-blue-60 dark:text-blue-400',
   subtitle,
+  children,
   className,
   id,
   ...props
@@ -55,6 +64,8 @@ export const StatCard: React.FC<StatCardProps> = ({
           </div>
         )}
       </div>
+
+      {children && <div className="mt-3">{children}</div>}
 
       {(change || subtitle) && (
         <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">

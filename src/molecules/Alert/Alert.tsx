@@ -61,6 +61,7 @@ export const Alert: React.FC<AlertProps> = ({
       </div>
       {onClose && (
         <button
+          id={id ? `${id}-close` : undefined}
           type="button"
           onClick={onClose}
           className={cn(

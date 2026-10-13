@@ -8,8 +8,14 @@ export interface BreadcrumbItem {
   onClick?: (e: React.MouseEvent<HTMLAnchorElement | HTMLSpanElement>) => void;
 }
 
-export interface BreadcrumbsProps {
-  items: BreadcrumbItem[];
+export const mockBreadcrumbsItems: BreadcrumbItem[] = [
+  { label: 'Beranda', href: '#' },
+  { label: 'Akademik', href: '#' },
+  { label: 'Daftar Nilai', active: true },
+];
+
+export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
+  items?: BreadcrumbItem[];
   separator?: React.ReactNode;
   className?: string;
   onItemClick?: (item: BreadcrumbItem, index: number) => void;
@@ -33,11 +39,19 @@ const SlashSeparator: React.FC = () => (
         </svg>
 );
 
-export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className, onItemClick }) => {
+export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
+  items = mockBreadcrumbsItems,
+  className,
+  onItemClick,
+  id,
+  ...props
+}) => {
     return (
         <nav
+      id={id}
       aria-label="Breadcrumb"
       className={cn(`inline-flex items-center gap-1 font-['Lexend'] text-xs`, className)}
+      {...props}
     >
       <ol className="inline-flex items-center gap-1">
         {items.map((item, index) => {
