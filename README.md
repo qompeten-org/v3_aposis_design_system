@@ -27,21 +27,35 @@ Repositori ini menerapkan metodologi **Atomic Design**:
 
 ## 📦 Instalasi di Repositori Konsumen
 
+### Cara 1: Install Langsung dari GitHub dengan Tag Versi (Direkomendasikan)
 Jalankan perintah berikut di repositori target Anda (misal `aposis-fe-v2`, `aposis-school-dashboard`, dll.):
 
 ```bash
-npm install @aposis/design-system
+# Install versi spesifik via Git Tag (misal v1.0.0):
+npm install github:qompeten-org/aposis_v3_design_system#v1.0.0
+
+# Atau menggunakan URL Git lengkap:
+npm install git+https://github.com/qompeten-org/aposis_v3_design_system.git#v1.0.0
 ```
 
-> **Untuk pengujian lokal (Local Development):**
-> Anda bisa menghubungkan langsung tanpa publish ke npm menggunakan npm link:
-> ```bash
-> # Di folder aposis_v3_design_system
-> npm link
->
-> # Di folder repo konsumen (misal aposis-fe-v2)
-> npm link @aposis/design-system
-> ```
+Atau tambahkan langsung di file `package.json` repositori konsumen:
+```json
+"dependencies": {
+  "@aposis/design-system": "github:qompeten-org/aposis_v3_design_system#v1.0.0"
+}
+```
+
+> **Catatan:** Skrip `prepare` di `package.json` akan otomatis mengompilasi paket (`dist/`) saat di-install oleh npm dari GitHub.
+
+### Cara 2: Untuk Pengujian Lokal (Local Development)
+Anda bisa menghubungkan langsung tanpa install dari GitHub menggunakan `npm link`:
+```bash
+# Di folder aposis_v3_design_system:
+npm link
+
+# Di folder repo konsumen (misal aposis-fe-v2):
+npm link @aposis/design-system
+```
 
 ---
 

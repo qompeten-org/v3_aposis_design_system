@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "buildCommand": "npm run build:app",
+  "outputDirectory": "dist-app",
   "headers": [
     {
       "source": "/assets/(.*)",

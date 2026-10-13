@@ -1,11 +1,22 @@
 {
   "name": "@aposis/design-system",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Atomic Design System for Aposis microservices and frontends built with React, TypeScript, and Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qompeten-org/aposis_v3_design_system.git"
+  },
+  "homepage": "https://github.com/qompeten-org/aposis_v3_design_system#readme",
+  "bugs": {
+    "url": "https://github.com/qompeten-org/aposis_v3_design_system/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -43,13 +54,14 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:package && npm run build:app",
     "build:app": "vite build",
     "build:package": "tsc -p tsconfig.build.json && vite build --mode lib",
     "build:lib": "tsc -p tsconfig.build.json && vite build --mode lib",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "prepare": "npm run build:package",
     "prepublishOnly": "npm run build:package",
-    "vercel-build": "vite build",
+    "vercel-build": "npm run build:app",
     "preview": "vite preview",
     "package:test": "npm pack --dry-run",
     "docs:dev": "docmd dev",
